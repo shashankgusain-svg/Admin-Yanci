@@ -41,7 +41,7 @@ const sidebarBtns = [
   }
 ];
 
-const Sidebar = () => {
+export default function Sidebar(){
   return (
     <div className="sidebar fixed gap-10 bg-white">
       <div className="flex flex-col h-full justify-between">
@@ -62,5 +62,3 @@ const Sidebar = () => {
     </div>
   );
 };
-
-export default Sidebar;

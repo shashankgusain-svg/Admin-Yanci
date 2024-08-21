@@ -2,38 +2,101 @@
 @tailwind components;
 @tailwind utilities;
 
-
-@layer base{
-
+@layer base {
+  html,
+  body,
+  main {
+    @apply font-inter;
+  }
 }
 
-@layer components{
-    .navbar{
-        height: 72px;
-        gap : 81px;
-    }
+@layer components {
+  .navbar {
+    height: 72px;
+    gap: 81px;
+  }
 
-    .sidebar{
-        width: 100%;
-        max-width: 264px;
-        height: calc(100vh - 72px);
-        top: 72px;
-        left: 0;
-        padding: 40px 31px 32px 16px;
-    }
+  .sidebar {
+    width: 100%;
+    max-width: 264px;
+    height: calc(100vh - 72px);
+    top: 72px;
+    left: 0;
+    padding: 40px 31px 32px 16px;
+  }
 
-    .sidebarBtn{
-        border-radius: 4px;
-        padding: 6px 16px 6px 16px;
-    }
+  .sidebarBtn {
+    border-radius: 4px;
+    padding: 6px 16px 6px 16px;
+  }
 
-    .admin-content{
-        margin-top: 72px;
-        margin-left: 264px;
-        width: calc(100% - 264px);
+  .admin-content {
+    margin-top: 72px;
+    margin-left: 264px;
+    width: calc(100% - 264px);
+    padding: 27px;
+    height: 100vh;
+  }
+
+  .statsCard {
+    @apply w-60;
+    height: 104px;
+    border-radius: 10px;
+    letter-spacing: 1px;
+  }
+
+  .dropdown-menu{
+    width: 160px;
+  }
+
+  .dropdown-menu > div{
+    border: 0.5px solid #DDE0E3;
+    padding: 6px 0px 6px 0px;
+    border-radius: 6px;
+  }
+
+  .dropdown-button {
+    padding: 8px 12px 8px 12px;
+    border-radius: 6px 0px 0px 0px;
+    border: 1px solid #dcdbe1;
+    border-radius: 6px;
+
+    &:hover{
+      transform: scale(0.95);
     }
+  }
+
+  .dropdown-item {
+    padding: 10px 16px 10px 16px;
+    color: #595959;
+  }
+
+  .table-title{
+    padding: 10px 12px;
+  }
+
+  .table-bottom{
+    height: 67px;
+  }
+
+  .table-header{
+    padding: 15px 12px 15px 12px;
+  }
+
+  .table-cell{
+    padding: 15px 12px 15px 12px;
+  }
+
+  .searchBar{
+    min-width: 628px;
+    padding: 0 16px;
+    gap: 10px;
+  }
 }
 
-@layer utilities{
-  
+@layer utilities {
+
+  .modalShadow{
+    box-shadow: 0px 6px 16px 2px #0000000F;
+  }
 }
