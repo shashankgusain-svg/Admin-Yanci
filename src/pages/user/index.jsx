@@ -162,7 +162,7 @@ export default function User() {
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
       <div className="flex flex-col gap-6">
-        <div className="flex gap-8 flex-wrap">
+        <div className="grid gap-8 grid-cols-2 lg:grid-cols-4">
           {dummyStats.map((stat) => (
             <StatsCard
               label={stat.label}

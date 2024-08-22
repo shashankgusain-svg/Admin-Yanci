@@ -4,4 +4,5 @@ import TableRow from "./TableRow";
 
 Table.Row = TableRow;
 Table.Cell = TableCell;
+
 export default Table;

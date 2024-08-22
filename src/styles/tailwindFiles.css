@@ -8,13 +8,30 @@
   main {
     @apply font-inter;
   }
+  label{
+    order: 1;
+  }
+
+  input{
+    order: 2;
+  }
+
+  input[required] + label::after{
+    content: '*' !important;
+    color: red !important;
+    float: right;
+  }
 }
 
 @layer components {
+  /* Navbar */
+
   .navbar {
     height: 72px;
     gap: 81px;
   }
+
+  /* Sidebar */
 
   .sidebar {
     width: 100%;
@@ -35,33 +52,36 @@
     margin-left: 264px;
     width: calc(100% - 264px);
     padding: 27px;
-    height: 100vh;
   }
 
+  /* Stats Card */
+
   .statsCard {
-    @apply w-60;
+    /* @apply w-60; */
     height: 104px;
     border-radius: 10px;
     letter-spacing: 1px;
   }
 
-  .dropdown-menu{
-    width: 160px;
+  /* Dropdown */
+
+  .dropdown-menu {
+    min-width: 160px;
   }
 
-  .dropdown-menu > div{
-    border: 0.5px solid #DDE0E3;
-    padding: 6px 0px 6px 0px;
+  .dropdown-menu > div {
+    border: 0.5px solid #dde0e3;
+    padding: 6px 4px 6px 4px;
     border-radius: 6px;
   }
 
-  .dropdown-button {
+  .table-button {
     padding: 8px 12px 8px 12px;
     border-radius: 6px 0px 0px 0px;
     border: 1px solid #dcdbe1;
     border-radius: 6px;
 
-    &:hover{
+    &:hover {
       transform: scale(0.95);
     }
   }
@@ -71,32 +91,72 @@
     color: #595959;
   }
 
-  .table-title{
+  /* Table */
+
+  .table-title {
     padding: 10px 12px;
   }
 
-  .table-bottom{
+  .table-bottom {
     height: 67px;
   }
 
-  .table-header{
+  .table-header {
     padding: 15px 12px 15px 12px;
   }
 
-  .table-cell{
+  .table-cell {
     padding: 15px 12px 15px 12px;
   }
 
-  .searchBar{
-    min-width: 628px;
+  /* Search Bar */
+
+  .searchBar {
+    min-width: 240;
     padding: 0 16px;
+    gap: 10px;
+  }
+
+  /* Date Picker */
+
+  .date-picker {
+    width: 375px;
+  }
+
+  .react-calendar__tile.--active {
+    @apply bg-primary-6 text-white;
+    /* background-color: red !important; */
+  }
+
+  /* Pagination */
+
+  .pagination {
+    border-radius: 6px;
+    border: 1px solid #dcdbe1;
+  }
+
+  .pagination-item {
+    @apply text-body-2 text-center;
+    width: 42.4px;
+    height: 40px;
+    padding: 10px;
+    border-left: 1px solid #dcdbe1;
+
+    &:first-child {
+      border: none;
+    }
+  }
+
+  .custom-input {
+    width: Fixed (375px) px;
+    height: Fixed (48px) px;
+    padding: 16px 10px 16px 10px;
     gap: 10px;
   }
 }
 
 @layer utilities {
-
-  .modalShadow{
-    box-shadow: 0px 6px 16px 2px #0000000F;
+  .modalShadow {
+    box-shadow: 0px 6px 16px 2px #0000000f;
   }
 }

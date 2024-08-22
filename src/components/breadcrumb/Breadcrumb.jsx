@@ -6,7 +6,7 @@ export default function Breadcrumb({ items }) {
     <nav aria-label="breadcrumb">
       <ol className="flex gap-2 items-center">
         {items.map((item, index) => (
-          <li key={index} className="text-primary-6 font-semibold text-heading-5 first-of-type:text-label-1 first-of-type:text-black-13 first-of-type:font-normal">
+          <li key={index} className="last-of-type:text-primary-6 last-of-type:font-semibold last-of-type:text-heading-5 text-label-1 text-black-13 font-normal">
             {item.link ? (
               <Link href={item.link}>
                 <a>{item.name}</a>

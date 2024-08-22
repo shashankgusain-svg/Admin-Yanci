@@ -13,6 +13,9 @@ module.exports = {
       fontFamily : {
         inter : ["var(--font-inter)"],
       },
+      borderWidth : {
+        0.3 : "0.3px",
+      },
       colors: {
         primary: {
           1: "#ebf8f7",

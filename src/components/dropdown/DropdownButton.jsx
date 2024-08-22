@@ -1,7 +1,8 @@
 import DropdownContext from "@/contexts/dropdown/DropdownContext";
 import React from "react";
+import Button from "../button/Button";
 
-export default function DropdownButton({ children }) {
+export default function DropdownButton({ children, onClick }) {
   const { setIsOpen } = React.useContext(DropdownContext);
 
   const toggleDropdown = () => {
@@ -9,8 +10,6 @@ export default function DropdownButton({ children }) {
   };
 
   return (
-    <button onClick={toggleDropdown} className="dropdown-button cursor-pointer relative items-center flex gap-2 bg-white text-body-2">
-      {children}
-    </button>
+    <Button type="table" onClick={toggleDropdown}>{children}</Button>
   );
 }
