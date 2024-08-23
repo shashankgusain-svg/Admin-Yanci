@@ -18,10 +18,10 @@ export default function CustomInput({
         name = {name}
         value = {value}
         onChange = {onChange}
-        placeHolder = {placeHolder}
+        placeholder = {placeHolder}
         required = {required}
         disabled = {disabled}
-        className = {`custom-input border border-black-5 bg-black-4 rounded-lg ${className}`}
+        className = {`${type != "button" ? "custom-input border border-black-5 bg-black-4 rounded-lg" : "underline text-blue-600 text-left p-2 pl-0 text-body-2 cursor-pointer"} ${className}`}
         {...rest}
     />
   );

@@ -10,11 +10,11 @@ module.exports = {
   ],
   theme: {
     extend: {
-      fontFamily : {
-        inter : ["var(--font-inter)"],
+      fontFamily: {
+        inter: ["var(--font-inter)"],
       },
-      borderWidth : {
-        0.3 : "0.3px",
+      borderWidth: {
+        0.3: "0.3px",
       },
       colors: {
         primary: {
@@ -46,16 +46,21 @@ module.exports = {
         },
       },
       fontSize: {
-        'heading-1': ['2rem', '1.2'],     // 32px = 2rem, Line height: 120%
-        'heading-2': ['1.8125rem', '1.2'],// 29px = 1.8125rem
-        'heading-3': ['1.625rem', '1.2'], // 26px = 1.625rem
-        'heading-4': ['1.4375rem', '1.2'],// 23px = 1.4375rem
-        'heading-5': ['1.25rem', '1.2'],  // 20px = 1.25rem
-        'heading-6': ['1.125rem', '1.2'], // 18px = 1.125rem
-        'body-1': ['1rem', '1.45'],       // 16px = 1rem, Line height: 145%
-        'body-2': ['0.875rem', '1.45'],   // 14px = 0.875rem
-        'label-1': ['0.8125rem', '1.4'],  // 13px = 0.8125rem, Line height: 140%
-        'label-2': ['0.6875rem', '1.4'],  // 11px = 0.6875rem
+        "heading-1": ["2rem", "1.2"], // 32px = 2rem, Line height: 120%
+        "heading-2": ["1.8125rem", "1.2"], // 29px = 1.8125rem
+        "heading-3": ["1.625rem", "1.2"], // 26px = 1.625rem
+        "heading-4": ["1.4375rem", "1.2"], // 23px = 1.4375rem
+        "heading-5": ["1.25rem", "1.2"], // 20px = 1.25rem
+        "heading-6": ["1.125rem", "1.2"], // 18px = 1.125rem
+        "body-1": ["1rem", "1.45"], // 16px = 1rem, Line height: 145%
+        "body-2": ["0.875rem", "1.45"], // 14px = 0.875rem
+        "label-1": ["0.8125rem", "1.4"], // 13px = 0.8125rem, Line height: 140%
+        "label-2": ["0.6875rem", "1.4"], // 11px = 0.6875rem
+      },
+      screens: {
+        xl: "1300px",
+        xxl: "1560px",
+        "3xl": "1900px",
       },
     },
   },

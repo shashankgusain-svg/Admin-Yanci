@@ -10,7 +10,7 @@ export default function Searchbar({ value, onChange, placeHolder }) {
         type="text"
         value={value}
         onChange={onChange}
-        placeHolder={placeHolder}
+        placeholder={placeHolder}
         className="text-body-1 w-full border-none outline-none"
       />
     </div>

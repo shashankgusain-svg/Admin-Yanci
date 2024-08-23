@@ -6,7 +6,10 @@ export default function Breadcrumb({ items }) {
     <nav aria-label="breadcrumb">
       <ol className="flex gap-2 items-center">
         {items.map((item, index) => (
-          <li key={index} className="last-of-type:text-primary-6 last-of-type:font-semibold last-of-type:text-heading-5 text-label-1 text-black-13 font-normal">
+          <li
+            key={index}
+            className="last-of-type:text-primary-6 last-of-type:font-semibold last-of-type:text-heading-5 text-label-1 text-black-13 font-normal"
+          >
             {item.link ? (
               <Link href={item.link}>
                 <a>{item.name}</a>
@@ -14,7 +17,9 @@ export default function Breadcrumb({ items }) {
             ) : (
               <span>{item.name}</span>
             )}
-            {index < items.length - 1 ? <span className="ml-2">&gt;</span> : null}
+            {index < items.length - 1 ? (
+              <span className="ml-2">&gt;</span>
+            ) : null}
           </li>
         ))}
       </ol>

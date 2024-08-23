@@ -2,7 +2,8 @@ import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Dropdown from "@/components/dropdown";
 import StatsCard from "@/components/statsCard/StatsCard";
 import React from "react";
-import Table from "@/components/table";
+import Table from "@/components/Table";
+import Toggle from "@/components/typeToggle/TypeToggle";
 
 const headers = [
   "SNo",
@@ -152,19 +153,28 @@ const dummyStats = [
   },
 ];
 
-export default function User() {
-  const breadCrumbItems = [
-    { name: "Home", Link: "/" },
-    { name: "User Management" },
-  ];
+const userOptions = [
+  { label: "Active Users", content: null },
+  {
+    label: "Blocked Users",
+    content: null,
+  },
+];
 
+const breadCrumbItems = [
+  { name: "Home", Link: "/" },
+  { name: "User Management" },
+];
+
+export default function User() {
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
       <div className="flex flex-col gap-6">
         <div className="grid gap-8 grid-cols-2 lg:grid-cols-4">
-          {dummyStats.map((stat) => (
+          {dummyStats.map((stat, index) => (
             <StatsCard
+              key={index}
               label={stat.label}
               isPercentage={stat.isPercentage ? stat.isPercentage : false}
               percentageChange={stat.percentageChange}
@@ -173,6 +183,8 @@ export default function User() {
             />
           ))}
         </div>
+        <Toggle options={userOptions} />
+
         <Table headers={headers} title="User's Details" searchBar>
           {data.map((item, index) => (
             <Table.Row key={index}>

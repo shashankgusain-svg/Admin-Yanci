@@ -17,8 +17,8 @@ export default function Table({
   title,
   searchBar = false,
   searchPlaceHolder,
-  datePicker,
-  exportToCSV,
+  datePicker = false,
+  exportToCSV = false,
 }) {
   return (
     <div className="flex flex-col">
@@ -36,14 +36,17 @@ export default function Table({
           ) : null}
         </div>
         <div className="flex items-center gap-3">
-          <Dropdown>
-            <Dropdown.Button>
-              <Image src={calender} />
-            </Dropdown.Button>
-            <Dropdown.Menu origin="top-right">
-              <DatePicker />
-            </Dropdown.Menu>
-          </Dropdown>
+          
+          {datePicker ? (
+            <Dropdown>
+              <Dropdown.Button>
+                <Image src={calender} />
+              </Dropdown.Button>
+              <Dropdown.Menu origin="top-right">
+                <DatePicker />
+              </Dropdown.Menu>
+            </Dropdown>
+          ) : null}
 
           <Dropdown>
             <Dropdown.Button>
@@ -70,13 +73,16 @@ export default function Table({
               <Dropdown.Item>A-Z</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
-          <Button type="table">
-            <Image src={exportIcon} />
-            <p>Export to CSV</p>
-          </Button>
+
+          {exportToCSV ? (
+            <Button type="table">
+              <Image src={exportIcon} />
+              <p>Export to CSV</p>
+            </Button>
+          ) : null}
         </div>
       </div>
-      <div className="overflow-x-auto border-x border-primary-3 bg-white">
+      <div className=" border-x border-primary-3 bg-white">
         <table className="min-w-full border-collapse">
           <thead className="border-b-0.3 border-b-primary-8">
             <tr>
@@ -109,11 +115,7 @@ export default function Table({
           </Dropdown>
         </div>
 
-        <Pagination
-          currentPage={4}
-          totalPages={10}
-          onPageChange={()=>{}}
-        />
+        <Pagination currentPage={4} totalPages={10} onPageChange={() => {}} />
       </div>
     </div>
   );

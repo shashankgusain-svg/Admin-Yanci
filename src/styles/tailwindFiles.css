@@ -8,16 +8,16 @@
   main {
     @apply font-inter;
   }
-  label{
+  label {
     order: 1;
   }
 
-  input{
+  input {
     order: 2;
   }
 
-  input[required] + label::after{
-    content: '*' !important;
+  input[required] + label::after {
+    content: "*" !important;
     color: red !important;
     float: right;
   }
@@ -48,10 +48,10 @@
   }
 
   .admin-content {
-    margin-top: 72px;
-    margin-left: 264px;
-    width: calc(100% - 264px);
+    width: 100%;
     padding: 27px;
+    padding-top: calc(72px + 27px);
+    padding-left: calc(264px + 27px);
   }
 
   /* Stats Card */
@@ -158,5 +158,54 @@
 @layer utilities {
   .modalShadow {
     box-shadow: 0px 6px 16px 2px #0000000f;
+  }
+
+  .small-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 15px;
+
+    @media (min-width: theme("screens.sm")) {
+      padding: 0;
+    }
+  }
+
+  .wrapper {
+    width: 100%;
+    max-width: 1920px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 100%;
+
+    @media (min-width: theme("screens.md")) {
+      grid-template-columns: 80px calc(100% - 80px);
+    }
+  }
+
+  .size-108 {
+    height: 90px;
+    width: 100px;
+
+    @media (min-width: theme("screens.md")) {
+      height: 108px;
+      width: 108px;
+    }
+  }
+
+  .layout-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 10px;
+    max-width: 1240px;
+
+    @media (min-width: theme("screens.xxl")) {
+      max-width: 1400px;
+      padding: 0 0;
+    }
+
+    @media (min-width: theme("screens.3xl")) {
+      max-width: 1700px;
+    }
   }
 }

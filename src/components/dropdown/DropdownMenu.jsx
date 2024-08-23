@@ -9,7 +9,7 @@ export default function DropdownMenu({
   return (
     <div
       className={`
-      dropdown-menu absolute ease-in-out transition-all duration-200 
+      dropdown-menu absolute ease-in-out transition-all duration-200 z-50
      ${
        origin === "bottom-left" || origin === "bottom-right"
          ? "pb-2"
