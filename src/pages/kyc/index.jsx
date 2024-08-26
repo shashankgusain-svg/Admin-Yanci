@@ -1,80 +1,51 @@
 import React from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import StatsCard from "@/components/statsCard/StatsCard";
-import Table from "@/components/Table";
 import Toggle from "@/components/typeToggle/TypeToggle";
-
-const headers = [
-  "SNo",
-  "P.I",
-  "Name",
-  "Submission Date",
-  "Yanci ID",
-  "CSD ID",
-  "Nationality",
-  "Phone",
-  "Email",
-  "KYC Details",
-  "CSD Form",
-  "Verification",
-];
-
-const data = [
-  {
-    sno: 1,
-    pi: "Profile Image",
-    name: "Darell Steward",
-    submissionDate: "03/12/23",
-    yanciID: "#6371",
-    csdID : "#479147",
-    nationality: "Ghana",
-    phone: "966-498619143",
-    email: "user1@info.com",
-    verification: "Verified",
-  },
-];
+import Submitted from "./submitted";
+import Abandoned from "./abandoned";
 
 const dummyStats = [
   {
-    label: "Total users",
+    label: "Total KYCS",
     percentageChange: 36,
     value: 2426,
     isPositiveChange: true,
   },
   {
-    label: "Active users",
+    label: "Abandoned KYCS",
     percentageChange: 36,
-    value: 2426,
+    value: 226,
     isPositiveChange: true,
   },
   {
-    label: "Inactive users",
+    label: "Verified KYCS",
     percentageChange: 36,
-    isPercentage: true,
-    value: 42,
+    isPercentage: false,
+    value: 2426,
     isPositiveChange: false,
   },
   {
-    label: "Funded Accounts",
-    percentageChange: 36,
-    isPercentage: true,
-    value: 62,
+    label: "Pending Approvals",
+    percentageChange: 226,
+    isPercentage: false,
+    value: 226,
     isPositiveChange: true,
   },
   {
-    label: "Unfunded Accounts",
-    percentageChange: 36,
-    isPercentage: true,
+    label: "Rejected KYCS",
+    percentageChange: 26,
+    isPercentage: false,
     value: 62,
     isPositiveChange: true,
   },
 ];
 
 const userOptions = [
-  { label: "Submitted KYCs", content: null },
+  { label: "Submitted KYCs", content: <Submitted/> },
   {
     label: "Abandoned KYCs",
-    content: null,
+    content: <Abandoned/>,
   },
 ];
 
@@ -84,6 +55,7 @@ const breadCrumbItems = [
 ];
 
 export default function Kyc() {
+
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
@@ -101,37 +73,6 @@ export default function Kyc() {
           ))}
         </div>
         <Toggle options={userOptions} />
-
-        <Table headers={headers} title="User's Details" searchBar exportToCSV datePicker>
-          {data.map((item, index) => (
-            <Table.Row key={index}>
-              <Table.Cell>{item.sno}</Table.Cell>
-              <Table.Cell>{item.pi}</Table.Cell>
-              <Table.Cell>{item.name}</Table.Cell>
-              <Table.Cell>{item.submissionDate}</Table.Cell>
-              <Table.Cell>{item.yanciID}</Table.Cell>
-              <Table.Cell>{item.csdID}</Table.Cell>
-              <Table.Cell>{item.nationality}</Table.Cell>
-              <Table.Cell>{item.phone}</Table.Cell>
-              <Table.Cell>{item.email}</Table.Cell>
-              <Table.Cell><a>View</a></Table.Cell>
-              <Table.Cell><a>View</a></Table.Cell>
-              <Table.Cell>
-                <span
-                  className={`inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium ${
-                    item.verification === "Verified"
-                      ? "bg-green-100 text-green-800"
-                      : item.verification === "Pending"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : "bg-red-100 text-red-800 "
-                  }`}
-                >
-                  {item.verification}
-                </span>
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </Table>
       </div>
     </div>
   );

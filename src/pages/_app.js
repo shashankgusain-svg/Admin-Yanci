@@ -1,6 +1,7 @@
 import "@/globals.css";
 import { Inter } from "next/font/google";
 import Head from "next/head";
+import RootLayout from "./layout";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -17,7 +18,9 @@ export default function App({ Component, pageProps }) {
         <title>Yanci</title>
       </Head>
       <main className={`${inter.variable}`}>
-        <Component {...pageProps} />
+        <RootLayout>
+          <Component {...pageProps} />
+        </RootLayout>
       </main>
     </>
   );

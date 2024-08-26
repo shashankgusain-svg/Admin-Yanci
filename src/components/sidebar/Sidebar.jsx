@@ -5,13 +5,22 @@ import User from "../../../public/icons/sidebar/User";
 import Logout from "../../../public/icons/sidebar/Logout";
 import Kyc from "../../../public/icons/sidebar/Kyc";
 import Transactions from "../../../public/icons/sidebar/Transactions";
+import { usePathname } from "next/navigation";
 
-const SidebarBtn = ({ children, path }) => {
+const SidebarBtn = ({ children, path, className }) => {
+  const pathname = usePathname();
+  const isActive = pathname === path;
+  // ${isActive ? "bg-primary-6 text-white" : "text-primary-6 bg-white"} 
+  
   return (
     <Link
       href={path}
       replace
-      className="sidebarBtn h-9 flex items-center gap-2 hover:bg-primary-2"
+      className={`
+        sidebarBtn h-9 flex items-center gap-2 hover:bg-primary-2 
+
+        ${className}
+      `}
     >
       {children}
     </Link>
@@ -32,16 +41,18 @@ const sidebarBtns = [
   {
     name: "KYC",
     path: "/kyc",
-    icon: <Kyc/>
+    icon: <Kyc />,
   },
   {
     name: "Transactions",
     path: "/transactions",
-    icon: <Transactions/>
-  }
+    icon: <Transactions />,
+  },
 ];
 
-export default function Sidebar(){
+export default function Sidebar() {
+  
+
   return (
     <div className="sidebar fixed gap-10 bg-white">
       <div className="flex flex-col h-full justify-between">
@@ -49,7 +60,7 @@ export default function Sidebar(){
           {sidebarBtns.map((button, index) => (
             <SidebarBtn path={button.path} key={index}>
               {button.icon}
-              <p className="text-primary-6 text-body-1">{button.name}</p>
+              <p className="text-body-1">{button.name}</p>
             </SidebarBtn>
           ))}
         </div>
@@ -61,4 +72,4 @@ export default function Sidebar(){
       </div>
     </div>
   );
-};
+}

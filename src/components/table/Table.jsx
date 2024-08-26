@@ -82,7 +82,7 @@ export default function Table({
           ) : null}
         </div>
       </div>
-      <div className=" border-x border-primary-3 bg-white">
+      <div className=" border-x border-primary-3 bg-white ">
         <table className="min-w-full border-collapse">
           <thead className="border-b-0.3 border-b-primary-8">
             <tr>

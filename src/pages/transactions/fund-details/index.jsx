@@ -1,0 +1,97 @@
+import React from "react";
+import Table from "@/components/Table";
+import viewDetails from '../../../../public/icons/misc/viewDetails.svg';
+
+const headers = [
+  "SNo",
+  "CSD ID",
+  "Fund type",
+  "Transction ID",
+  "Transaction date",
+  "Status",
+];
+
+const transactions = [
+  {
+    SNo: 1,
+    csdID: "46484435",
+    fundType: "Deposit",
+    transactionID: "#6371",
+    transactionDate: "03/12/23",
+    transactionAmount: "GHC 1000",
+    status: "Successful",
+  },
+  {
+    SNo: 2,
+    csdID: "46484435",
+    fundType: "Withdrawal",
+    transactionID: "#479147",
+    transactionDate: "03/12/23",
+    transactionAmount: "GHC 1000",
+    status: "Successful",
+  },
+  {
+    SNo: 3,
+    csdID: "46484435",
+    fundType: "Deposit",
+    transactionID: "#6371",
+    transactionDate: "03/12/23",
+    transactionAmount: "GHC 1000",
+    status: "Successful",
+  },
+];
+
+export default function FundDetails() {
+  const dropdownItems = [
+    {
+      label: "View Details",
+      icom : viewDetails,
+      onClick: () => {
+        // your custom click handler for viewing details
+      },
+    },
+  ];
+
+  return (
+    <>
+      <Table
+        headers={headers}
+        title="User's Details"
+        searchBar
+        exportToCSV
+        datePicker
+      >
+        {transactions.map((item, index) => (
+          <Table.Row
+            key={index}
+            dropdownItems={dropdownItems}
+            modalTitle="Block User Confirmation"
+            modalMessage="Are you sure you want to block this user? This action can be undone."
+            onConfirm={() => console.log("User blocked!")}
+            showModalButton={true}
+          >
+            <Table.Cell>{item.SNo}</Table.Cell>
+            <Table.Cell>{item.csdID}</Table.Cell>
+            <Table.Cell>{item.fundType}</Table.Cell>
+            <Table.Cell>{item.transactionID}</Table.Cell>
+            <Table.Cell>{item.transactionDate}</Table.Cell>
+            <Table.Cell>{item.transactionAmount}</Table.Cell>
+            <Table.Cell>
+              <span
+                className={`inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium ${
+                  item.status === "Successful"
+                    ? "bg-green-100 text-green-600"
+                    : item.verification === "Pending"
+                    ? "bg-yellow-100 text-yellow-400"
+                    : "bg-red-100 text-red-800 "
+                }`}
+              >
+                {item.status}
+              </span>
+            </Table.Cell>
+          </Table.Row>
+        ))}
+      </Table>
+    </>
+  );
+}

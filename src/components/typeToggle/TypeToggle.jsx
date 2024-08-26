@@ -20,7 +20,7 @@ export default function Toggle({ options }) {
           </button>
         ))}
       </div>
-      <div className="mt-4">
+      <div className="mt-8">
         {options.map((option) => (
           <div
             key={option.label}

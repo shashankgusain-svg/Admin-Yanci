@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Button({ children, onClick, size, type, style, className }) {
   const commonBtnStyle =
-    "h-12 p-5 flex gap-2 rounded-full text-body-2 justify-center items-center";
+    "h-12 p-5 flex gap-2 rounded-full text-body-2 justify-center items-center font-semibold";
 
   return (
     <button
