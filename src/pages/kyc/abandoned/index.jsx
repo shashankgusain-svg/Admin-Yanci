@@ -41,7 +41,7 @@ export default function Abandoned() {
   return (
     <Table
       headers={headers}
-      title="User's Details"
+      title="KYC Details"
       searchBar
       exportToCSV
       datePicker

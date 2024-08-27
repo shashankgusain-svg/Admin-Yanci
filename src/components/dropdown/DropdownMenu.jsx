@@ -3,6 +3,7 @@ import { useContext } from "react";
 
 export default function DropdownMenu({
   children,
+  className,
   origin = "top-right" | "top-left" | "bottom-left" | "bottom-right",
 }) {
   const { isOpen } = useContext(DropdownContext);
@@ -30,6 +31,7 @@ export default function DropdownMenu({
           ? "origin-bottom-right bottom-full right-0"
           : "origin-top-right top-full right-0"
       }
+      ${className}
     `}
     >
       <div className="overflow-hidden bg-white flex flex-col modalShadow">

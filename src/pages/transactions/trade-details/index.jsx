@@ -1,6 +1,6 @@
 import React from "react";
 import Table from "@/components/Table";
-import viewDetails from '../../../../public/icons/misc/viewDetails.svg';
+import viewDetails from "../../../../public/icons/misc/viewDetails.svg";
 
 const headers = [
   "SNo",
@@ -67,19 +67,18 @@ export default function TradeDetails() {
   const dropdownItems = [
     {
       label: "View Details",
-      icon : viewDetails,
+      icon: viewDetails,
       onClick: () => {
         // your custom click handler for viewing details
       },
     },
   ];
-  
 
   return (
     <>
       <Table
         headers={headers}
-        title="User's Details"
+        title="Transaction Details"
         searchBar
         exportToCSV
         datePicker
@@ -88,10 +87,6 @@ export default function TradeDetails() {
           <Table.Row
             key={index}
             dropdownItems={dropdownItems}
-            modalTitle="Block User Confirmation"
-            modalMessage="Are you sure you want to block this user? This action can be undone."
-            onConfirm={() => console.log("User blocked!")}
-            showModalButton={true}
           >
             <Table.Cell>{item.SNo}</Table.Cell>
             <Table.Cell>{item.CSD_ID}</Table.Cell>

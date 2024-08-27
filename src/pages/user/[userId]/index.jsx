@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import React from "react";
 import Modal from "@/components/modal";
-import csdForm from "../../../public/images/csd_form.jpeg";
+import csdForm from "../../../../public/images/csd_form.jpeg";
 
 const kycdetails = [
   {
@@ -335,7 +335,7 @@ const kycdetails = [
 
 export default function UserPage() {
   const router = useRouter();
-  const { id } = router.query;
+  const { userId } = router.query;
 
   const breadCrumbItems = [
     { name: "Home", Link: "/" },
@@ -353,7 +353,7 @@ export default function UserPage() {
           title="KYC Details"
           isOpen={true}
           onClose={() => {setShowDetails(prev => !prev)}}
-          type="display"
+          type="detail"
         >
           <Modal.Content>
             <div className="flex flex-col gap-6 h-full">
@@ -396,9 +396,9 @@ export default function UserPage() {
       ) : null}
       {
         showForm ?
-        <Modal download={()=>{}} title="CSD Form" type="doc" isOpen={true} onClose={prev => {setShowForm(!prev)}}>
+        <Modal download={()=>{}} title="CSD Form" type="document" isOpen={true} onClose={prev => {setShowForm(!prev)}}>
           <Modal.Content>
-            <Image src={csdForm}/>
+            <Image className="mx-auto" src={csdForm}/>
           </Modal.Content>
         </Modal> : 
         null
@@ -456,7 +456,7 @@ export default function UserPage() {
                 disabled
                 name="yanciId"
                 id="yanciId"
-                value={id}
+                value={userId}
                 required
               />
             </InputAndLabel>

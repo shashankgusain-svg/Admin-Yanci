@@ -16,6 +16,12 @@ module.exports = {
       borderWidth: {
         0.3: "0.3px",
       },
+      maxWidth:{
+        confirmation : "437px",
+        details : "1153px",
+        document : "784px",
+        report : "550px",
+      },
       colors: {
         primary: {
           1: "#ebf8f7",

@@ -8,6 +8,7 @@ const headers = [
   "Fund type",
   "Transction ID",
   "Transaction date",
+  "Transaction amount",
   "Status",
 ];
 
@@ -56,7 +57,7 @@ export default function FundDetails() {
     <>
       <Table
         headers={headers}
-        title="User's Details"
+        title="Transaction Details"
         searchBar
         exportToCSV
         datePicker
