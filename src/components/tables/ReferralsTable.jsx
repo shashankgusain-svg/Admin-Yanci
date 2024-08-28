@@ -1,6 +1,6 @@
 import React from "react";
-import Table from "@/components/Table";
-import Dropdown from "../dropdown";
+import Table from "@/components/table/TableIndex";
+import Dropdown from "../dropdown/DropdownIndex";
 
 const headers = [
   "SNo",

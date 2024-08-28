@@ -1,5 +1,5 @@
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
-import Dropdown from "@/components/dropdown";
+import Dropdown from "@/components/dropdown/DropdownIndex";
 import StatsCard from "@/components/statsCard/StatsCard";
 import React from "react";
 import Toggle from "@/components/typeToggle/TypeToggle";

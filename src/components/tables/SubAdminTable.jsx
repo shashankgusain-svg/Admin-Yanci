@@ -1,6 +1,6 @@
 import React from "react";
-import Table from "../Table";
-import Dropdown from "../dropdown";
+import Table from "../table/TableIndex";
+import Dropdown from "../dropdown/DropdownIndex";
 import viewDetails from "../../../public/icons/misc/viewDetails.svg";
 import Image from "next/image";
 

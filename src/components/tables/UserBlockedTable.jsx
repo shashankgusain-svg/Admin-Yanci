@@ -1,10 +1,10 @@
 import React from "react";
 import unblockUser from "../../../public/icons/misc/unblock.svg";
 import viewDetails from "../../../public/icons/misc/viewDetails.svg";
-import Table from "@/components/Table";
+import Table from "@/components/table/TableIndex";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import Dropdown from "@/components/dropdown";
+import Dropdown from "@/components/dropdown/DropdownIndex";
 import Image from "next/image";
 
 const headers = [

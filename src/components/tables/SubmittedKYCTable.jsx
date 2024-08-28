@@ -1,9 +1,9 @@
 import React from "react";
-import Table from "@/components/Table";
-import Modal from "@/components/modal";
+import Table from "@/components/table/TableIndex";
+import Modal from "@/components/modal/ModalIndex";
 import Button from "@/components/button/Button";
-import InputAndLabel from "@/components/inputandlabel";
-import Dropdown from "@/components/dropdown";
+import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
+import Dropdown from "@/components/dropdown/DropdownIndex";
 import Image from "next/image";
 
 import verify from "../../../public/icons/misc/verify.svg";

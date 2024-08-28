@@ -1,4 +1,4 @@
-import InputAndLabel from "@/components/inputandlabel";
+import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import Image from "next/image";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import React from "react";

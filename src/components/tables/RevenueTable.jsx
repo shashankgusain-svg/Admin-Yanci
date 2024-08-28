@@ -1,9 +1,9 @@
 import React from "react";
-import Table from "../Table";
+import Table from "../table/TableIndex";
 import viewDetails from "../../../public/icons/misc/viewDetails.svg";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import Dropdown from "../dropdown";
+import Dropdown from "../dropdown/DropdownIndex";
 
 const headers = [
   "SNo",

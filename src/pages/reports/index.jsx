@@ -3,8 +3,8 @@ import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Button from "@/components/button/Button";
 import Image from "next/image";
 import reportLoading from "../../../public/icons/misc/reportLoading.svg";
-import Modal from "@/components/modal";
-import InputAndLabel from "@/components/inputandlabel";
+import Modal from "@/components/modal/ModalIndex";
+import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 
 export default function Reports() {
   const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Reports" }];

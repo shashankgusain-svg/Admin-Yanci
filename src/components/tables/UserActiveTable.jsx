@@ -1,11 +1,11 @@
 import React from "react";
-import Modal from "@/components/modal";
+import Modal from "@/components/modal/ModalIndex";
 import Button from "@/components/button/Button";
 import blockUser from "../../../public/icons/misc/block.svg";
 import viewDetails from "../../../public/icons/misc/viewDetails.svg";
-import Table from "@/components/Table";
+import Table from "@/components/table/TableIndex";
 import Link from "next/link";
-import Dropdown from "@/components/dropdown";
+import Dropdown from "@/components/dropdown/DropdownIndex";
 import Image from "next/image";
 import { useRouter } from "next/router";
 

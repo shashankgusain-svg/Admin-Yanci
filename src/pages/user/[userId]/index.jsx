@@ -1,10 +1,10 @@
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Button from "@/components/button/Button";
-import InputAndLabel from "@/components/inputandlabel";
+import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import React from "react";
-import Modal from "@/components/modal";
+import Modal from "@/components/modal/ModalIndex";
 import csdForm from "../../../../public/images/csd_form.jpeg";
 
 const kycdetails = [

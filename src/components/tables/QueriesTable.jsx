@@ -1,7 +1,7 @@
 import React from "react";
-import Table from "@/components/Table";
+import Table from "@/components/table/TableIndex";
 import respond from "../../../public/icons/misc/respond.svg";
-import Dropdown from "@/components/dropdown";
+import Dropdown from "@/components/dropdown/DropdownIndex";
 import Image from "next/image";
 
 const headers = [

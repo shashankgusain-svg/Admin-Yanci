@@ -1,4 +1,4 @@
-import InputAndLabel from "@/components/inputandlabel";
+import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import { useRouter } from "next/router";
 import React from "react";

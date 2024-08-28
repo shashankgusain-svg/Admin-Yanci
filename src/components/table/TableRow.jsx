@@ -1,5 +1,5 @@
 import React from "react";
-import Dropdown from "../dropdown";
+import Dropdown from "../dropdown/DropdownIndex";
 import Image from "next/image";
 
 export default function TableRow({ children, dropdownItems = [] }) {

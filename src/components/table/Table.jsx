@@ -6,7 +6,7 @@ import exportIcon from "../../../public/icons/misc/export.svg";
 import calender from "../../../public/icons/misc/calender.svg";
 import filter from "../../../public/icons/misc/filter.svg";
 import Image from "next/image";
-import Dropdown from "../dropdown";
+import Dropdown from "../dropdown/DropdownIndex";
 import DatePicker from "../datePicker/DatePicker";
 import Button from "../button/Button";
 import Pagination from "../pagination/Pagination";
