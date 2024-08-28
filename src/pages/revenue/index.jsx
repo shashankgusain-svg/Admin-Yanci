@@ -6,36 +6,43 @@ import RevenueTable from "@/components/tables/RevenueTable";
 const dummyStats = [
   {
     label: "Total Revenue",
-    percentageChange: 36,
-    value: 2426,
-    isPositiveChange: true,
+    value: 522426,
+    isDollar: true,
+    percentageChange : 36
   },
   {
-    label: "Abandoned KYCS",
-    percentageChange: 36,
-    value: 226,
-    isPositiveChange: true,
+    label: "Yanci Fee",
+    value: 522426,
+    isDollar: true,
+    percentageChange : 36
   },
   {
-    label: "Verified KYCS",
-    percentageChange: 36,
-    isPercentage: false,
-    value: 2426,
-    isPositiveChange: false,
+    label: "TTB Fee",
+    value: 522426,
+    isDollar: true,
+    percentageChange : 36,
+    isPositiveChange : true,
   },
   {
-    label: "Pending Approvals",
-    percentageChange: 226,
-    isPercentage: false,
-    value: 226,
-    isPositiveChange: true,
+    label: "GSE Fee",
+    value: 522426,
+    isDollar: true,
+    percentageChange : 36,
+    isPositiveChange : true,
   },
   {
-    label: "Rejected KYCS",
-    percentageChange: 26,
-    isPercentage: false,
-    value: 62,
-    isPositiveChange: true,
+    label: "SEC Fee",
+    value: 522426,
+    isDollar: true,
+    percentageChange : 36,
+    isPositiveChange : true,
+  },
+  {
+    label: "CSD Fee",
+    value: 522426,
+    isDollar: true,
+    percentageChange : 36,
+    isPositiveChange : true,
   },
 ];
 
@@ -55,13 +62,14 @@ export default function Revenue() {
               key={index}
               label={stat.label}
               isPercentage={stat.isPercentage ? stat.isPercentage : false}
+              isDollar={stat.isDollar}
               percentageChange={stat.percentageChange}
               value={stat.value}
               isPositiveChange={stat.isPositiveChange}
             />
           ))}
         </div>
-        <RevenueTable/>
+        <RevenueTable />
       </div>
     </div>
   );

@@ -10,6 +10,11 @@ import Reports from "../../../public/icons/sidebar/Reports";
 import Notifications from "../../../public/icons/sidebar/Notifications";
 import StockManagement from "../../../public/icons/sidebar/StockManagement";
 import { usePathname } from "next/navigation";
+import RoleManagement from "../../../public/icons/sidebar/RoleManagement";
+import UserSupport from "../../../public/icons/sidebar/UserSupport";
+import AuditLogs from "../../../public/icons/sidebar/AuditLogs";
+import Policies from "../../../public/icons/sidebar/Policies";
+import Referrals from "../../../public/icons/sidebar/Referrals";
 
 const SidebarBtn = ({ children, path, isActive, className = "" }) => {
   return (
@@ -36,6 +41,11 @@ const sidebarBtns = [
   { name: "Reports", path: "/reports", Icon: Reports },
   { name: "Stock", path: "/stock", Icon: StockManagement },
   { name: "Notifications", path: "/notifications", Icon: Notifications },
+  { name: "Role Management", path: "/role-management", Icon: RoleManagement },
+  { name: "User Support", path: "/user-support", Icon: UserSupport },
+  { name: "Audit Logs", path: "/audit-logs", Icon: AuditLogs },
+  { name: "Policies", path: "/policies", Icon: Policies },
+  { name: "Referrals", path: "/referrals", Icon: Referrals },
 ];
 
 export default function Sidebar() {

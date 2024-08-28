@@ -149,6 +149,7 @@ export default function Active() {
         headers={headers}
         title="User's Details"
         searchBar
+        searchPlaceHolder="Search with Yanci ID"
         exportToCSV
         datePicker
       >

@@ -14,14 +14,20 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="navbar border-b-2 border-black-3 w-full bg-white fixed top-0 left-0 py-4 px-8 z-10">
-      <div className="flex justify-between items-center">
+    <nav className="navbar flex border-b-2 border-black-3 w-full bg-white fixed top-0 left-0 px-8 z-10">
+      <div className="min-w-full flex justify-between items-center">
         <Image src={Logo} alt="Logo"/>
         <div className="flex items-center gap-6 ">
           {pathname === "/notifications" ? (
-            <Button className="font-normal" onClick={()=>{router.push("notifications/create")}}>
+            <Button className="font-normal h-11" onClick={()=>{router.push("notifications/create")}}>
               <Image src={add} alt="Create new"/>
               Create Notification
+            </Button>
+          ) : null}
+          {pathname === "/role-management" ? (
+            <Button className="font-normal h-11" onClick={()=>{router.push("notifications/create")}}>
+              <Image src={add} alt="Add new"/>
+              Add Sub Admin
             </Button>
           ) : null}
           <button>

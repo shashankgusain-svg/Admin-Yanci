@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function Transactions({ active }) {
   return !active ? (
     <svg

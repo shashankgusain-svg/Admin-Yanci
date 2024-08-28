@@ -25,7 +25,7 @@ export default function Table({
       <div className="table-title gap-10 h-14 flex justify-between items-center rounded-t-xl border border-primary-3 border-b-0 bg-primary-2">
         <div className="flex items-center gap-6">
           <h3 className="text-heading-6 font-semibold text-primary-8">
-            {title}
+            {title ? title : null}
           </h3>
           {searchBar ? <Searchbar placeHolder={searchPlaceHolder} /> : null}
         </div>

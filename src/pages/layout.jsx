@@ -1,4 +1,3 @@
-import Modal from "@/components/modal";
 import Navbar from "@/components/navbar/Navbar";
 import Sidebar from "@/components/sidebar/Sidebar";
 

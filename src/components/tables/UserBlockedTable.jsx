@@ -128,6 +128,7 @@ export default function Blocked() {
         headers={headers}
         title="User's Details"
         searchBar
+        searchPlaceHolder="Search with Yanci ID"
         exportToCSV
         datePicker
       >

@@ -2,7 +2,6 @@ import React from "react";
 import Table from "@/components/Table";
 import history from '../../../public/icons/misc/history.svg';
 import Dropdown from "@/components/dropdown";
-import InputAndLabel from "@/components/inputandlabel";
 import Image from "next/image";
 
 const headers = [
@@ -33,36 +32,11 @@ const data = [
 ];
 
 export default function Abandoned() {
-  const dropdownItems = [
-    {
-      label: "Remind me later",
-      onClick: () => {
-        // your custom click handler for viewing details
-      },
-    },
-  ];
   return (
     <Table headers={headers} title="KYC Details" exportToCSV datePicker>
       {data.map((item, index) => (
         <Table.Row
           key={index}
-          dropdownItems={dropdownItems}
-          modalTitle="Are you sure you want to verify this user?"
-          onConfirm={() => console.log("User blocked!")}
-          showModalButton={true}
-          modalContent={
-            <InputAndLabel>
-              <InputAndLabel.Label htmlFor="csdNumber">
-                Put CSD Number
-              </InputAndLabel.Label>
-              <InputAndLabel.Input
-                name="csdNumber"
-                id="csdNumber"
-                placeholder="0000"
-                required
-              />
-            </InputAndLabel>
-          }
         >
           <Table.Cell>{item.sno}</Table.Cell>
           <Table.Cell>{item.pi}</Table.Cell>
