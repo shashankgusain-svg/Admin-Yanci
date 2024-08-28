@@ -1,8 +1,7 @@
-import Navbar from "@/components/navbar/Navbar";
-import Sidebar from "@/components/sidebar/Sidebar";
+import Navbar from "../navbar/Navbar";
+import Sidebar from "../sidebar/Sidebar";
 
 export default function RootLayout({ children }) {
-
   return (
     <>
       <Navbar />
