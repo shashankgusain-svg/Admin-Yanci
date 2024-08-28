@@ -1,6 +1,9 @@
 import React from "react";
 import Table from "../Table";
-import viewDetails from '../../../public/icons/misc/viewDetails.svg';
+import viewDetails from "../../../public/icons/misc/viewDetails.svg";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import Dropdown from "../dropdown";
 
 const headers = [
   "SNo",
@@ -40,15 +43,8 @@ const data = [
 ];
 
 export default function RevenueTable() {
-  const dropdownItems = [
-    {
-      label: "View Details",
-      icon: viewDetails,
-      onClick: () => {
-        // your custom click handler for viewing details
-      },
-    },
-  ];
+  const router = useRouter();
+
   return (
     <>
       <Table
@@ -59,7 +55,7 @@ export default function RevenueTable() {
         datePicker
       >
         {data.map((item, index) => (
-          <Table.Row key={index} dropdownItems={dropdownItems}>
+          <Table.Row key={index}>
             <Table.Cell>{item.sNo}</Table.Cell>
             <Table.Cell>{item.yanciId}</Table.Cell>
             <Table.Cell>{item.csdId}</Table.Cell>
@@ -69,6 +65,23 @@ export default function RevenueTable() {
             <Table.Cell>{item.ttbFee}</Table.Cell>
             <Table.Cell>{item.otherPlatformFee}</Table.Cell>
             <Table.Cell>{item.currentBalance}</Table.Cell>
+            <td>
+              <Dropdown>
+                <Dropdown.Button type="clean" className="table-cell px-1">
+                  <span className="font-bold">&#8942;</span>
+                </Dropdown.Button>
+                <Dropdown.Menu origin="bottom-right">
+                  <Dropdown.Item
+                    onClick={() => {
+                      router.push(`revenue/${item.csdId}`);
+                    }}
+                  >
+                    <Image src={viewDetails} alt="View Details" />
+                    <p>View Details</p>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </td>
           </Table.Row>
         ))}
       </Table>

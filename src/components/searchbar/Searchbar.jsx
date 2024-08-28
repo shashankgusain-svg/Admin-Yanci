@@ -5,7 +5,7 @@ import Search from "../../../public/icons/misc/search.svg";
 export default function Searchbar({ value, onChange, placeHolder }) {
   return (
     <div className="searchBar h-8 flex rounded-lg border border-black-5 bg-white">
-      <Image className="w-4" src={Search} />
+      <Image className="w-4" src={Search} alt="Search"/>
       <input
         type="text"
         value={value}

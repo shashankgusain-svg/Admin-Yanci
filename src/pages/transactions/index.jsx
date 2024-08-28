@@ -2,8 +2,8 @@ import React from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import StatsCard from "@/components/statsCard/StatsCard";
 import Toggle from "@/components/typeToggle/TypeToggle";
-import TradeDetails from "./trade-details";
-import FundDetails from "./fund-details";
+import TradeDetails from "../../components/tables/TradeDetailsTable";
+import FundDetails from "../../components/tables/FundDetailsTable";
 
 const dummyStats = [
   {

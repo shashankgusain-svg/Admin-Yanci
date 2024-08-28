@@ -10,9 +10,9 @@ export default function Arrow({ direction = "up" }) {
       <path
         d="M2.08333 4.66667L4.99999 1.75M4.99999 1.75L7.91666 4.66667M4.99999 1.75V9.25"
         stroke="#22C55E"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   ) : direction && direction === "down" ? (
@@ -26,9 +26,9 @@ export default function Arrow({ direction = "up" }) {
       <path
         d="M2.08333 6.33333L4.99999 9.25M4.99999 9.25L7.91666 6.33333M4.99999 9.25V1.75"
         stroke="#EF4444"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   ) : null;

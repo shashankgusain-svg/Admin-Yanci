@@ -21,6 +21,24 @@
     color: red !important;
     float: right;
   }
+
+  select{
+    @apply bg-black-1 text-black-1 cursor-pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    background-image: none;
+    outline: 0;
+    box-shadow: none;
+    border: none !important;
+    padding: 16px 10px 16px 10px;
+    flex: 1;
+  }
+
+  select::-ms-expand {
+    display: none;
+  }
 }
 
 @layer components {
@@ -152,6 +170,25 @@
     height: Fixed (48px) px;
     padding: 16px 10px 16px 10px;
     gap: 10px;
+  }
+
+  .select {
+    @apply max-w-report bg-black-1 border border-black-5 rounded-lg overflow-hidden relative flex items-center;
+    width: 100%;
+    height: 49px;
+    line-height: 3;
+
+    &::after {
+      content: "\25BC";
+      position: absolute;
+      top: 0;
+      right: 10px;
+      @apply cursor-pointer transition-all duration-300 ease-in-out;
+    }
+
+    &:hover::after{
+      @apply text-primary-3;
+    }
   }
 }
 

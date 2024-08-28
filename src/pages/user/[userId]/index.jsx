@@ -340,7 +340,7 @@ export default function UserPage() {
   const breadCrumbItems = [
     { name: "Home", Link: "/" },
     { name: "User Management", Link: "/" },
-    { name: "User Management" },
+    { name: userId },
   ];
 
   const [showDetails, setShowDetails] = React.useState(false);

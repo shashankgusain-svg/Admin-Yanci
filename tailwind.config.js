@@ -21,6 +21,7 @@ module.exports = {
         details : "1153px",
         document : "784px",
         report : "550px",
+        upload : "920px"
       },
       colors: {
         primary: {

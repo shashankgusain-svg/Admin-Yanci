@@ -2,8 +2,8 @@ import React from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import StatsCard from "@/components/statsCard/StatsCard";
 import Toggle from "@/components/typeToggle/TypeToggle";
-import Submitted from "./submitted";
-import Abandoned from "./abandoned";
+import Submitted from "../../components/tables/SubmittedKYCTable";
+import Abandoned from "../../components/tables/AbandonedKYCTable";
 
 const dummyStats = [
   {

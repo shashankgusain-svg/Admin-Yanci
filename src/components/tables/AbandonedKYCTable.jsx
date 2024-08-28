@@ -1,6 +1,9 @@
 import React from "react";
 import Table from "@/components/Table";
+import history from '../../../public/icons/misc/history.svg';
+import Dropdown from "@/components/dropdown";
 import InputAndLabel from "@/components/inputandlabel";
+import Image from "next/image";
 
 const headers = [
   "SNo",
@@ -39,13 +42,7 @@ export default function Abandoned() {
     },
   ];
   return (
-    <Table
-      headers={headers}
-      title="KYC Details"
-      searchBar
-      exportToCSV
-      datePicker
-    >
+    <Table headers={headers} title="KYC Details" exportToCSV datePicker>
       {data.map((item, index) => (
         <Table.Row
           key={index}
@@ -79,6 +76,19 @@ export default function Abandoned() {
             <a>View</a>
           </Table.Cell>
           <Table.Cell>{item.abandonedAt}</Table.Cell>
+          <td>
+            <Dropdown>
+              <Dropdown.Button type="clean" className="table-cell px-1">
+                <span className="font-bold">&#8942;</span>
+              </Dropdown.Button>
+              <Dropdown.Menu origin="bottom-right">
+                <Dropdown.Item>
+                  <Image src={history} alt="Remind user" />
+                  <p>Remind user</p>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </td>
         </Table.Row>
       ))}
     </Table>

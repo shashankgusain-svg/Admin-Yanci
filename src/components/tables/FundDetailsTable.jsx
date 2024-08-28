@@ -1,6 +1,9 @@
 import React from "react";
 import Table from "@/components/Table";
-import viewDetails from '../../../../public/icons/misc/viewDetails.svg';
+import viewDetails from "../../../public/icons/misc/viewDetails.svg";
+import Dropdown from "@/components/dropdown";
+import Image from "next/image";
+import { useRouter } from "next/router";
 
 const headers = [
   "SNo",
@@ -43,21 +46,14 @@ const transactions = [
 ];
 
 export default function FundDetails() {
-  const dropdownItems = [
-    {
-      label: "View Details",
-      icom : viewDetails,
-      onClick: () => {
-        // your custom click handler for viewing details
-      },
-    },
-  ];
+  const router = useRouter();
 
   return (
     <>
       <Table
         headers={headers}
         title="Transaction Details"
+        searchPlaceHolder="Search with Transaction ID"
         searchBar
         exportToCSV
         datePicker
@@ -65,7 +61,6 @@ export default function FundDetails() {
         {transactions.map((item, index) => (
           <Table.Row
             key={index}
-            dropdownItems={dropdownItems}
             modalTitle="Block User Confirmation"
             modalMessage="Are you sure you want to block this user? This action can be undone."
             onConfirm={() => console.log("User blocked!")}
@@ -90,6 +85,23 @@ export default function FundDetails() {
                 {item.status}
               </span>
             </Table.Cell>
+            <td>
+              <Dropdown>
+                <Dropdown.Button type="clean" className="table-cell px-1">
+                  <span className="font-bold">&#8942;</span>
+                </Dropdown.Button>
+                <Dropdown.Menu origin="bottom-right">
+                  <Dropdown.Item
+                    onClick={() => {
+                      router.push(`transactions/${item.csdID}`);
+                    }}
+                  >
+                    <Image src={viewDetails} alt="View Details" />
+                    <p>View Details</p>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </td>
           </Table.Row>
         ))}
       </Table>

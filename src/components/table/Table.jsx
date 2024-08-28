@@ -16,7 +16,7 @@ export default function Table({
   children,
   title,
   searchBar = false,
-  searchPlaceHolder,
+  searchPlaceHolder="Type to Search",
   datePicker = false,
   exportToCSV = false,
 }) {
@@ -27,20 +27,13 @@ export default function Table({
           <h3 className="text-heading-6 font-semibold text-primary-8">
             {title}
           </h3>
-          {searchBar ? (
-            <Searchbar
-              placeHolder={
-                searchPlaceHolder ? searchPlaceHolder : "Type to Search"
-              }
-            />
-          ) : null}
+          {searchBar ? <Searchbar placeHolder={searchPlaceHolder} /> : null}
         </div>
         <div className="flex items-center gap-3">
-          
           {datePicker ? (
             <Dropdown>
               <Dropdown.Button>
-                <Image src={calender} />
+                <Image src={calender} alt="Calender" />
               </Dropdown.Button>
               <Dropdown.Menu origin="top-right">
                 <DatePicker />
@@ -50,7 +43,7 @@ export default function Table({
 
           <Dropdown>
             <Dropdown.Button>
-              <Image src={filter} />
+              <Image src={filter} alt="Filter" />
               Filter
             </Dropdown.Button>
             <Dropdown.Menu origin="top-right">
@@ -63,7 +56,7 @@ export default function Table({
 
           <Dropdown>
             <Dropdown.Button>
-              <Image src={sort} />
+              <Image src={sort} alt="Sort" />
               Sort
             </Dropdown.Button>
             <Dropdown.Menu origin="top-right">
@@ -76,7 +69,7 @@ export default function Table({
 
           {exportToCSV ? (
             <Button type="table">
-              <Image src={exportIcon} />
+              <Image src={exportIcon} alt="Export" />
               <p>Export to CSV</p>
             </Button>
           ) : null}
@@ -105,7 +98,7 @@ export default function Table({
           <Dropdown>
             <Dropdown.Button>
               20
-              <Image src={down} />
+              <Image src={down} alt="Down" />
             </Dropdown.Button>
             <Dropdown.Menu origin="bottom-right">
               <Dropdown.Item>10</Dropdown.Item>

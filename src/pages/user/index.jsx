@@ -4,8 +4,8 @@ import StatsCard from "@/components/statsCard/StatsCard";
 import React from "react";
 import Toggle from "@/components/typeToggle/TypeToggle";
 import { useRouter } from "next/router";
-import Active from "./active";
-import Blocked from "./blocked";
+import Active from "../../components/tables/UserActiveTable";
+import Blocked from "../../components/tables/UserBlockedTable";
 
 const dummyStats = [
   {

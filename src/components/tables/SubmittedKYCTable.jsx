@@ -3,10 +3,12 @@ import Table from "@/components/Table";
 import Modal from "@/components/modal";
 import Button from "@/components/button/Button";
 import InputAndLabel from "@/components/inputandlabel";
+import Dropdown from "@/components/dropdown";
+import Image from "next/image";
 
-import verify from "../../../../public/icons/misc/verify.svg";
-import history from "../../../../public/icons/misc/history.svg";
-import reject from "../../../../public/icons/misc/reject.svg";
+import verify from "../../../public/icons/misc/verify.svg";
+import history from "../../../public/icons/misc/history.svg";
+import reject from "../../../public/icons/misc/reject.svg";
 
 const headers = [
   "SNo",
@@ -41,25 +43,6 @@ const data = [
 export default function Submitted() {
   const [isModalOpen, setModalOpen] = React.useState(false);
 
-  const dropdownItems = [
-    {
-      label: "Verify",
-      icon: verify,
-      onClick: () => {
-        setModalOpen(true);
-      },
-    },
-    {
-      label: "Put on hold",
-      icon: history,
-      openModal: true,
-    },
-    {
-      label: "Reject",
-      icon: reject,
-      openModal: true,
-    },
-  ];
   return (
     <>
       <Modal
@@ -83,24 +66,26 @@ export default function Submitted() {
           </InputAndLabel>
         </Modal.Content>
         <Modal.Footer>
-          <Button type="secondary" style="negative" className="h-9">
+          <Button
+            type="secondary"
+            style="negative"
+            className="h-9"
+            onClick={() => {
+              setModalOpen(false);
+            }}
+          >
             Cancel
           </Button>
-          <Button type="primary" className="h-9">Approve</Button>
+          <Button type="primary" className="h-9">
+            Approve
+          </Button>
         </Modal.Footer>
       </Modal>
 
-      <Table
-        headers={headers}
-        title="KYC Details"
-        searchBar
-        exportToCSV
-        datePicker
-      >
+      <Table headers={headers} title="KYC Details" exportToCSV datePicker>
         {data.map((item, index) => (
           <Table.Row
             key={index}
-            dropdownItems={dropdownItems}
             modalTitle="Are you sure you want to verify this user?"
             onConfirm={() => console.log("User blocked!")}
             showModalButton={true}
@@ -134,6 +119,31 @@ export default function Submitted() {
                 {item.verification}
               </span>
             </Table.Cell>
+            <td>
+              <Dropdown>
+                <Dropdown.Button type="clean" className="table-cell px-1">
+                  <span className="font-bold">&#8942;</span>
+                </Dropdown.Button>
+                <Dropdown.Menu origin="bottom-right">
+                  <Dropdown.Item
+                    onClick={() => {
+                      setModalOpen(true);
+                    }}
+                  >
+                    <Image src={verify} alt="Verify" />
+                    <p>Verify</p>
+                  </Dropdown.Item>
+                  <Dropdown.Item>
+                    <Image src={history} alt="Put on Hold" />
+                    <p>Put On Hold</p>
+                  </Dropdown.Item>
+                  <Dropdown.Item>
+                    <Image src={reject} alt="Reject" />
+                    <p>Reject</p>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </td>
           </Table.Row>
         ))}
       </Table>

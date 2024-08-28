@@ -36,7 +36,7 @@ export default function Modal({
                 onClick={onClose}
                 className="text-gray-500 hover:text-gray-700"
               >
-                <Image src={closeIcon} />
+                <Image src={closeIcon} alt="Close"/>
               </button>
             </div>
             {children}
@@ -63,14 +63,14 @@ export default function Modal({
                     onClick={download}
                     className="text-gray-500 hover:text-gray-700"
                   >
-                    <Image src={downloadIcon} />
+                    <Image src={downloadIcon} alt="Download"/>
                   </button>
                 ) : null}
                 <button
                   onClick={onClose}
                   className="text-gray-500 hover:text-gray-700"
                 >
-                  <Image src={closeIcon} />
+                  <Image src={closeIcon} alt="Close"/>
                 </button>
               </div>
             </div>
@@ -96,7 +96,7 @@ export default function Modal({
                 onClick={onClose}
                 className="text-gray-500 hover:text-gray-700"
               >
-                <Image src={closeIcon} />
+                <Image src={closeIcon} alt="Close"/>
               </button>
             </div>
             {children}

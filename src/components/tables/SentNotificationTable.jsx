@@ -55,9 +55,6 @@ export default function SentNotificationTable() {
       <Table
         headers={headers}
         title="Notification Details"
-        searchBar
-        exportToCSV
-        datePicker
       >
         {data.map((item, index) => (
           <Table.Row key={index} dropdownItems={dropdownItems}>

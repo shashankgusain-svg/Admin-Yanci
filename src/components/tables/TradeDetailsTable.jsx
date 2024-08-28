@@ -1,10 +1,12 @@
 import React from "react";
 import Table from "@/components/Table";
-import viewDetails from "../../../../public/icons/misc/viewDetails.svg";
+import viewDetails from "../../../public/icons/misc/viewDetails.svg";
+import Dropdown from "@/components/dropdown";
+import Image from "next/image";
+import { useRouter } from "next/router";
 
 const headers = [
   "SNo",
-  "P.I",
   "CSD ID",
   "Trade type",
   "Order type",
@@ -64,30 +66,19 @@ const data = [
 ];
 
 export default function TradeDetails() {
-  const dropdownItems = [
-    {
-      label: "View Details",
-      icon: viewDetails,
-      onClick: () => {
-        // your custom click handler for viewing details
-      },
-    },
-  ];
-
+  const router = useRouter();
   return (
     <>
       <Table
         headers={headers}
         title="Transaction Details"
+        searchPlaceHolder="Search with Transaction ID"
         searchBar
         exportToCSV
         datePicker
       >
         {data.map((item, index) => (
-          <Table.Row
-            key={index}
-            dropdownItems={dropdownItems}
-          >
+          <Table.Row key={index}>
             <Table.Cell>{item.SNo}</Table.Cell>
             <Table.Cell>{item.CSD_ID}</Table.Cell>
             <Table.Cell>{item.Trade_type}</Table.Cell>
@@ -100,7 +91,23 @@ export default function TradeDetails() {
             <Table.Cell>{item.CSD_fee}</Table.Cell>
             <Table.Cell>{item.GSE_fee}</Table.Cell>
             <Table.Cell>{item.SEC_fee}</Table.Cell>
-            <Table.Cell>{item.SEC_fee}</Table.Cell>
+            <td>
+              <Dropdown>
+                <Dropdown.Button type="clean" className="table-cell px-1">
+                  <span className="font-bold">&#8942;</span>
+                </Dropdown.Button>
+                <Dropdown.Menu origin="bottom-right">
+                  <Dropdown.Item
+                    onClick={() => {
+                      router.push(`transactions/${item.CSD_ID}`);
+                    }}
+                  >
+                    <Image src={viewDetails} alt="View Details" />
+                    <p>View Details</p>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </td>
           </Table.Row>
         ))}
       </Table>

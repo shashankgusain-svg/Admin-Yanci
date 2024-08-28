@@ -1,8 +1,11 @@
 import React from "react";
-import blockUser from "../../../public/icons/misc/unblock.svg";
+import unblockUser from "../../../public/icons/misc/unblock.svg";
 import viewDetails from "../../../public/icons/misc/viewDetails.svg";
 import Table from "@/components/Table";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import Dropdown from "@/components/dropdown";
+import Image from "next/image";
 
 const headers = [
   "SNo",
@@ -117,19 +120,7 @@ const data = [
 ];
 
 export default function Blocked() {
-  const dropdownItems = [
-    {
-      label: "View Details",
-      icon: viewDetails,
-      onClick: () => {
-        // your custom click handler for viewing details
-      },
-    },
-    {
-      label: "Unblock User",
-      icon: blockUser,
-    },
-  ];
+  const router = useRouter();
 
   return (
     <>
@@ -141,10 +132,17 @@ export default function Blocked() {
         datePicker
       >
         {data.map((item, index) => (
-          <Table.Row key={index} dropdownItems={dropdownItems}>
+          <Table.Row key={index}>
             <Table.Cell>{item.sno}</Table.Cell>
             <Table.Cell>{item.pi}</Table.Cell>
-            <Table.Cell><Link href={`user/${item.name}`}>{item.name}</Link></Table.Cell>
+            <Table.Cell>
+              <Link
+                href={`user/${item.name}`}
+                className="text-primary-7 hover:underline"
+              >
+                {item.name}
+              </Link>
+            </Table.Cell>
             <Table.Cell>{item.id}</Table.Cell>
             <Table.Cell>{item.age}</Table.Cell>
             <Table.Cell>{item.gender}</Table.Cell>
@@ -152,6 +150,27 @@ export default function Blocked() {
             <Table.Cell>{item.phone}</Table.Cell>
             <Table.Cell>{item.email}</Table.Cell>
             <Table.Cell>{item.createdDate}</Table.Cell>
+            <td>
+              <Dropdown>
+                <Dropdown.Button type="clean" className="table-cell px-1">
+                  <span className="font-bold">&#8942;</span>
+                </Dropdown.Button>
+                <Dropdown.Menu origin="bottom-right">
+                  <Dropdown.Item
+                    onClick={() => {
+                      router.push(`user/${item.name}`);
+                    }}
+                  >
+                    <Image src={viewDetails} alt="View Details" />
+                    <p>View Details</p>
+                  </Dropdown.Item>
+                  <Dropdown.Item>
+                    <Image src={unblockUser} alt="Unblock User" />
+                    <p>Unblock User</p>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </td>
           </Table.Row>
         ))}
       </Table>

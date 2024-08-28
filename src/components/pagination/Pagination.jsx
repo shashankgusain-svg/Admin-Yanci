@@ -20,7 +20,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
           className="pagination-item hover:bg-primary-2 "
           onClick={() => onPageChange(currentPage - 1)}
         >
-          <Image src={arrowLeft}/>
+          <Image src={arrowLeft} alt="Arrow Left"/>
         </button>
       );
     }
@@ -97,7 +97,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
           className="pagination-item hover:bg-primary-2 "
           onClick={() => onPageChange(currentPage + 1)}
         >
-          <Image src={arrowRight}/>
+          <Image src={arrowRight} alt="Arrow Right"/>
         </button>
       );
     }
