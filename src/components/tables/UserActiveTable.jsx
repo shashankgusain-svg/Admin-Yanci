@@ -137,10 +137,10 @@ export default function Active() {
         }}
       >
         <Modal.Footer>
-          <Button type="secondary" className="h-9 w-24" onClick={()=>{setModalOpen(false);}}>
+          <Button design="secondary" className="h-9 w-24" onClick={()=>{setModalOpen(false);}}>
             Cancel
           </Button>
-          <Button style="negative" type="primary" className="h-9">
+          <Button style="negative" design="primary" className="h-9">
             Block
           </Button>
         </Modal.Footer>

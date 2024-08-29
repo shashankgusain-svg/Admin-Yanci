@@ -1,5 +1,8 @@
 import "@/globals.css";
 import { Inter } from "next/font/google";
+import 'react-date-picker/dist/DatePicker.css';
+import 'react-calendar/dist/Calendar.css';
+import '../styles/datepicker.css';
 import Head from "next/head";
 import RootLayout from "@/components/layouts/layout";
 

@@ -564,7 +564,7 @@ export default function UserPage() {
             />
           </InputAndLabel>
         </div>
-        <Button type="primary" style="negative">
+        <Button design="primary" style="negative">
           Delete User
         </Button>
       </div>

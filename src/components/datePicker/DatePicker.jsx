@@ -12,7 +12,7 @@ export default function DatePicker() {
   };
 
   return (
-    <div className="date-picker flex flex-col gap-2">
+    <div className="date-picker flex flex-col gap-2 pb-1">
       <div className="flex gap-10 py-4 px-8 bg-black-3">
         <div className="flex flex-col gap-2">
           <label className="text-body-2">From</label>
@@ -39,7 +39,7 @@ export default function DatePicker() {
       </div>
 
       <div className="px-4 grid grid-cols-2 gap-2">
-        <Button type="primary">Remove</Button>
+        <Button design="primary">Remove</Button>
         <Button>Apply</Button>
       </div>
     </div>

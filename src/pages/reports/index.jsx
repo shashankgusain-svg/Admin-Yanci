@@ -30,11 +30,20 @@ export default function Reports() {
       </Modal>
       <div className="flex flex-col gap-6">
         <Breadcrumb items={breadCrumbItems} />
-        <div className="w-full max-w-report grid grid-cols-1 gap-4">
-          <div className="flex flex-col gap-2">
-            <p className="text-body-2 text-primary-6">Type of report</p>
+        <form onSubmit={() => {}} className="flex flex-col gap-6">
+          <div className="w-full max-w-report grid grid-cols-1 gap-4">
             <InputAndLabel>
-              <InputAndLabel.Select defaultValue={"DEFAULT"}>
+              <InputAndLabel.Label
+                htmlFor="typeOfReport"
+                className="text-primary-6"
+              >
+                Type of report
+              </InputAndLabel.Label>
+              <InputAndLabel.Select
+                id="typeOfReport"
+                name="typeOfReport"
+                defaultValue={"DEFAULT"}
+              >
                 <InputAndLabel.Option value="DEFAULT" disabled>
                   Type
                 </InputAndLabel.Option>
@@ -50,11 +59,18 @@ export default function Reports() {
                 </InputAndLabel.Option>
               </InputAndLabel.Select>
             </InputAndLabel>
-          </div>
-          <div className="flex flex-col gap-2">
-            <p className="text-body-2 text-primary-6">Timeline</p>
             <InputAndLabel>
-              <InputAndLabel.Select defaultValue={"DEFAULT"}>
+              <InputAndLabel.Label
+                htmlFor="typeOfReport"
+                className="text-primary-6"
+              >
+                Timeline
+              </InputAndLabel.Label>
+              <InputAndLabel.Select
+                name="timeline"
+                id="timeline"
+                defaultValue={"DEFAULT"}
+              >
                 <InputAndLabel.Option value="DEFAULT" disabled>
                   This month
                 </InputAndLabel.Option>
@@ -73,15 +89,16 @@ export default function Reports() {
               </InputAndLabel.Select>
             </InputAndLabel>
           </div>
-        </div>
-        <Button
-          className="w-72"
-          onClick={() => {
-            setIsModalOpen(true);
-          }}
-        >
-          Generate Report
-        </Button>
+          <Button
+            className="w-72"
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+            type="submit"
+          >
+            Generate Report
+          </Button>
+        </form>
       </div>
     </>
   );

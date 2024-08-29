@@ -1,11 +1,11 @@
 import React from "react";
 
-export default function Button({ children, onClick, type, style, className }) {
+export default function Button({ children, onClick, design, type="button", style, className }) {
   const commonBtnStyle =
     "h-12 p-5 flex gap-2 rounded-full text-body-2 justify-center items-center font-semibold";
 
   const getButtonClasses = () => {
-    switch (type) {
+    switch (design) {
       case "secondary":
         if (style === "negative")
           return `border border-red-600 text-red-600 ${commonBtnStyle}`;
@@ -23,14 +23,14 @@ export default function Button({ children, onClick, type, style, className }) {
           return `bg-black-7 text-white ${commonBtnStyle}`;
         return `bg-primary-6 text-white ${commonBtnStyle}`;
       case "table":
-        return "table-button uppercase cursor-pointer relative items-center flex gap-2 bg-white text-body-2";
+        return "table-button px-3 py-2 uppercase cursor-pointer relative items-center flex gap-2 bg-white text-body-2";
       default:
         return `bg-primary-6 text-white ${commonBtnStyle}`;
     }
   };
 
   return (
-    <button className={`${className} ${getButtonClasses()}`} onClick={onClick}>
+    <button type={type} className={`${className} ${getButtonClasses()}`} onClick={onClick}>
       {children}
     </button>
   );

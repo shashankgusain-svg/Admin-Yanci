@@ -16,26 +16,27 @@ export default function Table({
   children,
   title,
   searchBar = false,
-  searchPlaceHolder="Type to Search",
+  searchPlaceHolder = "Type to Search",
   datePicker = false,
   exportToCSV = false,
 }) {
   return (
-    <div className="flex flex-col">
-      <div className="table-title gap-10 h-14 flex justify-between items-center rounded-t-xl border border-primary-3 border-b-0 bg-primary-2">
-        <div className="flex items-center gap-6">
+    <div className="w-full flex flex-col">
+      {/* Header */}
+      <div className="min-w-full flex flex-wrap justify-between items-center gap-x-10 gap-y-5 p-4 bg-primary-2 rounded-t-xl border border-primary-3 border-b-0">
+        <div className="flex items-center flex-wrap gap-x-6 gap-y-4">
           <h3 className="text-heading-6 font-semibold text-primary-8">
             {title ? title : null}
           </h3>
           {searchBar ? <Searchbar placeHolder={searchPlaceHolder} /> : null}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           {datePicker ? (
             <Dropdown>
               <Dropdown.Button>
                 <Image src={calender} alt="Calender" />
               </Dropdown.Button>
-              <Dropdown.Menu origin="top-right">
+              <Dropdown.Menu origin="top-left">
                 <DatePicker />
               </Dropdown.Menu>
             </Dropdown>
@@ -46,7 +47,7 @@ export default function Table({
               <Image src={filter} alt="Filter" />
               Filter
             </Dropdown.Button>
-            <Dropdown.Menu origin="top-right">
+            <Dropdown.Menu origin="top-left">
               <Dropdown.Item>A-Z</Dropdown.Item>
               <Dropdown.Item>A-Z</Dropdown.Item>
               <Dropdown.Item>A-Z</Dropdown.Item>
@@ -59,7 +60,7 @@ export default function Table({
               <Image src={sort} alt="Sort" />
               Sort
             </Dropdown.Button>
-            <Dropdown.Menu origin="top-right">
+            <Dropdown.Menu origin="top-left">
               <Dropdown.Item>A-Z</Dropdown.Item>
               <Dropdown.Item>A-Z</Dropdown.Item>
               <Dropdown.Item>A-Z</Dropdown.Item>
@@ -68,14 +69,16 @@ export default function Table({
           </Dropdown>
 
           {exportToCSV ? (
-            <Button type="table">
+            <Button design="table">
               <Image src={exportIcon} alt="Export" />
               <p>Export to CSV</p>
             </Button>
           ) : null}
         </div>
       </div>
-      <div className=" border-x border-primary-3 bg-white ">
+
+      {/* Table */}
+      <div className="border-x border-primary-3 bg-white min-w-full overflow-x-auto overflow-y-visible">
         <table className="min-w-full border-collapse">
           <thead className="border-b-0.3 border-b-primary-8">
             <tr>
@@ -92,7 +95,9 @@ export default function Table({
           <tbody className="bg-white">{children}</tbody>
         </table>
       </div>
-      <div className="table-bottom flex items-center justify-between py-3 px-5 bg-white border border-primary-3 border-t-0 rounded-b-xl">
+
+      {/* Footer */}
+      <div className="table-bottom flex flex-wrap justify-between items-center gap-x-2 gap-y-5 p-4 bg-white border border-primary-3 border-t-0 rounded-b-xl min-w-full">
         <div className="flex items-center gap-2">
           <p className="text-body-2 text-black-7">Entries per page</p>
           <Dropdown>
@@ -107,7 +112,6 @@ export default function Table({
             </Dropdown.Menu>
           </Dropdown>
         </div>
-
         <Pagination currentPage={4} totalPages={10} onPageChange={() => {}} />
       </div>
     </div>

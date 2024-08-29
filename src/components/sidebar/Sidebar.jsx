@@ -53,23 +53,25 @@ export default function Sidebar() {
 
   return (
     <div className="sidebar fixed gap-10 bg-white">
-      <div className="flex flex-col h-full justify-between">
-        <div className="flex flex-col gap-4">
-          {sidebarBtns.map(({ name, path, Icon }) => {
-            const isActive =
-              pathname === null
-                ? false
-                : path === "/"
-                ? pathname === "/"
-                : pathname.startsWith(path);
+      <div className="flex flex-col gap-14 h-full justify-between">
+        <div className="overflow-y-auto">
+          <div className="flex flex-col gap-4 pr-4">
+            {sidebarBtns.map(({ name, path, Icon }) => {
+              const isActive =
+                pathname === null
+                  ? false
+                  : path === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(path);
 
-            return (
-              <SidebarBtn key={path} path={path} isActive={isActive}>
-                <Icon active={isActive} />
-                <p className="text-body-1">{name}</p>
-              </SidebarBtn>
-            );
-          })}
+              return (
+                <SidebarBtn key={path} path={path} isActive={isActive}>
+                  <Icon active={isActive} />
+                  <p className="text-body-1">{name}</p>
+                </SidebarBtn>
+              );
+            })}
+          </div>
         </div>
 
         <button className="sidebarBtn h-9 flex items-center gap-2 hover:bg-primary-2 cursor-pointer">

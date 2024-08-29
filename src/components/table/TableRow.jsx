@@ -1,10 +1,8 @@
 import React from "react";
-import Dropdown from "../dropdown/DropdownIndex";
-import Image from "next/image";
 
-export default function TableRow({ children, dropdownItems = [] }) {
+export default function TableRow({ children}) {
   return (
-    <tr className="border-b-0.3 border-primary-8 cursor-pointer">
+    <tr className="border-b-0.3 border-primary-8 hover:bg-primary-1">
       {children}
     </tr>
   );

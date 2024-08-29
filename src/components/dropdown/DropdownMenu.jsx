@@ -26,7 +26,7 @@ export default function DropdownMenu({
   return (
     <div
       className={`
-        dropdown-menu absolute ease-in-out transition-all duration-200
+        dropdown-menu absolute ease-in-out z-40 transition-all duration-200
         ${isOpen ? "visible scale-100" : "invisible scale-0"}
         ${getOriginClasses()}
         ${className}

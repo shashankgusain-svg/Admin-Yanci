@@ -13,7 +13,7 @@ export default function CustomInput({
   ...rest
 }) {
   return type === "status" ? (
-    <div className={`custom-input border border-black-5 bg-black-4 rounded-lg`}>
+    <div className={`custom-input w-full flex items-center border border-black-5 bg-black-4 rounded-lg`}>
       <span
         className={`inline-flex items-center px-3 py-0.5 rounded-full text-sm ${
           value === "Successful"
@@ -38,12 +38,12 @@ export default function CustomInput({
       className={`
           ${
             disabled === true
-              ? "custom-input border border-black-5 bg-black-4 rounded-lg"
+              ? "custom-input border border-black-5 bg-black-4 rounded-lg text-body-2"
               : null
           }
           ${
             type != "button"
-              ? "custom-input border border-black-5 bg-black-1 rounded-lg"
+              ? "custom-input border border-black-5 bg-black-1 rounded-lg w-full text-body-2"
               : "underline text-blue-600 text-left p-2 pl-0 text-body-2 cursor-pointer"
           } 
         ${className}`}

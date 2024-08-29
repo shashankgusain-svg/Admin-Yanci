@@ -12,7 +12,7 @@ export default function DropdownButton({ children, type, className }) {
   return type === "clean" ? (
     <button className={className} onClick={toggleDropdown}>{children}</button>
   ) : (
-    <Button type="table" onClick={toggleDropdown}>
+    <Button design="table" onClick={toggleDropdown}>
       {children}
     </Button>
   );

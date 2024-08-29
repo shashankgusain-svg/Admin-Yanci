@@ -2,27 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+/* width */
+::-webkit-scrollbar {
+  width: 14px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  @apply bg-black-3;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply bg-primary-4 border-solid border-4 border-black-3;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-6;
+}
+
 @layer base {
   html,
   body,
   main {
     @apply font-inter;
   }
-  label {
-    order: 1;
-  }
 
-  input {
-    order: 2;
-  }
-
-  input[required] + label::after {
-    content: "*" !important;
-    color: red !important;
-    float: right;
-  }
-
-  select{
+  select {
     @apply bg-black-1 text-black-1 cursor-pointer;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -38,6 +47,25 @@
 
   select::-ms-expand {
     display: none;
+  }
+
+  input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    display: grid;
+    place-content: center;
+    @apply bg-white border-2 border-primary-6 m-0 w-4 h-4 rounded-sm text-primary-6;
+  }
+
+  input[type="checkbox"]::before {
+    content: "";
+    @apply w-2 h-2 scale-0 transition-transform ease-in-out duration-150 bg-primary-6
+  }
+
+  input[type="checkbox"]:checked::before {
+    @apply scale-100;
   }
 }
 
@@ -57,7 +85,7 @@
     height: calc(100vh - 72px);
     top: 72px;
     left: 0;
-    padding: 40px 31px 32px 16px;
+    padding: 40px 16px 32px 16px;
   }
 
   .sidebarBtn {
@@ -94,7 +122,6 @@
   }
 
   .table-button {
-    padding: 8px 12px 8px 12px;
     border-radius: 6px 0px 0px 0px;
     border: 1px solid #dcdbe1;
     border-radius: 6px;
@@ -116,7 +143,7 @@
   }
 
   .table-bottom {
-    height: 67px;
+    min-height: 67px;
   }
 
   .table-header {
@@ -130,7 +157,7 @@
   /* Search Bar */
 
   .searchBar {
-    min-width: 240;
+    width: clamp(100px,35vw,400px);
     padding: 0 16px;
     gap: 10px;
   }
@@ -166,8 +193,8 @@
   }
 
   .custom-input {
-    width: Fixed (375px) px;
-    height: Fixed (48px) px;
+    width: 375px;
+    height: 48px;
     padding: 16px 10px 16px 10px;
     gap: 10px;
   }
@@ -186,7 +213,7 @@
       @apply cursor-pointer transition-all duration-300 ease-in-out;
     }
 
-    &:hover::after{
+    &:hover::after {
       @apply text-primary-3;
     }
   }

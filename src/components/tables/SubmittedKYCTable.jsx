@@ -67,7 +67,7 @@ export default function Submitted() {
         </Modal.Content>
         <Modal.Footer>
           <Button
-            type="secondary"
+            design="secondary"
             style="negative"
             className="h-9"
             onClick={() => {
@@ -76,7 +76,7 @@ export default function Submitted() {
           >
             Cancel
           </Button>
-          <Button type="primary" className="h-9">
+          <Button design="primary" className="h-9">
             Approve
           </Button>
         </Modal.Footer>
