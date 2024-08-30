@@ -21,7 +21,8 @@ module.exports = {
         details : "1153px",
         document : "784px",
         report : "550px",
-        upload : "920px"
+        upload : "920px",
+        roleMgmt : "862px"
       },
       colors: {
         primary: {

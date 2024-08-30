@@ -21,7 +21,7 @@ export default function Table({
   exportToCSV = false,
 }) {
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col relative">
       {/* Header */}
       <div className="min-w-full flex flex-wrap justify-between items-center gap-x-10 gap-y-5 p-4 bg-primary-2 rounded-t-xl border border-primary-3 border-b-0">
         <div className="flex items-center flex-wrap gap-x-6 gap-y-4">
@@ -78,14 +78,14 @@ export default function Table({
       </div>
 
       {/* Table */}
-      <div className="border-x border-primary-3 bg-white min-w-full overflow-x-auto overflow-y-visible">
+      <div className="table-wrapper border-x border-primary-3 bg-white min-w-full overflow-x-auto">
         <table className="min-w-full border-collapse">
           <thead className="border-b-0.3 border-b-primary-8">
             <tr>
               {headers.map((header, index) => (
                 <th
                   key={index}
-                  className="table-header text-left text-primary-8 text-body-1 font-semibold"
+                  className="table-header whitespace-nowrap text-left text-primary-8 text-body-1 font-semibold"
                 >
                   {header}
                 </th>

@@ -48,13 +48,13 @@ export default function Reports() {
                   Type
                 </InputAndLabel.Option>
 
-                <InputAndLabel.Option value="">
+                <InputAndLabel.Option value="someValue">
                   Comission Report
                 </InputAndLabel.Option>
-                <InputAndLabel.Option value="">
+                <InputAndLabel.Option value="someValue">
                   Executed trade report
                 </InputAndLabel.Option>
-                <InputAndLabel.Option value="">
+                <InputAndLabel.Option value="someValue">
                   Levy report
                 </InputAndLabel.Option>
               </InputAndLabel.Select>
@@ -75,15 +75,15 @@ export default function Reports() {
                   This month
                 </InputAndLabel.Option>
 
-                <InputAndLabel.Option value="">This month</InputAndLabel.Option>
-                <InputAndLabel.Option value="">
+                <InputAndLabel.Option value="someValue">This month</InputAndLabel.Option>
+                <InputAndLabel.Option value="someValue">
                   Last 3 months
                 </InputAndLabel.Option>
-                <InputAndLabel.Option value="">
+                <InputAndLabel.Option value="someValue">
                   Last 6 months
                 </InputAndLabel.Option>
-                <InputAndLabel.Option value="">This year</InputAndLabel.Option>
-                <InputAndLabel.Option value="">
+                <InputAndLabel.Option value="someValue">This year</InputAndLabel.Option>
+                <InputAndLabel.Option value="someValue">
                   Custom timeline
                 </InputAndLabel.Option>
               </InputAndLabel.Select>

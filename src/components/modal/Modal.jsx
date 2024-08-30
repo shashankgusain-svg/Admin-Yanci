@@ -18,7 +18,7 @@ export default function Modal({
   switch (type) {
     case "confirmation":
       return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black-13 bg-opacity-50">
+        <div className="layout-container fixed w-full inset-0 z-50 flex items-center justify-center bg-black-13 bg-opacity-50">
           <div
             className={`bg-white w-full max-w-confirmation flex flex-col rounded-lg shadow-lg ${className}`}
           >
@@ -45,7 +45,7 @@ export default function Modal({
       );
     case "document":
       return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black-13 bg-opacity-50">
+        <div className="layout-container fixed inset-0 z-50 flex items-center justify-center bg-black-13 bg-opacity-50">
           <div className={`h-5/6 max-w-document w-full bg-white flex flex-col rounded-lg shadow-lg ${className}`}>
             <div className="flex justify-between items-start py-4 px-6 gap-4">
               <div className="flex flex-col gap-4 justify-start items-start">
@@ -80,7 +80,7 @@ export default function Modal({
       );
     case "detail":
       return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black-13 bg-opacity-50">
+        <div className="layout-container fixed inset-0 z-50 flex items-center justify-center bg-black-13 bg-opacity-50">
           <div className={`h-5/6 max-w-details w-full bg-white flex flex-col rounded-lg shadow-lg ${className}`}>
             <div className="flex justify-between items-start py-4 px-6 gap-4">
               <div className="flex flex-col gap-4 justify-start items-start">

@@ -18,7 +18,8 @@ const queries = [
     SNo: 1,
     yanciID: "#6371",
     ticketNo: "#6371",
-    comments: "Join our community ride this weekend! Meet fellow MopedSafe users.",
+    comments:
+      "Join our community ride this weekend! Meet fellow MopedSafe users.",
     sentOn: "03/12/23",
     status: "Resolved",
   },
@@ -26,7 +27,8 @@ const queries = [
     SNo: 2,
     yanciID: "#479147",
     ticketNo: "#479147",
-    comments: "Join our community ride this weekend! Meet fellow MopedSafe users.",
+    comments:
+      "Join our community ride this weekend! Meet fellow MopedSafe users.",
     sentOn: "03/12/23",
     status: "Resolved",
   },
@@ -34,7 +36,8 @@ const queries = [
     SNo: 3,
     yanciID: "#6371",
     ticketNo: "#6371",
-    comments: "Join our community ride this weekend! Meet fellow MopedSafe users.",
+    comments:
+      "Join our community ride this weekend! Meet fellow MopedSafe users.",
     sentOn: "03/12/23",
     status: "Pending",
   },
@@ -42,7 +45,8 @@ const queries = [
     SNo: 4,
     yanciID: "#6371",
     ticketNo: "#6371",
-    comments: "Join our community ride this weekend! Meet fellow MopedSafe users.",
+    comments:
+      "Join our community ride this weekend! Meet fellow MopedSafe users.",
     sentOn: "03/12/23",
     status: "On Hold",
   },

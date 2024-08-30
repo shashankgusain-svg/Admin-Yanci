@@ -52,7 +52,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="sidebar fixed gap-10 bg-white">
+    <div className="sidebar sticky gap-10 bg-white">
       <div className="flex flex-col gap-14 h-full justify-between">
         <div className="overflow-y-auto">
           <div className="flex flex-col gap-4 pr-4">

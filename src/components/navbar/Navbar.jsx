@@ -14,7 +14,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="navbar flex border-b-2 border-black-3 w-full bg-white fixed top-0 left-0 px-8 z-10">
+    <nav className="navbar flex border-b-2 border-black-3 w-full bg-white sticky top-0 left-0 px-8 z-30">
       <div className="min-w-full flex justify-between items-center">
         <Image src={Logo} alt="Logo"/>
         <div className="flex items-center gap-6 ">
@@ -25,7 +25,7 @@ export default function Navbar() {
             </Button>
           ) : null}
           {pathname === "/role-management" ? (
-            <Button className="font-normal h-11" onClick={()=>{router.push("notifications/create")}}>
+            <Button className="font-normal h-11" onClick={()=>{router.push("role-management/add-admin")}}>
               <Image src={add} alt="Add new"/>
               Add Sub Admin
             </Button>

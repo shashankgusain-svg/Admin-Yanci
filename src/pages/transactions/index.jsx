@@ -66,7 +66,7 @@ export default function Transactions() {
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
       <div className="flex flex-col gap-6">
-        <div className="grid gap-8 grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
           {dummyStats.map((stat, index) => (
             <StatsCard
               key={index}
