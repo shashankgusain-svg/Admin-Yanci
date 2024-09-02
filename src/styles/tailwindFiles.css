@@ -234,10 +234,10 @@
     margin: 0 auto;
     max-width: 1920px;
 
-    @media (min-width: theme("screens.xxl")) {
+    /* @media (min-width: theme("screens.xxl")) {
       max-width: 1400px;
       padding: 0 0;
-    }
+    } */
 
     @media (min-width: theme("screens.3xl")) {
       max-width: 1700px;
