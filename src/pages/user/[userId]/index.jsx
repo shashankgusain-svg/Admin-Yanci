@@ -398,7 +398,7 @@ export default function UserPage() {
         showForm ?
         <Modal download={()=>{}} title="CSD Form" type="document" isOpen={true} onClose={prev => {setShowForm(!prev)}}>
           <Modal.Content>
-            <Image className="mx-auto" src={csdForm}/>
+            <Image className="mx-auto" src={csdForm} alt="CSD Form"/>
           </Modal.Content>
         </Modal> : 
         null
@@ -407,7 +407,8 @@ export default function UserPage() {
       <div className="flex flex-col gap-6 justify-start items-start">
         <Image
           className="w-28 h-28"
-          //   src="https://s3-alpha-sig.figma.com/img/219f/f04e/13cf071c2722391e99b58166825c9b6c?Expires=1725235200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=AJjyug6U1F4mk4Hl3m~kB86pl03Spr6TYFZdcPX1~CNsEwd86E1D9oXxrn7ID0PBgAhbk5PilDfR7IXlN6HLrcQiyELI0h3~xpgHXAfv41kyE3v94311OwqCReUFf9MwATZ9t7CxLik6FSXCTKNt-d4T8i7uMLtU-8C2p9x~u70OBdVQ2YcmelBrySUugPbQKdwaf2PH8sXP63twEEpwZAGfdOm0qydPwvMv4c8f3m6qHUDNhgss-VgOBZ6K9aHpCezrpZp1eSoKll95lffPkLC5vLprmO77kiKb5swVjRHpcHsce7u5-pgoxEyW9cRCYnhlyaNZ~xPC7H7oI7R9jA__"
+          alt="Profile Pic"
+          src=""
         />
         <div className="grid grid-cols-3 gap-8">
           <InputAndLabel>

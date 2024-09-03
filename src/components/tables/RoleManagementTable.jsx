@@ -49,7 +49,7 @@ export default function RoleManagementTable() {
   const handleCheckboxChange = (index, type) => {
     console.log(`Checkbox at row ${index + 1} for ${type} was clicked!`);
   };
-  
+
   return (
     <div className="rounded-xl border border-primary-4 overflow-x-auto w-full max-w-roleMgmt">
       <table className="min-w-full table-fixed">

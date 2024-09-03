@@ -8,9 +8,7 @@ export default function RootLayout({ children }) {
         <Navbar />
         <div className="flex">
           <Sidebar />
-          <div className="admin-content bg-black-3">
-            {children}
-          </div>
+          <div className="admin-content bg-black-3">{children}</div>
         </div>
       </div>
     </div>

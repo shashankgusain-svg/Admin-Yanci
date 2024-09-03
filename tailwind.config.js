@@ -10,6 +10,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      width:{
+
+      },
       fontFamily: {
         inter: ["var(--font-inter)"],
       },
