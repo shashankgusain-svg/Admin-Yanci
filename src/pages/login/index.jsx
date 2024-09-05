@@ -6,34 +6,25 @@ import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import Cookies from "js-cookie";
 import { useAuthStore } from "@/stores/authstore";
 import { useRouter } from "next/router";
+import { getToken } from "@/services/api/authService";
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
-  const { setUser, setToken } = useAuthStore();
+  const { setToken } = useAuthStore();
 
   const router = useRouter();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("http://3.139.241.224:8000/v1/admin/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await res.json();
+    const data = await getToken({ email, password });
 
     if (data.token) {
-      console.log(data);
-      Cookies.set("token", data.token, {expires : 7});
+      Cookies.set("token", data.token, { expires: 7 });
       setToken(data.token);
-      setUser({email});
-      router.push('/');
+      router.push("/");
     } else {
       console.log("Login failed");
     }
@@ -68,7 +59,10 @@ export default function Login() {
           <h2 className="text-[3.25rem] leading-[1.2] font-bold mb-6">
             Welcome back!
           </h2>
-          <form className="w-full max-w-[500px] flex flex-col gap-10 mt-24" onSubmit={handleLogin}>
+          <form
+            className="w-full max-w-[500px] flex flex-col gap-10 mt-24"
+            onSubmit={handleLogin}
+          >
             <InputAndLabel>
               <InputAndLabel.Label htmlFor="email">
                 Email address

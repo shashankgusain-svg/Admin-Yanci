@@ -334,14 +334,51 @@ const kycdetails = [
 ];
 
 export default function UserPage() {
+  const [data, setData] = React.useState({
+    profilePic: null,
+    name: "",
+    id: "",
+    age: "",
+    gender: "",
+    nationality: "",
+    phone: "",
+    email: "",
+    createdDate: "",
+  });
+  const [loading, setLoading] = React.useState(true);
+
   const router = useRouter();
   const { userId } = router.query;
 
   const breadCrumbItems = [
     { name: "Home", Link: "/" },
     { name: "User Management", Link: "/" },
-    { name: userId },
+    { name: data.name },
   ];
+
+  const fetchUserDetails = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `http://3.139.241.224:8000/v1/adminuser/getusers?userId=${userId}`
+      );
+      const result = await res.json();
+
+      if (result.success && result.data) {
+        setData(result.data);
+      } else {
+        console.error("Data fetch error:", result.message);
+      }
+    } catch (error) {
+      console.error("Fetch error: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchUserDetails();
+  }, [loading]);
 
   const [showDetails, setShowDetails] = React.useState(false);
   const [showForm, setShowForm] = React.useState(false);
@@ -352,7 +389,9 @@ export default function UserPage() {
         <Modal
           title="KYC Details"
           isOpen={true}
-          onClose={() => {setShowDetails(prev => !prev)}}
+          onClose={() => {
+            setShowDetails((prev) => !prev);
+          }}
           type="detail"
         >
           <Modal.Content>
@@ -394,22 +433,24 @@ export default function UserPage() {
           </Modal.Content>
         </Modal>
       ) : null}
-      {
-        showForm ?
-        <Modal download={()=>{}} title="CSD Form" type="document" isOpen={true} onClose={prev => {setShowForm(!prev)}}>
+      {showForm ? (
+        <Modal
+          download={() => {}}
+          title="CSD Form"
+          type="document"
+          isOpen={true}
+          onClose={(prev) => {
+            setShowForm(!prev);
+          }}
+        >
           <Modal.Content>
-            <Image className="mx-auto" src={csdForm} alt="CSD Form"/>
+            <Image className="mx-auto" src={csdForm} alt="CSD Form" />
           </Modal.Content>
-        </Modal> : 
-        null
-      }
+        </Modal>
+      ) : null}
       <Breadcrumb items={breadCrumbItems} />
       <div className="flex flex-col gap-6 justify-start items-start">
-        <Image
-          className="w-28 h-28"
-          alt="Profile Pic"
-          src=""
-        />
+        <Image className="w-28 h-28" alt="Profile Pic" src="" />
         <div className="grid grid-cols-3 gap-8">
           <InputAndLabel>
             <InputAndLabel.Label htmlFor="firstName">
@@ -419,7 +460,7 @@ export default function UserPage() {
               disabled
               name="firstName"
               id="firstName"
-              value="Dummy Name"
+              value={data.name ? data.name.split(" ")[0] : ""}
               required
             />
           </InputAndLabel>
@@ -432,7 +473,7 @@ export default function UserPage() {
               disabled
               name="lastName"
               id="lastName"
-              value="Dummy Last Name"
+              value={data.name ? data.name.split(" ")[1] : ""}
               required
             />
           </InputAndLabel>
@@ -443,7 +484,7 @@ export default function UserPage() {
               disabled
               name="gender"
               id="gender"
-              value="Gender"
+              value={data.gender}
               required
             />
           </InputAndLabel>
@@ -457,7 +498,7 @@ export default function UserPage() {
                 disabled
                 name="yanciId"
                 id="yanciId"
-                value={userId}
+                value={data.id}
                 required
               />
             </InputAndLabel>
@@ -468,7 +509,7 @@ export default function UserPage() {
                 disabled
                 name="csdId"
                 id="csdId"
-                value="CSD ID"
+                value={data.id}
                 required
               />
             </InputAndLabel>
@@ -480,7 +521,7 @@ export default function UserPage() {
               disabled
               name="age"
               id="age"
-              value="Age"
+              value={data.age}
               required
             />
           </InputAndLabel>
@@ -493,7 +534,7 @@ export default function UserPage() {
               disabled
               name="nationality"
               id="nationality"
-              value="Nationality"
+              value={data.nationality}
               required
             />
           </InputAndLabel>
@@ -504,7 +545,7 @@ export default function UserPage() {
               disabled
               name="phone"
               id="phone"
-              value="Phone Number"
+              value={data.phone}
               required
             />
           </InputAndLabel>
@@ -515,7 +556,7 @@ export default function UserPage() {
               disabled
               name="email"
               id="email"
-              value="Email Address"
+              value={data.email}
               required
             />
           </InputAndLabel>
@@ -528,7 +569,7 @@ export default function UserPage() {
               disabled
               name="registeredOn"
               id="registeredOn"
-              value="Registration Date"
+              value={data.createdDate}
               required
             />
           </InputAndLabel>
@@ -543,7 +584,7 @@ export default function UserPage() {
               type="button"
               value="View Details"
               onClick={() => {
-                setShowDetails(prev => !prev)
+                setShowDetails((prev) => !prev);
               }}
               required
             />
@@ -559,7 +600,7 @@ export default function UserPage() {
               type="button"
               value="View Details"
               onClick={() => {
-                setShowForm(prev => !prev);
+                setShowForm((prev) => !prev);
               }}
               required
             />

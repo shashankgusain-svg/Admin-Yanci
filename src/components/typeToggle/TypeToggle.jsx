@@ -1,7 +1,14 @@
-import React from 'react'
+import React from "react";
 
-export default function Toggle({ options }) {
+export default function Toggle({ options, onSelect }) {
   const [activeTab, setActiveTab] = React.useState(options[0].label);
+
+  const handleTabClick = (label) => {
+    setActiveTab(label);
+    if (onSelect) {
+      onSelect(label);
+    }
+  };
 
   return (
     <div>
@@ -9,7 +16,7 @@ export default function Toggle({ options }) {
         {options.map((option) => (
           <button
             key={option.label}
-            onClick={() => setActiveTab(option.label)}
+            onClick={() => handleTabClick(option.label)}
             className={`pb-1 min-w-32 ${
               activeTab === option.label
                 ? "border-b-4 border-primary-6 text-primary-6"

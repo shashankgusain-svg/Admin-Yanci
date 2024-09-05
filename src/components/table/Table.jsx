@@ -4,21 +4,49 @@ import sort from "../../../public/icons/misc/sort.svg";
 import down from "../../../public/icons/misc/down.svg";
 import exportIcon from "../../../public/icons/misc/export.svg";
 import calender from "../../../public/icons/misc/calender.svg";
-import filter from "../../../public/icons/misc/filter.svg";
 import Image from "next/image";
 import Dropdown from "../dropdown/DropdownIndex";
 import DatePicker from "../datePicker/DatePicker";
 import Button from "../button/Button";
 import Pagination from "../pagination/Pagination";
 
+const TableRow = ({ cells, isDropdown, dropdownItems }) => {
+  return (
+    <tr className="border-b-0.3 border-primary-8 hover:bg-primary-1">
+      {Object.values(cells).map((value) => {
+        return value;
+      })}
+      {isDropdown ? (
+        <td>
+          <Dropdown>
+            <Dropdown.Button type="clean" className="table-cell px-1">
+              <span className="font-bold">&#8942;</span>
+            </Dropdown.Button>
+            <Dropdown.Menu origin="bottom-right">
+              {dropdownItems.map((dropdownItem, index) => (
+                <Dropdown.Item onClick={dropdownItem.onClick}>
+                  <Image src={dropdownItem.icon} alt="View Details" />
+                  <p>{dropdownItem.text}</p>
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </td>
+      ) : null}
+    </tr>
+  );
+};
+
 export default function Table({
-  headers,
-  children,
+  columns = [],
   title,
   searchBar = false,
   searchPlaceHolder = "Type to Search",
   datePicker = false,
   exportToCSV = false,
+  isDropdown = false,
+  dropdownItems,
+  data = [],
 }) {
   return (
     <div className="w-full flex flex-col relative">
@@ -36,13 +64,13 @@ export default function Table({
               <Dropdown.Button>
                 <Image src={calender} alt="Calender" />
               </Dropdown.Button>
-              <Dropdown.Menu origin="top-left">
+              <Dropdown.Menu origin="top-right">
                 <DatePicker />
               </Dropdown.Menu>
             </Dropdown>
           ) : null}
 
-          <Dropdown>
+          {/* <Dropdown>
             <Dropdown.Button>
               <Image src={filter} alt="Filter" />
               Filter
@@ -66,7 +94,7 @@ export default function Table({
               <Dropdown.Item>A-Z</Dropdown.Item>
               <Dropdown.Item>A-Z</Dropdown.Item>
             </Dropdown.Menu>
-          </Dropdown>
+          </Dropdown> */}
 
           {exportToCSV ? (
             <Button design="table">
@@ -81,18 +109,63 @@ export default function Table({
       <div className="table-wrapper border-x border-primary-3 bg-white min-w-full overflow-x-auto">
         <table className="min-w-full border-collapse">
           <thead className="border-b-0.3 border-b-primary-8">
-            <tr>
-              {headers.map((header, index) => (
+            <tr className="">
+              {columns.map((col, index) => (
                 <th
                   key={index}
                   className="table-header whitespace-nowrap text-left text-primary-8 text-body-1 font-semibold"
                 >
-                  {header}
+                  {col.header}
+                  {col.sortable ? (
+                    <button className="inline-block">
+                      <Image src={sort} alt={`Sort ${col.header}`} />
+                    </button>
+                  ) : null}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white">{children}</tbody>
+          <tbody className="bg-white">
+            {data.map((row, rowIndex) => (
+              <tr
+                className="border-b-0.3 border-primary-8 hover:bg-primary-1"
+                key={rowIndex}
+              >
+                {/* For Cells */}
+                {columns.map((col, colIndex) => (
+                  <td
+                    key={colIndex}
+                    className={`table-cell h-12 text-left whitespace-nowrap text-sm text-gray-700`}
+                  >
+                    {col.render ? col.render(row) : row[col.key]}
+                  </td>
+                ))}
+
+                {/* For Dropdown */}
+                {isDropdown ? (
+                  <td>
+                    <Dropdown>
+                      <Dropdown.Button type="clean" className="table-cell px-1">
+                        <span className="font-bold">&#8942;</span>
+                      </Dropdown.Button>
+                      <Dropdown.Menu origin="bottom-right">
+                        {dropdownItems.map((dropdownItem, index) => (
+                          <Dropdown.Item
+                            onClick={dropdownItem.onClick}
+                            key={index}
+                            className={dropdownItem.className}
+                          >
+                            <Image src={dropdownItem.icon} alt="View Details" />
+                            <p>{dropdownItem.text}</p>
+                          </Dropdown.Item>
+                        ))}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </td>
+                ) : null}
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
 

@@ -3,7 +3,6 @@ import unblockUser from "../../../public/icons/misc/unblock.svg";
 import viewDetails from "../../../public/icons/misc/viewDetails.svg";
 import Table from "@/components/table/TableIndex";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import Dropdown from "@/components/dropdown/DropdownIndex";
 import Image from "next/image";
 
@@ -26,11 +25,14 @@ export default function Blocked() {
 
   React.useEffect(() => {
     async function fetchData() {
-      const res = await fetch("http://3.139.241.224:8000/v1/adminuser/getusers?isBlocked=true&page=1&limit=10");
+      const res = await fetch(
+        "http://3.139.241.224:8000/v1/adminuser/getusers?isBlocked=true&page=1&limit=10"
+      );
       const result = await res.json();
       setData(result.data);
       setLoading(false);
     }
+
     fetchData();
   }, []);
 

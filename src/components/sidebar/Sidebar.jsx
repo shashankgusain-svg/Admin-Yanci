@@ -15,6 +15,9 @@ import UserSupport from "../../../public/icons/sidebar/UserSupport";
 import AuditLogs from "../../../public/icons/sidebar/AuditLogs";
 import Policies from "../../../public/icons/sidebar/Policies";
 import Referrals from "../../../public/icons/sidebar/Referrals";
+import { useAuthStore } from "@/stores/authstore";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 const SidebarBtn = ({ children, path, isActive, className = "" }) => {
   return (
@@ -50,6 +53,14 @@ const sidebarBtns = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { setToken } = useAuthStore();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    Cookies.remove("token");
+    setToken(null);
+    router.push("/login");
+  };
 
   return (
     <div className="sidebar sticky gap-10 bg-white">
@@ -74,7 +85,10 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <button className="sidebarBtn h-9 flex items-center gap-2 hover:bg-primary-2 cursor-pointer">
+        <button
+          onClick={handleLogout}
+          className="sidebarBtn h-9 flex items-center gap-2 hover:bg-primary-2 cursor-pointer"
+        >
           <Logout />
           <p className="text-primary-6 text-body-1">Logout</p>
         </button>
