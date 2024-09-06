@@ -11,7 +11,7 @@ export default function Searchbar({ value, onChange, placeHolder }) {
         value={value}
         onChange={onChange}
         placeholder={placeHolder}
-        className="text-body-1 w-full border-none outline-none"
+        className="text-body-1 w-full border-none outline-none active:outline-none focus:outline-none"
       />
     </div>
   );

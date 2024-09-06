@@ -44,7 +44,7 @@ export default function CustomInput({
           ${
             type != "button"
               ? "custom-input border border-black-5 bg-black-1 rounded-lg w-full text-body-2"
-              : "underline text-blue-600 text-left p-2 pl-0 text-body-2 cursor-pointer"
+              : "underline text-blue-600 text-left p-2 pl-0 text-body-2 cursor-pointer active:outline-none"
           } 
         ${className}`}
       {...rest}

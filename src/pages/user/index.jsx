@@ -1,5 +1,4 @@
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
-import Dropdown from "@/components/dropdown/DropdownIndex";
 import StatsCard from "@/components/statsCard/StatsCard";
 import React from "react";
 import Toggle from "@/components/typeToggle/TypeToggle";
@@ -9,43 +8,9 @@ import unblockUser from "../../../public/icons/misc/unblock.svg";
 import blockUser from "../../../public/icons/misc/block.svg";
 import viewDetails from "../../../public/icons/misc/viewDetails.svg";
 import Link from "next/link";
-import { getUsersData, getUserStats } from "@/services/api/userService";
-
-const dummyStats = [
-  {
-    label: "Total users",
-    percentageChange: 36,
-    value: 2426,
-    isPositiveChange: true,
-  },
-  {
-    label: "Active users",
-    percentageChange: 36,
-    value: 2426,
-    isPositiveChange: true,
-  },
-  {
-    label: "Inactive users",
-    percentageChange: 36,
-    isPercentage: true,
-    value: 42,
-    isPositiveChange: false,
-  },
-  {
-    label: "Funded Accounts",
-    percentageChange: 36,
-    isPercentage: true,
-    value: 62,
-    isPositiveChange: true,
-  },
-  {
-    label: "Unfunded Accounts",
-    percentageChange: 36,
-    isPercentage: true,
-    value: 62,
-    isPositiveChange: true,
-  },
-];
+import { getUsersData, getUserStats, searchUser } from "@/services/api/userService";
+import Modal from "@/components/modal/ModalIndex";
+import Button from "@/components/button/Button";
 
 const breadCrumbItems = [
   { name: "Home", Link: "/" },
@@ -54,10 +19,30 @@ const breadCrumbItems = [
 
 export default function User() {
   const router = useRouter();
+  const [isModalOpen, setModalOpen] = React.useState(false);
   const [data, setData] = React.useState({ active: [], blocked: [] });
   const [stats, setStats] = React.useState({});
   const [loading, setLoading] = React.useState(true);
-  const [selectedOption, setSelectedOption] = React.useState("");
+  const [selectedOption, setSelectedOption] = React.useState("Active Users");
+  const [sortField, setSortField] = React.useState("");
+  const [sortOrder, setSortOrder] = React.useState("asc");
+
+  const getBirthYear = (birthdate) => {
+    const curDate = new Date();
+    const birthDate = new Date(birthdate);
+
+    let age = curDate.getFullYear() - birthDate.getFullYear();
+
+    if (
+      curDate.getMonth() < birthDate.getMonth() ||
+      (curDate.getMonth() === birthDate.getMonth() &&
+        curDate.getMonth() < birthDate.getMonth())
+    ) {
+      age--;
+    }
+
+    return age;
+  };
 
   const columns = [
     {
@@ -68,62 +53,117 @@ export default function User() {
       header: "Name",
       key: "name",
       render: (row) => (
-        <Link href={`/user/${row.id}`} className="hover:underline text-primary-7">
-          <p>{row.name}</p>
+        <Link
+          href={`/user/${row._id}`}
+          className="hover:underline text-primary-7"
+        >
+          <p>
+            {row.firstName} {row.lastName}
+          </p>
         </Link>
       ),
-      sortable : true
+      sortable: true,
+      onSort: () => {
+        handleSort("firstName");
+      },
     },
     {
       header: "ID",
-      key: "id",
+      key: "_id",
       render: (row) => (
-        <Link href={`/user/${row.id}`} className="hover:underline text-primary-7">
-          <p>{row.id}</p>
+        <Link
+          href={`/user/${row._id}`}
+          className="hover:underline text-primary-7"
+        >
+          <p>{row._id}</p>
         </Link>
       ),
     },
-    { header: "Age", key: "age" },
+    {
+      header: "Age",
+      key: "age",
+      render: (row) => <>{getBirthYear(row.dob)}</>,
+    },
     { header: "Gender", key: "gender" },
     { header: "Nationality", key: "nationality" },
     { header: "Phone", key: "phone" },
     { header: "Email", key: "email" },
-    { header: "Created Date", key: "createdDate", sortable:true },
+    {
+      header: "Created Date",
+      key: "createdAt",
+      sortable: true,
+      onSort: () => {
+        handleSort("createdAt");
+      },
+      isDate: true,
+    },
   ];
 
   const fetchUsersData = async (type) => {
     setLoading(true);
-    const result = await getUsersData(type);
+    const result = await getUsersData(type, sortField, sortOrder);
     setData((prevData) => ({
       ...prevData,
-      [type === "Blocked Users" ? "blocked" : "active"]: result.data,
+      [type === "Blocked Users" ? "blocked" : "active"]: result.results,
     }));
     setLoading(false);
   };
 
-  const fetchUserStats = async () =>{
+  const fetchUserStats = async () => {
     const result = await getUserStats();
-    const temp = {...result.metrics};
+    const temp = { ...result.metrics };
     setStats(temp);
+  };
+
+  const handleSearch = async (name) => {
+    setLoading(true);
+    const data = await searchUser(name);
+
   }
 
   React.useEffect(() => {
     fetchUsersData(selectedOption);
-  }, [selectedOption]);
+  }, [selectedOption, sortField, sortOrder]);
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     fetchUserStats();
-  },[])
+  }, []);
 
-  const blockedDroppdownItems = [
-    { icon: viewDetails, text: "View Details", onClick: () => { router.push(`/user/${row.id}`)} },
+  const blockedDroppdownItems = (row) => [
+    {
+      icon: viewDetails,
+      text: "View Details",
+      onClick: () => {
+        router.push(`/user/${row._id}`);
+      },
+    },
     { icon: unblockUser, text: "Unblock User", onClick: () => {} },
   ];
 
-  const activeDroppdownItems = [
-    { icon: viewDetails, text: "View Details", onClick: () => {} },
-    { icon: blockUser, text: "Block User", onClick: () => {}, className : "text-red-500" },
+  const activeDroppdownItems = (row) => [
+    {
+      icon: viewDetails,
+      text: "View Details",
+      onClick: () => {
+        router.push(`/user/${row._id}`);
+      },
+    },
+    {
+      icon: blockUser,
+      text: "Block User",
+      onClick: () => {
+        setModalOpen((prev) => !prev);
+      },
+      className: "text-red-500",
+    },
   ];
+
+  const handleSort = (field) => {
+    const isAsc = sortField === field && sortOrder === "asc";
+    setSortField(field);
+    setSortOrder(isAsc ? "desc" : "asc");
+    fetchUsersData(selectedOption); // Refetch data with the new sort
+  };
 
   const userOptions = [
     {
@@ -132,11 +172,11 @@ export default function User() {
         <Table
           searchBar
           datePicker
-          title="User's Details"
           columns={columns}
           data={data.active}
           isDropdown
-          dropdownItems={activeDroppdownItems}
+          dropdownItems={(row) => activeDroppdownItems(row)}
+          isLoading={loading}
         />
       ),
     },
@@ -146,11 +186,11 @@ export default function User() {
         <Table
           searchBar
           datePicker
-          title="User's Details"
           columns={columns}
           data={data.blocked}
           isDropdown
-          dropdownItems={blockedDroppdownItems}
+          dropdownItems={(row) => blockedDroppdownItems(row)}
+          isLoading={loading}
         />
       ),
     },
@@ -158,16 +198,40 @@ export default function User() {
 
   return (
     <div className="flex flex-col gap-6">
+      <Modal
+        isOpen={isModalOpen}
+        type="confirmation"
+        title="Are you sure you want to block this user from Yanci?"
+        message="You can unblock them later"
+        onClose={() => {
+          setModalOpen(false);
+        }}
+      >
+        <Modal.Footer>
+          <Button
+            design="secondary"
+            className="h-9 w-24"
+            onClick={() => {
+              setModalOpen(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button style="negative" design="primary" className="h-9">
+            Block
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Breadcrumb items={breadCrumbItems} />
       <div className="flex flex-col gap-6">
         <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
-          {Object.entries(stats).map(([key,value], index) => (
+          {Object.entries(stats).map(([key, value], index) => (
             <StatsCard
               key={index}
               label={key}
-              isPercentage={true}
-              percentageChange={value.percent}
-              value={56}
+              isPercentage={value.percent ? true : false}
+              percentageChange={value.percentChange}
+              value={value.percent ? value.percent : value.count}
               isPositiveChange={true}
             />
           ))}

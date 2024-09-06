@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Button({ children, onClick, design, type="button", style, className }) {
+export default function Button({ children, onClick, title="Button", design, type="button", style, className }) {
   const commonBtnStyle =
     "h-12 p-5 flex gap-2 rounded-full text-body-2 justify-center items-center font-semibold";
 
@@ -30,7 +30,7 @@ export default function Button({ children, onClick, design, type="button", style
   };
 
   return (
-    <button type={type} className={`${className} ${getButtonClasses()}`} onClick={onClick}>
+    <button type={type} title={title} className={`${className} ${getButtonClasses()}`} onClick={onClick}>
       {children}
     </button>
   );
