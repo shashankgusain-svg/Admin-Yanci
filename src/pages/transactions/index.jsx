@@ -49,17 +49,14 @@ const dummyStats = [
 ];
 
 const userOptions = [
-  { label: "Trade Details", content: <TradeDetails/> },
+  { label: "Trade Details", content: <></> },
   {
     label: "Fund Details",
-    content: <FundDetails/>,
+    content: <></>,
   },
 ];
 
-const breadCrumbItems = [
-  { name: "Home", Link: "/" },
-  { name: "Transactions" },
-];
+const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Transactions" }];
 
 export default function Transactions() {
   return (

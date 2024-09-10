@@ -11,17 +11,6 @@ export default function Calender({
 }) {
   return (
     <div className="calender-container">
-      {/* <div className="grid grid-cols-7 gap-2">
-        {Array.from({ length: 31 }, (_, i) => (
-          <button
-            key={i}
-            className={``}
-            onClick={() => setStartDate(new Date(2024, 2, i + 1))}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div> */}
       <DatePicker 
         autoFocus 
         wrapperClassName="datePicker" 

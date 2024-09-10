@@ -1,22 +1,25 @@
-import { URL, apiError } from "./helper";
+import { URL, apiError, getAuthToken } from "./helper";
 
 // GET
 
-export const getUsersData = async (type, sortField, sortOrder) => {
+export const getUsersData = async (payload) => {
   const endpoint =
-    type === "Blocked Users"
-      ? `${URL}adminuser/getusers?isBlocked=true&page=1&limit=10${
-          sortOrder ? `&sortOrder=${sortOrder}` : null
-        }${sortField ? `&sortBy=${sortField}` : null}`
-      : `${URL}adminuser/getusers?page=1&limit=10${
-          sortOrder ? `&sortOrder=${sortOrder}` : null
-        }${sortField ? `&sortBy=${sortField}` : null}`;
+    payload.type === "Blocked Users"
+      ? `${URL}adminuser/getusers?isBlocked=true&page=${payload.page}&limit=${
+          payload.limit
+        }${payload.sortOrder ? `&sortOrder=${payload.sortOrder}` : null}${
+          payload.sortField ? `&sortBy=${payload.sortField}` : null
+        }`
+      : `${URL}adminuser/getusers?page=${payload.page}&limit=${payload.limit}${
+          payload.sortOrder ? `&sortOrder=${payload.sortOrder}` : null
+        }${payload.sortField ? `&sortBy=${payload.sortField}` : null}`;
 
   try {
     const res = await fetch(endpoint, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
       },
     });
     const data = await res.json();
@@ -32,6 +35,7 @@ export const getUserStats = async () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
       },
     });
     const data = await res.json();
@@ -47,6 +51,7 @@ export const getUserDetails = async (userId) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
       },
     });
     const data = await res.json();
@@ -62,6 +67,7 @@ export const getUserKYCDetails = async (userId) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
       },
     });
     const data = await res.json();
@@ -71,20 +77,23 @@ export const getUserKYCDetails = async (userId) => {
   }
 };
 
-export const searchUser = async (name) => {
+export const searchUser = async (payload) => {
   try {
-    const response = await fetch(
-      `${URL}admin/getusers?firstName=${name}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const endpoint = `${URL}adminuser/getusers?page=${payload.page}&limit=${
+      payload.limit
+    }&search=${payload.value}${
+      payload.sortOrder ? `&sortOrder=${payload.sortOrder}` : ""
+    }${payload.sortField ? `&sortBy=${payload.sortField}` : ""}`;
+
+    const response = await fetch(endpoint, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     const result = await response.json();
-    console.log(result);
+    return result;
   } catch (error) {
     return apiError(error);
   }
@@ -92,13 +101,32 @@ export const searchUser = async (name) => {
 
 // DELETE
 
-export const deleteUser = async (userId, token) => {
+export const deleteUser = async (userId) => {
   try {
     const res = await fetch(`${URL}adminuser/users/${userId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    });
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    return apiError(error);
+  }
+};
+
+// PUT
+
+export const blockUser = async (userId) => {
+  console.log(userId);
+  try {
+    const res = await fetch(`${URL}adminuser/block/user/${userId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
       },
     });
     const data = await res.json();

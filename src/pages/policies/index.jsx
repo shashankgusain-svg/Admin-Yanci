@@ -9,7 +9,6 @@ import centerAlign from "../../../public/icons/text-editor/centerAlign.svg";
 import rightAlign from "../../../public/icons/text-editor/rightAlign.svg";
 import bulletsIcon from "../../../public/icons/text-editor/bullets.svg";
 
-
 import Button from "@/components/button/Button";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";

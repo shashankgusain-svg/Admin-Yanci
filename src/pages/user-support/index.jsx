@@ -1,10 +1,7 @@
 import React from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import StatsCard from "@/components/statsCard/StatsCard";
-import QueriesTable from "@/components/tables/QueriesTable";
-import FeedbackTable from "@/components/tables/FeedbackTable";
 import Toggle from "@/components/typeToggle/TypeToggle";
-import FAQTable from "@/components/tables/FAQTable";
 
 const dummyStats = [
   {
@@ -26,14 +23,14 @@ const dummyStats = [
 ];
 
 const userOptions = [
-  { label: "Queries", content: <QueriesTable /> },
+  { label: "Queries", content: <></> },
   {
     label: "Feedback",
-    content: <FeedbackTable />,
+    content: <></>,
   },
   {
     label: "FAQs",
-    content: <FAQTable />,
+    content: <></>,
   },
 ];
 

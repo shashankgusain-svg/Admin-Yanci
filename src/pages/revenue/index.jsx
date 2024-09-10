@@ -69,7 +69,7 @@ export default function Revenue() {
             />
           ))}
         </div>
-        <RevenueTable />
+        <></>
       </div>
     </div>
   );

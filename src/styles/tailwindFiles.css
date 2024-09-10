@@ -154,7 +154,8 @@
   }
 
   .table-cell {
-    padding: 15px 12px 15px 12px;
+    height: 48px;
+    padding: 0px 12px;
   }
 
   /* Search Bar */

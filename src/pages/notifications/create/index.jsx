@@ -2,23 +2,111 @@ import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import React from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Button from "@/components/button/Button";
+import { createNotification } from "@/services/api/notificationsService";
 
 export default function CreateNotification() {
+  const [notification, setNotification] = React.useState({
+    title: "",
+    targetCustomer: "",
+    mode: "",
+    description: "",
+    isScheduled: false,
+    scheduleDate: new Date(),
+    scheduleTime: {
+      hours: 12,
+      minutes: 30,
+      ampm: "AM",
+    },
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNotification((prevNotification) => ({
+      ...prevNotification,
+      [name]: value,
+    }));
+  };
+
+  const handleTimeChange = (e, field) => {
+    const value = e.target.value;
+    setNotification((prevNotification) => ({
+      ...prevNotification,
+      scheduleTime: {
+        ...prevNotification.scheduleTime,
+        [field]: value,
+      },
+    }));
+  };
+
+  const toggleScheduled = () => {
+    setNotification((prevNotification) => ({
+      ...prevNotification,
+      isScheduled: !prevNotification.isScheduled,
+    }));
+  };
+
+  const formatScheduledTime = () => {
+    const { hours, minutes, ampm } = notification.scheduleTime;
+    const formattedHours = hours < 10 ? `0${hours}` : hours;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    return `${formattedHours}:${formattedMinutes} ${ampm}`;
+  };
+
+  const formatDate = (date) => {
+    const tempDate = new Date(date);
+
+    let year = tempDate.getFullYear();
+    let month = (1 + tempDate.getMonth()).toString().padStart(2, "0");
+    let day = tempDate.getDate().toString().padStart(2, "0");
+
+    return month + "/" + day + "/" + year;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formattedNotification = notification.isScheduled
+      ? {
+          title: notification.title,
+          description: notification.description,
+          targetCustomer: notification.targetCustomer,
+          mode: notification.mode,
+          isScheduled: notification.isScheduled,
+          scheduleDate: formatDate(notification.scheduleDate),
+          scheduleTime: formatScheduledTime(),
+        }
+      : {
+          title: notification.title,
+          description: notification.description,
+          targetCustomer: notification.targetCustomer,
+          mode: notification.mode,
+        };
+    createNotification(formattedNotification);
+  };
+
   const breadCrumbItems = [
     { name: "Home", Link: "/" },
     { name: "Notification Management" },
     { name: "Create Notification" },
   ];
+
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
-      <form className="flex flex-col gap-8 max-w-report" onSubmit={() => {}}>
+      <form
+        className="flex flex-col gap-8 max-w-report"
+        onSubmit={handleSubmit}
+      >
         <div className="flex flex-col gap-4">
           <InputAndLabel>
-            <InputAndLabel.Label className="text-primary-6">
+            <InputAndLabel.Label htmlFor="title" className="text-primary-6">
               Notification Title
             </InputAndLabel.Label>
-            <InputAndLabel.Input value="Notification Title" />
+            <InputAndLabel.Input
+              id="title"
+              name="title"
+              value={notification.title}
+              onChange={handleChange}
+            />
           </InputAndLabel>
 
           <InputAndLabel>
@@ -31,19 +119,29 @@ export default function CreateNotification() {
             <InputAndLabel.Select
               name="targetCustomer"
               id="targetCustomer"
-              defaultValue={"DEFAULT"}
+              value={notification.targetCustomer}
+              onChange={handleChange}
             >
-              <InputAndLabel.Option value="DEFAULT" disabled>
-                Target Customer
+              <InputAndLabel.Option value="" disabled>
+                Select Customer
               </InputAndLabel.Option>
-              <InputAndLabel.Option value="Something">
-                Target Customer
+              <InputAndLabel.Option value="ALL_UNFUNDED_ACCOUNTS">
+                All funded accounts
               </InputAndLabel.Option>
-              <InputAndLabel.Option value="Something">
-                Target Customer
+              <InputAndLabel.Option value="NO_TRANSACTION_MADE">
+                No transactions made
               </InputAndLabel.Option>
-              <InputAndLabel.Option value="Something">
-                Target Customer
+              <InputAndLabel.Option value="MONTHLY_ACTIVE_USERS">
+                Monthly active users
+              </InputAndLabel.Option>
+              <InputAndLabel.Option value="NON_ACTIVE_USERS">
+                Non active users
+              </InputAndLabel.Option>
+              <InputAndLabel.Option value="ABANDONED_KYC">
+                Abandoned KYC
+              </InputAndLabel.Option>
+              <InputAndLabel.Option value="NEW_USERS">
+                New users
               </InputAndLabel.Option>
             </InputAndLabel.Select>
           </InputAndLabel>
@@ -52,34 +150,32 @@ export default function CreateNotification() {
               Mode
             </InputAndLabel.Label>
             <InputAndLabel.Select
-              defaultValue={"DEFAULT"}
               name="mode"
               id="mode"
+              value={notification.mode}
+              onChange={handleChange}
             >
-              <InputAndLabel.Option value="DEFAULT" disabled>
+              <InputAndLabel.Option value="" disabled>
                 Type
               </InputAndLabel.Option>
-              <InputAndLabel.Option value="Something">
-                Type
-              </InputAndLabel.Option>
-              <InputAndLabel.Option value="Something">
-                Type
-              </InputAndLabel.Option>
-              <InputAndLabel.Option value="Something">
-                Type
-              </InputAndLabel.Option>
+              <InputAndLabel.Option value="EMAIL">Email</InputAndLabel.Option>
+              <InputAndLabel.Option value="SMS">SMS</InputAndLabel.Option>
             </InputAndLabel.Select>
           </InputAndLabel>
 
           <InputAndLabel>
-            <InputAndLabel.Label className="text-primary-6">
+            <InputAndLabel.Label
+              htmlFor="description"
+              className="text-primary-6"
+            >
               Notification Description
             </InputAndLabel.Label>
             <InputAndLabel.TextArea
               className="min-h-40"
-              onChange={() => {
-                console.log("Hello");
-              }}
+              id="description"
+              name="description"
+              value={notification.description}
+              onChange={handleChange}
               placeHolder="Notification Text"
             />
           </InputAndLabel>
@@ -89,12 +185,64 @@ export default function CreateNotification() {
               type="checkbox"
               id="scheduleNotification"
               name="scheduleNotification"
-              value={true}
+              onChange={toggleScheduled}
             />
-            <label htmlFor="scheduledNotification" className="text-body-2 text-primary-6">
+            <label
+              htmlFor="scheduledNotification"
+              className="text-body-2 text-primary-6"
+            >
               Schedule Notification
             </label>
           </div>
+
+          {notification.isScheduled ? (
+            <div className="grid grid-cols-2 gap-8">
+              <InputAndLabel>
+                <InputAndLabel.Label
+                  htmlFor="scheduleDate"
+                  className="text-body-2 text-primary-6"
+                >
+                  Set Date
+                </InputAndLabel.Label>
+                <InputAndLabel.Input
+                  id="scheduleDate"
+                  name="scheduleDate"
+                  type="date"
+                  value={notification.scheduleDate}
+                  onChange={handleChange}
+                />
+              </InputAndLabel>
+              <div className="time-picker">
+                <InputAndLabel.Label className="text-body-2 text-primary-6">
+                  Set Time:
+                </InputAndLabel.Label>
+                <div className="time-inputs flex items-center gap-2">
+                  <InputAndLabel.Input
+                    type="number"
+                    min="1"
+                    max="12"
+                    value={notification.scheduleTime.hours}
+                    onChange={(e) => handleTimeChange(e, "hours")}
+                  />
+                  <span>:</span>
+                  <InputAndLabel.Input
+                    type="number"
+                    min="0"
+                    max="59"
+                    value={notification.scheduleTime.minutes}
+                    onChange={(e) => handleTimeChange(e, "minutes")}
+                  />
+                  <InputAndLabel.Select
+                    value={notification.scheduleTime.ampm}
+                    onChange={(e) => handleTimeChange(e, "ampm")}
+                  >
+                    <InputAndLabel.Option value="AM">AM</InputAndLabel.Option>
+                    <InputAndLabel.Option value="PM">PM</InputAndLabel.Option>
+                  </InputAndLabel.Select>
+                </div>
+              </div>
+            </div>
+          ) : null}
         </div>
         <Button type="submit" className="max-w-72" design="submit">
           Send Notification
