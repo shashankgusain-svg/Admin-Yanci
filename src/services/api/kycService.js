@@ -5,12 +5,14 @@ import { URL, apiError, getAuthToken } from "./helper";
 export const getKYCData = async (payload) => {
   const endpoint =
     payload.type === "Submitted KYCs"
-      ? `${URL}adminuser/kyc-users?isSubmitted=true&page=${payload.page}&limit=${
-          payload.limit
-        }${payload.sortOrder ? `&sortOrder=${payload.sortOrder}` : null}${
-          payload.sortField ? `&sortBy=${payload.sortField}` : null
-        }`
-      : `${URL}adminuser/kyc-users?isSubmitted=false&page=${payload.page}&limit=${payload.limit}${
+      ? `${URL}adminuser/kyc-users?isSubmitted=true&page=${
+          payload.page
+        }&limit=${payload.limit}${
+          payload.sortOrder ? `&sortOrder=${payload.sortOrder}` : null
+        }${payload.sortField ? `&sortBy=${payload.sortField}` : null}`
+      : `${URL}adminuser/kyc-users?isSubmitted=false&page=${
+          payload.page
+        }&limit=${payload.limit}${
           payload.sortOrder ? `&sortOrder=${payload.sortOrder}` : null
         }${payload.sortField ? `&sortBy=${payload.sortField}` : null}`;
 
@@ -23,7 +25,7 @@ export const getKYCData = async (payload) => {
       },
     });
     const data = await res.json();
-    console.log(data)
+    console.log(data);
     return data;
   } catch (error) {
     return apiError(error);
@@ -31,17 +33,37 @@ export const getKYCData = async (payload) => {
 };
 
 export const getKYCStats = async () => {
-    try {
-      const res = await fetch(`${URL}adminuser/metrics`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getAuthToken()}`,
-        },
-      });
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      return apiError(error);
-    }
-  };
+  try {
+    const res = await fetch(`${URL}adminuser/metrics`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    });
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    return apiError(error);
+  }
+};
+
+// PUT
+
+export const manageKYC = async (payload) => {
+  try {
+    const res = await fetch(`${URL}adminuser/kyc/verify/user`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+      body : JSON.stringify(payload)
+    });
+    const data = await res.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    return apiError(error);
+  }
+};

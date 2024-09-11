@@ -7,6 +7,7 @@ import {
   getNotificationDetails,
   getNotificationsMetrics,
 } from "@/services/api/notificationsService";
+import { notificationsKeyTitleMapping } from "@/utils/seed";
 
 export default function Notifications() {
   const [data, setData] = React.useState({ sent: [], scheduled: [] });
@@ -189,7 +190,7 @@ export default function Notifications() {
           {Object.entries(stats).map(([key, value], index) => (
             <StatsCard
               key={index}
-              label={key}
+              label={notificationsKeyTitleMapping[key] || key}
               isPercentage={false}
               value={value}
             />

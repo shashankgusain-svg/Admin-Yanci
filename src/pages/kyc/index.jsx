@@ -3,13 +3,18 @@ import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import StatsCard from "@/components/statsCard/StatsCard";
 import Toggle from "@/components/typeToggle/TypeToggle";
 import Table from "@/components/table/Table";
-import { getKYCData, getKYCStats } from "@/services/api/kycService";
+import { getKYCData, getKYCStats, manageKYC } from "@/services/api/kycService";
 import verify from "../../../public/icons/misc/verify.svg";
 import history from "../../../public/icons/misc/history.svg";
 import reject from "../../../public/icons/misc/reject.svg";
 import Link from "next/link";
 import imagePlaceholder from "../../../public/images/pi_placeholder.jpg";
 import KYCModal from "@/components/modals/KYCModal";
+import { kycKeyTitleMapping, kycVerificationStatusMapping } from "@/utils/seed";
+import Modal from "@/components/modal/ModalIndex";
+import PDFViewer from "@/components/pdfViewer/PDFViewer";
+import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
+import Button from "@/components/button/Button";
 
 export default function Kyc() {
   const [data, setData] = React.useState({ submitted: [], abandoned: [] });
@@ -26,12 +31,30 @@ export default function Kyc() {
   const [page, setPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(0);
 
-  const [showDetails, setShowDetails] = React.useState(false);
-
+  const [modalType, setModalType] = React.useState(null); // null, 'details', 'csdForm', 'csdModal'
   const [userId, setUserId] = React.useState("");
+  const [csdFormLink, setCsdFormLink] = React.useState(null);
+  const [verificationData, setVerificationData] = React.useState({
+    type: null,
+    userId: null,
+    csdNo: "",
+  });
 
-  const handleShowDetails = () => {
-    setShowDetails(true);
+  const handleCSDNumberChange = (e) => {
+    setVerificationData((prevData) => ({
+      ...prevData,
+      csdNo: e.target.value,
+    }));
+  };
+
+  const closeModal = () => {
+    setUserId(null);
+    setVerificationData({
+      type: null,
+      userId: null,
+      csdNo: "",
+    });
+    setModalType(null);
   };
 
   const submittedKYCsColumns = [
@@ -83,19 +106,19 @@ export default function Kyc() {
       ),
     },
     {
-      header: "CSD ID",
-      key: "csdId",
+      header: "CSD No",
+      key: "csdNo",
     },
     {
       header: "Nationality",
       key: "nationality",
     },
     {
-      header: "phone",
+      header: "Phone",
       key: "phone",
     },
     {
-      header: "email",
+      header: "Email",
       key: "email",
     },
     {
@@ -104,7 +127,10 @@ export default function Kyc() {
       render: (row) => (
         <button
           className="hover:underline text-blue-700"
-          onClick={handleShowDetails}
+          onClick={() => {
+            setUserId(row.userId);
+            setModalType("details");
+          }}
         >
           View Details
         </button>
@@ -116,7 +142,10 @@ export default function Kyc() {
       render: (row) => (
         <button
           className="hover:underline text-blue-700"
-          onClick={handleShowDetails}
+          onClick={() => {
+            setCsdFormLink(row.csdFormLink);
+            setModalType("csdForm");
+          }}
         >
           View Form
         </button>
@@ -130,12 +159,13 @@ export default function Kyc() {
           className={`inline-flex capitalize items-center px-3 py-0.5 rounded-full text-sm font-medium ${
             row.verificationStatus === "verified"
               ? "bg-green-500 text-white"
-              : row.verificationStatus === "pending"
-              ? "bg-yellow-400 text-black"
-              : "bg-red-500 text-white "
+              : row.verificationStatus === "rejected"
+              ? "bg-red-500 text-white"
+              : "bg-yellow-400 text-black"
           }`}
         >
-          {row.verificationStatus}
+          {kycVerificationStatusMapping[row.verificationStatus] ||
+            row.verificationStatus}
         </span>
       ),
     },
@@ -207,7 +237,10 @@ export default function Kyc() {
       render: (row) => (
         <button
           className="hover:underline text-blue-700"
-          onClick={handleShowDetails}
+          onClick={() => {
+            setUserId(row.userId);
+            setModalType("details");
+          }}
         >
           View Details
         </button>
@@ -256,17 +289,32 @@ export default function Kyc() {
     {
       icon: verify,
       text: "Verify",
-      onClick: () => {},
+      onClick: () => {
+        setVerificationData((prevData) => ({
+          ...prevData,
+          type: "verify",
+          userId: row.userId,
+        }));
+        setModalType("csdModal");
+      },
     },
     {
       icon: history,
       text: "Put On Hold",
-      onClick: () => {},
+      onClick: async () => {
+        await manageKYC({ type: "hold", userId: row.userId });
+        setModalType(null);
+        fetchKYCData();
+      },
     },
     {
       icon: reject,
       text: "Reject",
-      onClick: () => {},
+      onClick: async () => {
+        await manageKYC({ type: "reject", userId: row.userId });
+        setModalType(null);
+        fetchKYCData();
+      },
     },
   ];
 
@@ -342,19 +390,87 @@ export default function Kyc() {
 
   return (
     <div className="flex flex-col gap-6">
-      {showDetails ? (
-        <KYCModal
-          userId={userId}
-          onClose={() => {
-            setShowDetails(false);
-          }}
-        />
+      {/* For KYC Form */}
+      {modalType === "details" ? (
+        <KYCModal userId={userId} onClose={closeModal} />
       ) : null}
+
+      {/* For CSD Form */}
+      {modalType === "csdForm" ? (
+        <Modal
+          download={() => {}}
+          title="CSD Form"
+          type="document"
+          isOpen={true}
+          onClose={closeModal}
+        >
+          <Modal.Content>
+            {csdFormLink ? (
+              <PDFViewer src={csdFormLink} />
+            ) : (
+              <p className="text-black-5 text-heading-1">
+                CSD Form Not Available
+              </p>
+            )}
+          </Modal.Content>
+        </Modal>
+      ) : null}
+
+      {/* For CSD Verification */}
+
+      {modalType === "csdModal" ? (
+        <Modal
+          isOpen={true}
+          type="confirmation"
+          title="Are you sure you want to verify this user?"
+          onClose={closeModal}
+        >
+          <Modal.Content>
+            <InputAndLabel>
+              <InputAndLabel.Label htmlFor="csdNumber">
+                Put CSD Number
+              </InputAndLabel.Label>
+              <InputAndLabel.Input
+                id="csdNumber"
+                name="csdNumber"
+                value={verificationData.csdNo}
+                onChange={handleCSDNumberChange}
+              />
+            </InputAndLabel>
+          </Modal.Content>
+          <Modal.Footer>
+            <Button
+              design="secondary"
+              style="negative"
+              className="h-9"
+              onClick={closeModal}
+            >
+              Cancel
+            </Button>
+            <Button
+              design="primary"
+              className="h-9"
+              onClick={async () => {
+                await manageKYC(verificationData);
+                setModalType(null);
+                fetchKYCData();
+              }}
+            >
+              Approve
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      ) : null}
+
       <Breadcrumb items={breadCrumbItems} />
       <div className="flex flex-col gap-6">
         <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
           {Object.entries(stats).map(([key, value], index) => (
-            <StatsCard key={index} label={key} value={value} />
+            <StatsCard
+              key={index}
+              label={kycKeyTitleMapping[key] || key}
+              value={value}
+            />
           ))}
         </div>
         <Toggle

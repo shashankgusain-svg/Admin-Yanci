@@ -1,5 +1,6 @@
 import { apiError, URL } from "./helper";
 
+// POST
 export const getToken = async (credentials) => {
   try {
     const res = await fetch(`${URL}admin/login`, {

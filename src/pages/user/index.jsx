@@ -17,6 +17,7 @@ import {
 } from "@/services/api/userService";
 import Modal from "@/components/modal/ModalIndex";
 import Button from "@/components/button/Button";
+import { userKeyTitleMapping } from "@/utils/seed";
 
 const breadCrumbItems = [
   { name: "Home", Link: "/" },
@@ -355,7 +356,7 @@ export default function User() {
           {Object.entries(stats).map(([key, value], index) => (
             <StatsCard
               key={index}
-              label={key}
+              label={userKeyTitleMapping[key] || key}
               isPercentage={value.percent ? true : false}
               percentageChange={value.percentChange}
               value={value.percent ? value.percent : value.count}
