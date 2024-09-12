@@ -3,11 +3,11 @@ import Dropdown from "@/components/dropdown/DropdownIndex";
 import history from "../../../public/icons/misc/history.svg";
 import deleteRedIcon from "../../../public/icons/misc/deleteRed.svg";
 import React from "react";
+import { getAllSubAdmins } from "@/services/api/adminService";
 const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Sub Admin" }];
 
 export default function RoleManagement() {
   const [data, setData] = React.useState([]);
-
   const [loading, setLoading] = React.useState(true);
 
   const subAdminColumns = [
@@ -23,51 +23,74 @@ export default function RoleManagement() {
       header: "Features",
       key: "features",
       render: (row) => (
-        <div className=" whitespace-normal">{row.description}</div>
+        <p className=" whitespace-normal">
+          {row.permissions.map((permission, index) => (
+            <span key={permission._id}>
+              {permission.permissionName}
+              {index < row.permissions.length - 1 && ", "}
+            </span>
+          ))}
+        </p>
       ),
     },
   ];
+
+  const fetchSubAdminDetails = async () => {
+    setLoading(true);
+    const result = await getAllSubAdmins();
+    setData([...result.data]);
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    fetchSubAdminDetails();
+  }, []);
 
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
       <div>
         <h3 className="text-heading-6 font-semibold">Sub Admins</h3>
-        <div className="mt-4 rounded-xl border border-primary-4 overflow-x-auto">
-          <table className="min-w-full">
-            <thead className="h-14 p-4 border-b bg-primary-2 border-primary-3 w-full">
-              <tr className="w-full">
-                {subAdminColumns.map((col, index) => (
-                  <th
-                    className="text-left text-heading-6 font-semibold text-primary-8 table-header"
-                    key={index}
-                  >
-                    {col.header}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="bg-white">
-              {data.map((row, rowIndex) => (
-                <tr
-                  key={rowIndex}
-                  className="border-b-0.3 last:border-none border-primary-8 hover:bg-primary-1"
-                >
-                  {subAdminColumns.map((col, colIndex) => (
-                    <td
-                      key={colIndex}
-                      className="table-cell h-12 text-left whitespace-nowrap text-sm text-gray-700"
+        {loading ? (
+          <div className="mt-4 w-full">
+            <p className="text-black-6 text-heading-1">Loading Sub Admins</p>
+          </div>
+        ) : (
+          <div className="mt-4 rounded-xl border border-primary-4 overflow-x-auto">
+            <table className="min-w-full">
+              <thead className="h-14 p-4 border-b bg-primary-2 border-primary-3 w-full">
+                <tr className="w-full">
+                  {subAdminColumns.map((col, index) => (
+                    <th
+                      className="text-left text-heading-6 font-semibold text-primary-8 table-header"
+                      key={index}
                     >
-                      {col.render ? (
-                        col.render(row)
-                      ) : !row[col.key] ? (
-                        <>--</>
-                      ) : (
-                        row[col.key]
-                      )}
-                    </td>
+                      {col.header}
+                    </th>
                   ))}
-                  <td>
+                </tr>
+              </thead>
+              <tbody className="bg-white">
+                {data.map((row) => (
+                  <tr
+                    key={row._id}
+                    className="border-b-0.3 last:border-none border-primary-8 hover:bg-primary-1"
+                  >
+                    {subAdminColumns.map((col, colIndex) => (
+                      <td
+                        key={colIndex}
+                        className="table-cell h-12 text-left whitespace-nowrap text-sm text-gray-700"
+                      >
+                        {col.render ? (
+                          col.render(row)
+                        ) : !row[col.key] ? (
+                          <>--</>
+                        ) : (
+                          row[col.key]
+                        )}
+                      </td>
+                    ))}
+                    {/* <td>
                     <Dropdown>
                       <Dropdown.Button type="clean" className="table-cell px-1">
                         <span className="font-bold">&#8942;</span>
@@ -85,12 +108,13 @@ export default function RoleManagement() {
                         ))}
                       </Dropdown.Menu>
                     </Dropdown>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  </td> */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

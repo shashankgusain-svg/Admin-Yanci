@@ -3,11 +3,12 @@ import React from "react";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import Button from "@/components/button/Button";
 import { addSubAdmin } from "@/services/api/adminService";
-
-const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Sub Admin" }];
+import { useRouter } from "next/router";
 
 export default function index() {
-  const [newSubAdminDetails, setNewSubAdminDetails] = React.useState({
+  const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Sub Admin" }];
+
+  const defaultSubAdminDetails = {
     name: "",
     phone: "",
     email: "",
@@ -54,7 +55,10 @@ export default function index() {
         edit: false,
       },
     ],
-  });
+  };
+
+  const router = useRouter();
+  const [newSubAdminDetails, setNewSubAdminDetails] = React.useState(defaultSubAdminDetails);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -123,9 +127,11 @@ export default function index() {
     });
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    addSubAdmin(newSubAdminDetails);
+    await addSubAdmin(newSubAdminDetails);
+    setNewSubAdminDetails(defaultSubAdminDetails);
+    router.push("/role-management");
   };
 
   return (

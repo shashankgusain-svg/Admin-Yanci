@@ -9,6 +9,7 @@ import Dropdown from "../dropdown/DropdownIndex";
 import DatePicker from "../datePicker/DatePicker";
 import Button from "../button/Button";
 import Pagination from "../pagination/Pagination";
+import LoadingAnimation from "../../../public/icons/animated/loading";
 
 export default function Table({
   columns = [],
@@ -93,7 +94,7 @@ export default function Table({
       <div className="table-wrapper border-x border-primary-3 bg-white min-w-full overflow-x-auto">
         {isLoading ? (
           <div className="min-w-full table-header min-h-20">
-            <p className="text-primary-2 text-heading-1">Loading</p>
+            <LoadingAnimation/>
           </div>
         ) : (
           <table className="min-w-full border-collapse">
@@ -109,7 +110,12 @@ export default function Table({
                     {col.header}
                     {col.sortable ? (
                       <button onClick={col.onSort} className="block">
-                        <Image src={sort} alt={`Sort ${col.header}`} width={20} height={20}/>
+                        <Image
+                          src={sort}
+                          alt={`Sort ${col.header}`}
+                          width={20}
+                          height={20}
+                        />
                       </button>
                     ) : null}
                   </th>

@@ -1,13 +1,13 @@
 import React from "react";
 import Image from "next/image";
 import NotificationRound from "../../../public/icons/navbar/notification-round.svg";
-import Logo from "../../../public/images/yanci-full-logo.svg";
 import add from "../../../public/icons/misc/add.svg";
 import DummyImg from "../../../public/images/dummyImage.png";
 import Link from "next/link";
 import Button from "../button/Button";
 import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
+import Logo from "../../../public/icons/misc/Logo";
 
 export default function Navbar() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function Navbar() {
   return (
     <nav className="navbar flex border-b-2 border-black-3 w-full bg-white sticky top-0 left-0 px-8 z-30">
       <div className="min-w-full flex justify-between items-center">
-        <Image src={Logo} alt="Logo"/>
+        <Logo/>
         <div className="flex items-center gap-6 ">
           {pathname === "/notifications" ? (
             <Button className="font-normal h-11" onClick={()=>{router.push("notifications/create")}}>

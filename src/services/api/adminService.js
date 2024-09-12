@@ -1,6 +1,8 @@
 import { apiError, URL, getAuthToken } from "./helper";
 
-const getAllSubAdmins = async () => {
+// GET
+
+export const getAllSubAdmins = async () => {
   try {
     const res = await fetch(`${URL}admin/get-all?roleType=SUB`, {
       method: "GET",
@@ -25,7 +27,7 @@ export const addSubAdmin = async (payload) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${getAuthToken()}`,
       },
-      body: JSON.stringify({...payload}),
+      body: JSON.stringify({ ...payload }),
     });
     const data = await res.json();
     return data;

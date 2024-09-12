@@ -89,6 +89,7 @@ export const searchUser = async (payload) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
       },
     });
 
