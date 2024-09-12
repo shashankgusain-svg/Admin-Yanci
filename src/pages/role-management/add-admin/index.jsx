@@ -142,6 +142,7 @@ export default function index() {
       email: "",
       password: "",
       permissions: "",
+      phone: "",
     };
 
     if (!newSubAdminDetails.name.trim()) {
@@ -159,6 +160,14 @@ export default function index() {
       newErrors.password = "Password is required.";
     } else if (newSubAdminDetails.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters.";
+    }
+
+    const phoneRegex = /^(?:233|0)[2-5]\d{8}$/;
+    if (
+      newSubAdminDetails.phone.trim() &&
+      !phoneRegex.test(newSubAdminDetails.phone)
+    ) {
+      newErrors.phone = "Invalid phone number for Ghana.";
     }
 
     const allPermissionsSelected = newSubAdminDetails.permissions.every(
@@ -209,6 +218,9 @@ export default function index() {
                 value={newSubAdminDetails.name}
                 onChange={handleInputChange}
               />
+              {errors.name && (
+                <p className="text-red-600 text-sm">{errors.name}</p>
+              )}
             </InputAndLabel>
 
             <InputAndLabel>
@@ -222,6 +234,9 @@ export default function index() {
                 value={newSubAdminDetails.phone}
                 onChange={handleInputChange}
               />
+              {errors.phone && (
+                <p className="text-red-600 text-sm">{errors.phone}</p>
+              )}
             </InputAndLabel>
 
             <div className="col-span-2 flex flex-col gap-3 text-black-9 font-semibold">
@@ -241,6 +256,9 @@ export default function index() {
                     value={newSubAdminDetails.email}
                     onChange={handleInputChange}
                   />
+                  {errors.email && (
+                    <p className="text-red-600 text-sm">{errors.email}</p>
+                  )}
                 </InputAndLabel>
 
                 <InputAndLabel>
