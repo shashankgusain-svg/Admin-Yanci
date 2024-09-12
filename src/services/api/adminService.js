@@ -35,3 +35,22 @@ export const addSubAdmin = async (payload) => {
     apiError(error);
   }
 };
+
+// PUT
+
+export const updatePolicy = async (payload) => {
+  try {
+    const res = await fetch(`${URL}admin/create-sub-admin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+      body: JSON.stringify({ ...payload }),
+    });
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    apiError(error);
+  }
+};

@@ -58,7 +58,9 @@ export default function index() {
   };
 
   const router = useRouter();
-  const [newSubAdminDetails, setNewSubAdminDetails] = React.useState(defaultSubAdminDetails);
+  const [newSubAdminDetails, setNewSubAdminDetails] = React.useState(
+    defaultSubAdminDetails
+  );
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -127,11 +129,61 @@ export default function index() {
     });
   };
 
+  const [errors, setErrors] = React.useState({
+    name: "",
+    email: "",
+    password: "",
+    permissions: "",
+  });
+
+  const validateForm = () => {
+    const newErrors = {
+      name: "",
+      email: "",
+      password: "",
+      permissions: "",
+    };
+
+    if (!newSubAdminDetails.name.trim()) {
+      newErrors.name = "Name is required.";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!newSubAdminDetails.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else if (!emailRegex.test(newSubAdminDetails.email)) {
+      newErrors.email = "Invalid email format.";
+    }
+
+    if (!newSubAdminDetails.password.trim()) {
+      newErrors.password = "Password is required.";
+    } else if (newSubAdminDetails.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters.";
+    }
+
+    const allPermissionsSelected = newSubAdminDetails.permissions.every(
+      (permission) => permission.view || permission.edit
+    );
+    if (!allPermissionsSelected) {
+      newErrors.permissions =
+        "At least one permission (View or Edit) must be selected for each feature.";
+    }
+
+    setErrors(newErrors);
+
+    return Object.values(newErrors).every((error) => error === "");
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    await addSubAdmin(newSubAdminDetails);
-    setNewSubAdminDetails(defaultSubAdminDetails);
-    router.push("/role-management");
+    const isValid = validateForm();
+    if (isValid) {
+      await addSubAdmin(newSubAdminDetails);
+      setNewSubAdminDetails(defaultSubAdminDetails);
+      router.push("/role-management");
+    } else {
+      console.log("Validation failed", errors);
+    }
   };
 
   return (
@@ -205,6 +257,9 @@ export default function index() {
                     value={newSubAdminDetails.password}
                     onChange={handleInputChange}
                   />
+                  {errors.password && (
+                    <p className="text-red-600 text-sm">{errors.password}</p>
+                  )}
                 </InputAndLabel>
               </div>
             </div>
