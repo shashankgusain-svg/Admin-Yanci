@@ -30,6 +30,12 @@ export default function Navbar() {
               Add Sub Admin
             </Button>
           ) : null}
+          {pathname === "/support" ? (
+            <Button className="font-normal h-11" onClick={()=>{router.push("support/create-faq")}}>
+              <Image src={add} alt="Add new"/>
+              Create FAQ
+            </Button>
+          ) : null}
           <button>
             <Image src={NotificationRound} alt="Notifications" />
           </button>

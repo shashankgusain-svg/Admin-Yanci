@@ -18,6 +18,7 @@ import {
 import Modal from "@/components/modal/ModalIndex";
 import Button from "@/components/button/Button";
 import { userKeyTitleMapping } from "@/utils/seed";
+import { getBirthYear } from "@/utils/helpers";
 
 const breadCrumbItems = [
   { name: "Home", Link: "/" },
@@ -47,25 +48,6 @@ export default function User() {
   const [limit, setLimit] = React.useState(10);
   const [page, setPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(0);
-
-  // Utils
-
-  const getBirthYear = (birthdate) => {
-    const curDate = new Date();
-    const birthDate = new Date(birthdate);
-
-    let age = curDate.getFullYear() - birthDate.getFullYear();
-
-    if (
-      curDate.getMonth() < birthDate.getMonth() ||
-      (curDate.getMonth() === birthDate.getMonth() &&
-        curDate.getMonth() < birthDate.getMonth())
-    ) {
-      age--;
-    }
-
-    return age > 0 ? age : "--";
-  };
 
   const columns = [
     {
@@ -142,6 +124,7 @@ export default function User() {
       sortField: sortField,
       page: page,
       limit: limit,
+      value: searchValue
     });
     setData((prevData) => ({
       ...prevData,
@@ -155,29 +138,6 @@ export default function User() {
     const result = await getUserStats();
     const temp = { ...result.metrics };
     setStats(temp);
-  };
-
-  const handleSearch = async () => {
-    setLoading(true);
-    try {
-      const response = await searchUser({
-        sortOrder: sortOrder,
-        sortField: sortField,
-        page: page,
-        limit: limit,
-        value: searchValue,
-      });
-      setData((prevData) => ({
-        ...prevData,
-        [selectedOption === "Blocked Users" ? "blocked" : "active"]: [
-          ...response.results,
-        ],
-      }));
-    } catch (error) {
-      console.error("Error searching for users:", error);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleBlock = async () => {
@@ -202,12 +162,11 @@ export default function User() {
   const onSearch = (event) => {
     const value = event.target.value;
     setSearchValue(value);
-    handleSearch();
   };
 
   React.useEffect(() => {
     fetchUsersData();
-  }, [selectedOption, sortField, sortOrder, limit, page]);
+  }, [selectedOption, sortField, sortOrder, limit, page, searchValue]);
 
   React.useEffect(() => {
     fetchUserStats();
@@ -255,7 +214,6 @@ export default function User() {
     const isAsc = sortField === field && sortOrder === "asc";
     setSortField(field);
     setSortOrder(isAsc ? "desc" : "asc");
-    fetchUsersData(selectedOption); // Refetch data with the new sort
   };
 
   const userOptions = [

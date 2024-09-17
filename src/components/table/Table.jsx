@@ -1,6 +1,5 @@
 import React from "react";
 import Searchbar from "../searchbar/Searchbar";
-import sort from "../../../public/icons/misc/sort.svg";
 import down from "../../../public/icons/misc/down.svg";
 import exportIcon from "../../../public/icons/misc/export.svg";
 import calender from "../../../public/icons/misc/calender.svg";
@@ -10,6 +9,8 @@ import DatePicker from "../datePicker/DatePicker";
 import Button from "../button/Button";
 import Pagination from "../pagination/Pagination";
 import LoadingAnimation from "../../../public/icons/animated/loading";
+import SortIcon from "../../../public/icons/misc/SortIcon";
+import { downloadCSV } from "@/utils/helpers";
 
 export default function Table({
   columns = [],
@@ -55,34 +56,13 @@ export default function Table({
             </Dropdown>
           ) : null}
 
-          {/* <Dropdown>
-            <Dropdown.Button>
-              <Image src={filter} alt="Filter" />
-              Filter
-            </Dropdown.Button>
-            <Dropdown.Menu origin="top-left">
-              <Dropdown.Item>A-Z</Dropdown.Item>
-              <Dropdown.Item>A-Z</Dropdown.Item>
-              <Dropdown.Item>A-Z</Dropdown.Item>
-              <Dropdown.Item>A-Z</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-
-          <Dropdown>
-            <Dropdown.Button>
-              <Image src={sort} alt="Sort" />
-              Sort
-            </Dropdown.Button>
-            <Dropdown.Menu origin="top-left">
-              <Dropdown.Item>A-Z</Dropdown.Item>
-              <Dropdown.Item>A-Z</Dropdown.Item>
-              <Dropdown.Item>A-Z</Dropdown.Item>
-              <Dropdown.Item>A-Z</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown> */}
-
           {exportToCSV ? (
-            <Button design="table">
+            <Button
+              design="table"
+              onClick={() => {
+                downloadCSV(columns,data);
+              }}
+            >
               <Image src={exportIcon} alt="Export" />
               <p>Export to CSV</p>
             </Button>
@@ -94,12 +74,12 @@ export default function Table({
       <div className="table-wrapper border-x border-primary-3 bg-white min-w-full overflow-x-auto">
         {isLoading ? (
           <div className="min-w-full table-header min-h-20">
-            <LoadingAnimation/>
+            <LoadingAnimation />
           </div>
         ) : (
-          <table className="min-w-full border-collapse">
+          <table className="min-w-full border-collapse ">
             <thead className="border-b-0.3 border-b-primary-6">
-              <tr className="">
+              <tr>
                 {columns.map((col, index) => (
                   <th
                     key={index}
@@ -110,12 +90,7 @@ export default function Table({
                     {col.header}
                     {col.sortable ? (
                       <button onClick={col.onSort} className="block">
-                        <Image
-                          src={sort}
-                          alt={`Sort ${col.header}`}
-                          width={20}
-                          height={20}
-                        />
+                        <SortIcon />
                       </button>
                     ) : null}
                   </th>
@@ -156,7 +131,7 @@ export default function Table({
                         >
                           <span className="font-bold">&#8942;</span>
                         </Dropdown.Button>
-                        <Dropdown.Menu origin="bottom-right">
+                        <Dropdown.Menu origin="top-right">
                           {dropdownItems(row).map((dropdownItem, index) => (
                             <Dropdown.Item
                               onClick={dropdownItem.onClick}

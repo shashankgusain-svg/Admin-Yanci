@@ -27,11 +27,13 @@ export default function Kyc() {
   const [sortField, setSortField] = React.useState("");
   const [sortOrder, setSortOrder] = React.useState("asc");
 
+  const [searchValue, setSearchValue] = React.useState("");
+
   const [limit, setLimit] = React.useState(10);
   const [page, setPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(0);
 
-  const [modalType, setModalType] = React.useState(null); // null, 'details', 'csdForm', 'csdModal'
+  const [modalType, setModalType] = React.useState(null);
   const [userId, setUserId] = React.useState("");
   const [csdFormLink, setCsdFormLink] = React.useState(null);
   const [verificationData, setVerificationData] = React.useState({
@@ -55,6 +57,43 @@ export default function Kyc() {
       csdNo: "",
     });
     setModalType(null);
+  };
+
+  const fetchKYCData = async () => {
+    setLoading(true);
+    const result = await getKYCData({
+      type: selectedOption,
+      sortOrder: sortOrder,
+      sortField: sortField,
+      page: page,
+      limit: limit,
+      value: searchValue,
+    });
+
+    setData((prevData) => ({
+      ...prevData,
+      [selectedOption === "Submitted KYCs" ? "submitted" : "abandoned"]:
+        result.users,
+    }));
+    setTotalPages(result.totalPages || 1);
+    setLoading(false);
+  };
+
+  const fetchKYCStats = async () => {
+    const res = await getKYCStats();
+    const data = { ...res };
+    setStats(data);
+  };
+
+  const handleSort = (field) => {
+    const isAsc = sortField === field && sortOrder === "asc";
+    setSortField(field);
+    setSortOrder(isAsc ? "desc" : "asc");
+  };
+
+  const handleSearch = (event) => {
+    const value = event.target.value;
+    setSearchValue(value);
   };
 
   const submittedKYCsColumns = [
@@ -89,7 +128,7 @@ export default function Kyc() {
       key: "createdDate",
       sortable: true,
       onSort: () => {
-        handleSort("createdDate");
+        handleSort("createdAt");
       },
       isDate: true,
     },
@@ -203,7 +242,7 @@ export default function Kyc() {
       key: "createdDate",
       sortable: true,
       onSort: () => {
-        handleSort("createdDate");
+        handleSort("createdAt");
       },
       isDate: true,
     },
@@ -252,34 +291,9 @@ export default function Kyc() {
     },
   ];
 
-  const fetchKYCData = async () => {
-    setLoading(true);
-    const result = await getKYCData({
-      type: selectedOption,
-      sortOrder: sortOrder,
-      sortField: sortField,
-      page: page,
-      limit: limit,
-    });
-
-    setData((prevData) => ({
-      ...prevData,
-      [selectedOption === "Submitted KYCs" ? "submitted" : "abandoned"]:
-        result.users,
-    }));
-    setTotalPages(result.totalPages || 1);
-    setLoading(false);
-  };
-
-  const fetchKYCStats = async () => {
-    const res = await getKYCStats();
-    const data = { ...res };
-    setStats(data);
-  };
-
   React.useEffect(() => {
     fetchKYCData();
-  }, [selectedOption, sortField, sortOrder, limit, page]);
+  }, [selectedOption, sortField, sortOrder, limit, page, searchValue]);
 
   React.useEffect(() => {
     fetchKYCStats();
@@ -356,6 +370,8 @@ export default function Kyc() {
               setPage(1); // Reset to page 1 when limit changes
             },
           }}
+          searchValue={searchValue}
+          onSearch={handleSearch}
         />
       ),
     },
@@ -383,6 +399,8 @@ export default function Kyc() {
               setPage(1); // Reset to page 1 when limit changes
             },
           }}
+          searchValue={searchValue}
+          onSearch={handleSearch}
         />
       ),
     },

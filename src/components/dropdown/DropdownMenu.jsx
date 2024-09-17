@@ -13,7 +13,7 @@ export default function DropdownMenu({
       case "top-left":
         return "origin-top-left top-full left-0 pt-2";
       case "top-right":
-        return "origin-top-right top-full right-0 pt-2";
+        return "origin-top-right top-[60%] right-5 pt-2";
       case "bottom-left":
         return "origin-bottom-left bottom-full left-0 pb-2";
       case "bottom-right":

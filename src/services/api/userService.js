@@ -1,25 +1,33 @@
-import { URL, apiError, getAuthToken } from "./helper";
+import { getAuthToken } from "./cookies";
+import { URL, apiError } from "./helper";
 
 // GET
 
 export const getUsersData = async (payload) => {
-  const endpoint =
-    payload.type === "Blocked Users"
-      ? `${URL}adminuser/getusers?isBlocked=true&page=${payload.page}&limit=${
-          payload.limit
-        }${payload.sortOrder ? `&sortOrder=${payload.sortOrder}` : null}${
-          payload.sortField ? `&sortBy=${payload.sortField}` : null
-        }`
-      : `${URL}adminuser/getusers?page=${payload.page}&limit=${payload.limit}${
-          payload.sortOrder ? `&sortOrder=${payload.sortOrder}` : null
-        }${payload.sortField ? `&sortBy=${payload.sortField}` : null}`;
+  const token = await getAuthToken();
+  let endpoint = `${URL}adminuser/getusers?`;
+
+  if (payload.type === "Blocked Users") {
+    endpoint += `isBlocked=true`;
+  }
+  endpoint += `&page=${payload.page}&limit=${payload.limit}`;
+
+  if (payload.sortOrder) {
+    endpoint += `&sortOrder=${payload.sortOrder}`;
+  }
+  if (payload.sortField) {
+    endpoint += `&sortBy=${payload.sortField}`;
+  }
+  if (payload.value) {
+    endpoint += `&search=${encodeURIComponent(payload.value)}`;
+  }
 
   try {
     const res = await fetch(endpoint, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     const data = await res.json();
@@ -30,12 +38,13 @@ export const getUsersData = async (payload) => {
 };
 
 export const getUserStats = async () => {
+  const token = await getAuthToken();
   try {
     const res = await fetch(`${URL}adminuser/user-metrics`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     const data = await res.json();
@@ -46,12 +55,13 @@ export const getUserStats = async () => {
 };
 
 export const getUserDetails = async (userId) => {
+  const token = await getAuthToken();
   try {
     const res = await fetch(`${URL}adminuser/getusers?userId=${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     const data = await res.json();
@@ -62,12 +72,13 @@ export const getUserDetails = async (userId) => {
 };
 
 export const getUserKYCDetails = async (userId) => {
+  const token = await getAuthToken();
   try {
     const res = await fetch(`${URL}adminuser/kyc-details/${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     const data = await res.json();
@@ -77,38 +88,17 @@ export const getUserKYCDetails = async (userId) => {
   }
 };
 
-export const searchUser = async (payload) => {
-  try {
-    const endpoint = `${URL}adminuser/getusers?page=${payload.page}&limit=${
-      payload.limit
-    }&search=${payload.value}${
-      payload.sortOrder ? `&sortOrder=${payload.sortOrder}` : ""
-    }${payload.sortField ? `&sortBy=${payload.sortField}` : ""}`;
-
-    const response = await fetch(endpoint, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
-    });
-
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    return apiError(error);
-  }
-};
-
 // DELETE
 
 export const deleteUser = async (userId) => {
+  const token = await getAuthToken();
+
   try {
     const res = await fetch(`${URL}adminuser/users/${userId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     const data = await res.json();
@@ -121,13 +111,14 @@ export const deleteUser = async (userId) => {
 // PUT
 
 export const blockUser = async (userId) => {
-  console.log(userId);
+  const token = await getAuthToken();
+
   try {
     const res = await fetch(`${URL}adminuser/block/user/${userId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     const data = await res.json();

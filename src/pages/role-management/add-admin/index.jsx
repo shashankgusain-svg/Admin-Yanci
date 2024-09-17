@@ -75,18 +75,16 @@ export default function index() {
       const updatedPermissions = prevState.permissions.map((permission, i) => {
         if (i === index) {
           if (type === "edit") {
-            // If "Edit" is toggled on, ensure "View" is selected and "View Only" is deselected
             return {
               ...permission,
-              view: !permission.edit || true, // Ensure "View" is checked when "Edit" is toggled on
-              edit: !permission.edit, // Toggle "Edit"
+              view: !permission.edit || true,
+              edit: !permission.edit,
             };
           } else if (type === "view") {
-            // If "View" is toggled on/off, check/uncheck without affecting "Edit" unless both are being turned off
             return {
               ...permission,
-              view: !permission.view, // Toggle "View"
-              edit: !permission.view ? false : permission.edit, // If "View" is turned off, uncheck "Edit"
+              view: !permission.view,
+              edit: !permission.view ? false : permission.edit,
             };
           }
         }
@@ -133,7 +131,7 @@ export default function index() {
     name: "",
     email: "",
     password: "",
-    permissions: "",
+    phone: "",
   });
 
   const validateForm = () => {
@@ -141,7 +139,6 @@ export default function index() {
       name: "",
       email: "",
       password: "",
-      permissions: "",
       phone: "",
     };
 
@@ -168,14 +165,6 @@ export default function index() {
       !phoneRegex.test(newSubAdminDetails.phone)
     ) {
       newErrors.phone = "Invalid phone number for Ghana.";
-    }
-
-    const allPermissionsSelected = newSubAdminDetails.permissions.every(
-      (permission) => permission.view || permission.edit
-    );
-    if (!allPermissionsSelected) {
-      newErrors.permissions =
-        "At least one permission (View or Edit) must be selected for each feature.";
     }
 
     setErrors(newErrors);

@@ -15,9 +15,9 @@ import UserSupport from "../../../public/icons/sidebar/UserSupport";
 import AuditLogs from "../../../public/icons/sidebar/AuditLogs";
 import Policies from "../../../public/icons/sidebar/Policies";
 import Referrals from "../../../public/icons/sidebar/Referrals";
-import { useAuthStore } from "@/stores/authstore";
-import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import { getUser, removeToken, removeUser } from "@/services/api/cookies";
+import LoadingAnimation from "../../../public/icons/animated/loading";
 
 const SidebarBtn = ({ children, path, isActive, className = "" }) => {
   return (
@@ -36,30 +36,107 @@ const SidebarBtn = ({ children, path, isActive, className = "" }) => {
 };
 
 const sidebarBtns = [
-  { name: "Home", path: "/", Icon: Home },
-  { name: "User", path: "/user", Icon: User },
-  { name: "KYC", path: "/kyc", Icon: Kyc },
-  { name: "Transactions", path: "/transactions", Icon: Transactions },
-  { name: "Revenue", path: "/revenue", Icon: Revenue },
-  { name: "Reports", path: "/reports", Icon: Reports },
-  { name: "Stock", path: "/stock", Icon: StockManagement },
-  { name: "Notifications", path: "/notifications", Icon: Notifications },
-  { name: "Role Management", path: "/role-management", Icon: RoleManagement },
-  { name: "User Support", path: "/user-support", Icon: UserSupport },
-  { name: "Audit Logs", path: "/audit-logs", Icon: AuditLogs },
-  { name: "Policies", path: "/policies", Icon: Policies },
-  { name: "Referrals", path: "/referrals", Icon: Referrals },
+  { name: "Home", permissionName: "Home", path: "/", Icon: Home },
+  {
+    name: "User",
+    permissionName: "User Management",
+    path: "/user",
+    Icon: User,
+  },
+  { name: "KYC", permissionName: "KYC", path: "/kyc", Icon: Kyc },
+  {
+    name: "Transactions",
+    name: "Transactions",
+    path: "/transactions",
+    Icon: Transactions,
+  },
+  {
+    name: "Revenue",
+    permissionName: "Revenue",
+    path: "/revenue",
+    Icon: Revenue,
+  },
+  {
+    name: "Reports",
+    permissionName: "Reports",
+    path: "/reports",
+    Icon: Reports,
+  },
+  {
+    name: "Stock",
+    permissionName: "Stock Management",
+    path: "/stock",
+    Icon: StockManagement,
+  },
+  {
+    name: "Notifications",
+    permissionName: "Notifications",
+    path: "/notifications",
+    Icon: Notifications,
+  },
+  {
+    name: "Role Management",
+    permissionName: "Role Management",
+    path: "/role-management",
+    Icon: RoleManagement,
+  },
+  {
+    name: "User Support",
+    permissionName: "User Support",
+    path: "/support",
+    Icon: UserSupport,
+  },
+  {
+    name: "Audit Logs",
+    permissionName: "Audit Logs",
+    path: "/audit-logs",
+    Icon: AuditLogs,
+  },
+  {
+    name: "Policies",
+    permissionName: "Policies",
+    path: "/policies",
+    Icon: Policies,
+  },
+  {
+    name: "Referrals",
+    permissionName: "Referrals",
+    path: "/referrals",
+    Icon: Referrals,
+  },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { setToken } = useAuthStore();
   const router = useRouter();
+  const [isReady, setIsReady] = React.useState(false);
+  const [user, setUser] = React.useState(null);
+
+  React.useEffect(() => {
+    const userData = getUser();
+    setUser(userData);
+    setIsReady(true);
+  }, []);
 
   const handleLogout = () => {
-    Cookies.remove("token");
-    setToken(null);
+    removeToken();
+    removeUser();
     router.push("/login");
+  };
+
+  const canViewPage = (path) => {
+    if (!user) return false;
+
+    if (path === "/") return true;
+
+    if (user.isSuperAdmin) return true;
+
+    const permissionName = sidebarBtns.find(
+      (btn) => btn.path === path
+    )?.permissionName;
+    return user.adminPermission?.some(
+      (perm) => perm.permissionName === permissionName && perm.view === true
+    );
   };
 
   return (
@@ -67,21 +144,27 @@ export default function Sidebar() {
       <div className="flex flex-col gap-14 h-full justify-between">
         <div className="overflow-y-auto">
           <div className="flex flex-col gap-4 pr-4">
-            {sidebarBtns.map(({ name, path, Icon }) => {
-              const isActive =
-                pathname === null
-                  ? false
-                  : path === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(path);
+            {isReady ? (
+              sidebarBtns
+                .filter(({ path }) => canViewPage(path))
+                .map(({ name, path, Icon }) => {
+                  const isActive =
+                    pathname === null
+                      ? false
+                      : path === "/"
+                      ? pathname === "/"
+                      : pathname.startsWith(path);
 
-              return (
-                <SidebarBtn key={path} path={path} isActive={isActive}>
-                  <Icon active={isActive} />
-                  <p className="text-body-1">{name}</p>
-                </SidebarBtn>
-              );
-            })}
+                  return (
+                    <SidebarBtn key={path} path={path} isActive={isActive}>
+                      <Icon active={isActive} />
+                      <p className="text-body-1">{name}</p>
+                    </SidebarBtn>
+                  );
+                })
+            ) : (
+              <LoadingAnimation />
+            )}
           </div>
         </div>
 

@@ -18,8 +18,7 @@ export default function Notifications() {
   const [selectedOption, setSelectedOption] =
     React.useState("Sent Notifications");
 
-  const [sortField, setSortField] = React.useState("");
-  const [sortOrder, setSortOrder] = React.useState("asc");
+  const [searchValue, setSearchValue] = React.useState("");
 
   const [limit, setLimit] = React.useState(10);
   const [page, setPage] = React.useState(1);
@@ -29,6 +28,11 @@ export default function Notifications() {
     { name: "Home", Link: "/" },
     { name: "Notification Management" },
   ];
+
+  const handleSearch = (event) => {
+    const value = event.target.value;
+    setSearchValue(value);
+  };
 
   const sentNotificationColumns = [
     {
@@ -49,10 +53,10 @@ export default function Notifications() {
     {
       header: "Sent At",
       key: "sentOn",
-      sortable: true,
-      onSort: () => {
-        handleSort("sentOn");
-      },
+      // sortable: true,
+      // onSort: () => {
+      //   handleSort("sentOn");
+      // },
       isDate: true,
     },
     {
@@ -80,10 +84,10 @@ export default function Notifications() {
     {
       header: "Scheduled On",
       key: "scheduledOn",
-      sortable: true,
-      onSort: () => {
-        handleSort("scheduledOn");
-      },
+      // sortable: true,
+      // onSort: () => {
+      //   handleSort("scheduledOn");
+      // },
       isDate: true,
     },
     {
@@ -92,19 +96,18 @@ export default function Notifications() {
     },
   ];
 
-  const fetchNotifications = async (type) => {
+  const fetchNotifications = async () => {
     setLoading(true);
     const result = await getNotificationDetails({
-      type: type,
-      sortOrder: sortOrder,
-      sortField: sortField,
+      type: selectedOption,
       page: page,
       limit: limit,
+      value : searchValue
     });
-    console.log(result);
+
     setData((prevData) => ({
       ...prevData,
-      [type === "Sent Notifications" ? "sent" : "scheduled"]: result.data,
+      [selectedOption === "Sent Notifications" ? "sent" : "scheduled"]: result.data,
     }));
     setTotalPages(result.totalPages || 1);
     setLoading(false);
@@ -117,19 +120,19 @@ export default function Notifications() {
   };
 
   React.useEffect(() => {
-    fetchNotifications(selectedOption);
-  }, [selectedOption, sortField, sortOrder, limit, page]);
+    fetchNotifications();
+  }, [selectedOption, limit, page, searchValue]);
 
   React.useEffect(() => {
     fetchNotificationsStats();
   }, []);
 
-  const handleSort = (field) => {
-    const isAsc = sortField === field && sortOrder === "asc";
-    setSortField(field);
-    setSortOrder(isAsc ? "desc" : "asc");
-    fetchUsersData(selectedOption); // Refetch data with the new sort
-  };
+  // const handleSort = (field) => {
+  //   const isAsc = sortField === field && sortOrder === "asc";
+  //   setSortField(field);
+  //   setSortOrder(isAsc ? "desc" : "asc");
+  //   fetchUsersData(selectedOption); // Refetch data with the new sort
+  // };
 
   const userOptions = [
     {
@@ -137,10 +140,11 @@ export default function Notifications() {
       content: (
         <Table
           searchBar
-          datePicker
           columns={sentNotificationColumns}
           data={data.sent}
           isLoading={loading}
+          onSearch={handleSearch}
+          searchValue={searchValue}
           paginationProps={{
             currentPage: page,
             totalPages,
@@ -161,10 +165,11 @@ export default function Notifications() {
       content: (
         <Table
           searchBar
-          datePicker
           columns={scheduledNotificationColumns}
           data={data.scheduled}
           isLoading={loading}
+          onSearch={handleSearch}
+          searchValue={searchValue}
           paginationProps={{
             currentPage: page,
             totalPages,

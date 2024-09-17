@@ -1,24 +1,29 @@
-import { URL, apiError, getAuthToken } from "./helper";
+import { getAuthToken } from "./cookies";
+import { URL, apiError } from "./helper";
 
 // GET
 
 export const getNotificationDetails = async (payload) => {
-  const endpoint =
+  let endpoint =
     payload.type === "Sent Notifications"
-      ? `${URL}notify/list?page=${payload.page}&limit=${payload.limit}${
-          payload.sortOrder ? `&sortOrder=${payload.sortOrder}` : null
-        }${payload.sortField ? `&sortBy=${payload.sortField}` : null}`
-      : `${URL}notify/list?isScheduled=true?page=${
-          payload.page
-        }&limit=${payload.limit}${
-          payload.sortOrder ? `&sortOrder=${payload.sortOrder}` : null
-        }${payload.sortField ? `&sortBy=${payload.sortField}` : null}`;
+      ? `${URL}notify/list?`
+      : `${URL}notify/list?isScheduled=${true}`;
+
+  endpoint += `&title=${payload.value}`;
+
+  // if (payload.sortOrder) {
+  //   endpoint += `&sortOrder=${payload.sortOrder}`;
+  // }
+  // if (payload.sortField) {
+  //   endpoint += `&sortBy=${payload.sortField}`;
+  // }
 
   try {
     const res = await fetch(endpoint, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${await getAuthToken()}`,
       },
     });
     const data = await res.json();
@@ -34,6 +39,7 @@ export const getNotificationsMetrics = async () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${await getAuthToken()}`,
       },
     });
     const data = await res.json();
@@ -51,12 +57,11 @@ export const createNotification = async (payload) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
+        Authorization: `Bearer ${await getAuthToken()}`,
       },
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    console.log(data)
     return data;
   } catch (error) {
     apiError(error);

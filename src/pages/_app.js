@@ -5,9 +5,7 @@ import "react-date-picker/dist/DatePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "../styles/datepicker.css";
 import Head from "next/head";
-import Cookies from "js-cookie";
 import RootLayout from "@/components/layouts/layout";
-import { useAuthStore } from "@/stores/authstore";
 import { useRouter } from "next/router";
 
 const inter = Inter({
@@ -19,23 +17,8 @@ const inter = Inter({
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
-  const { user, loading, setToken } = useAuthStore();
-
-  React.useEffect(() => {
-    const token = Cookies.get("token");
-
-    if (token) {
-      setToken(token);
-    }
-
-    if (!loading && !token && router.pathname !== '/login') {
-      router.push("/login");
-    }
-  }, [user, loading, router, setToken]);
 
   const shouldUseLayout = router.pathname !== "/login";
-
-  if (loading) return <div>Loading...</div>;
 
   return (
     <>

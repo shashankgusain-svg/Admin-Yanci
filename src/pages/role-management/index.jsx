@@ -1,14 +1,18 @@
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Dropdown from "@/components/dropdown/DropdownIndex";
-import history from "../../../public/icons/misc/history.svg";
+import viewDetails from "../../../public/icons/misc/viewDetails.svg";
 import deleteRedIcon from "../../../public/icons/misc/deleteRed.svg";
+import Image from "next/image";
 import React from "react";
-import { getAllSubAdmins } from "@/services/api/adminService";
+import { useRouter } from "next/router";
+import { deleteSubAdmin, getAllSubAdmins } from "@/services/api/adminService";
 const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Sub Admin" }];
 
 export default function RoleManagement() {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+
+  const router = useRouter();
 
   const subAdminColumns = [
     {
@@ -24,12 +28,14 @@ export default function RoleManagement() {
       key: "features",
       render: (row) => (
         <p className=" whitespace-normal">
-          {row.permissions.map((permission, index) => (
-            <span key={permission._id}>
-              {permission.permissionName}
-              {index < row.permissions.length - 1 && ", "}
-            </span>
-          ))}
+          {row.permissions.map((permission, index) =>
+            permission.view === true ? (
+              <span key={permission._id}>
+                {permission.permissionName}
+                {index < row.permissions.length - 1 && ", "}
+              </span>
+            ) : null
+          )}
         </p>
       ),
     },
@@ -41,6 +47,30 @@ export default function RoleManagement() {
     setData([...result.data]);
     setLoading(false);
   };
+
+  const dropdownItems = (row) => [
+    {
+      icon: viewDetails,
+      text: "View Details",
+      onClick: () => {
+        router.push(`./role-management/${row._id}`);
+      },
+    },
+    {
+      icon: deleteRedIcon,
+      text: "Delete",
+      onClick: async () => {
+        try {
+          const res = await deleteSubAdmin(row._id);
+          const data = JSON.stringify(res);
+          fetchSubAdminDetails();
+        } catch (error) {
+          console.log(error);
+        }
+      },
+      className: "text-red-500",
+    },
+  ];
 
   React.useEffect(() => {
     fetchSubAdminDetails();
@@ -56,9 +86,9 @@ export default function RoleManagement() {
             <p className="text-black-6 text-heading-1">Loading Sub Admins</p>
           </div>
         ) : (
-          <div className="mt-4 rounded-xl border border-primary-4 overflow-x-auto">
-            <table className="min-w-full">
-              <thead className="h-14 p-4 border-b bg-primary-2 border-primary-3 w-full">
+          <div className="mt-4 rounded-xl border  border-primary-4 overflow-x-auto">
+            <table className="min-w-full bg-primary-2">
+              <thead className="h-14 p-4 border-b border-primary-3 w-full">
                 <tr className="w-full">
                   {subAdminColumns.map((col, index) => (
                     <th
@@ -90,25 +120,31 @@ export default function RoleManagement() {
                         )}
                       </td>
                     ))}
-                    {/* <td>
-                    <Dropdown>
-                      <Dropdown.Button type="clean" className="table-cell px-1">
-                        <span className="font-bold">&#8942;</span>
-                      </Dropdown.Button>
-                      <Dropdown.Menu origin="bottom-right">
-                        {dropdownItems(row).map((dropdownItem, index) => (
-                          <Dropdown.Item
-                            onClick={dropdownItem.onClick}
-                            key={index}
-                            className={dropdownItem.className}
-                          >
-                            <Image src={dropdownItem.icon} alt="View Details" />
-                            <p>{dropdownItem.text}</p>
-                          </Dropdown.Item>
-                        ))}
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </td> */}
+                    <td>
+                      <Dropdown>
+                        <Dropdown.Button
+                          type="clean"
+                          className="table-cell px-1"
+                        >
+                          <span className="font-bold">&#8942;</span>
+                        </Dropdown.Button>
+                        <Dropdown.Menu origin="top-right">
+                          {dropdownItems(row).map((dropdownItem, index) => (
+                            <Dropdown.Item
+                              onClick={dropdownItem.onClick}
+                              key={index}
+                              className={dropdownItem.className}
+                            >
+                              <Image
+                                src={dropdownItem.icon}
+                                alt="View Details"
+                              />
+                              <p>{dropdownItem.text}</p>
+                            </Dropdown.Item>
+                          ))}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </td>
                   </tr>
                 ))}
               </tbody>

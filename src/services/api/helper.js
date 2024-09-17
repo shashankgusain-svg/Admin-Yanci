@@ -1,5 +1,3 @@
-import Cookies from "js-cookie";
-
 export const URL = "https://yanci-backend.vercel.app/v1/";
 
 export const apiError = (e) => {
@@ -12,9 +10,4 @@ export const apiError = (e) => {
     alert("Takes more than the usual time. Please refresh the page.");
   }
   return { status: false, message: e };
-};
-
-export const getAuthToken = () => {
-  const token = Cookies.get("token");
-  return token;
 };

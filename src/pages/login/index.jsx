@@ -3,31 +3,58 @@ import Image from "next/image";
 import welcomeImg from "../../../public/images/welcomeImg.png";
 import Button from "@/components/button/Button";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
-import Cookies from "js-cookie";
-import { useAuthStore } from "@/stores/authstore";
 import { useRouter } from "next/router";
 import { getToken } from "@/services/api/authService";
+import { setToken, setUser } from "@/services/api/cookies";
+import { isRequired, verifyPassword, verifyEmail } from "@/utils/helpers";
 
 export default function Login() {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-
-  const { setToken } = useAuthStore();
+  const [fields, setFields] = React.useState({ email: "", password: "" });
+  const [expiry, setExpiry] = React.useState(false);
 
   const router = useRouter();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const data = await getToken({ email, password });
+    const isEmailValid = verifyEmail(fields.email);
+    const isPasswordValid = verifyPassword(fields.password);
+    const isEmailRequiredValid = isRequired(fields.email, "Email");
+    const isPasswordRequiredValid = isRequired(fields.password, "Password");
 
-    if (data.token) {
-      Cookies.set("token", data.token, { expires: 7 });
-      setToken(data.token);
-      router.push("/");
-    } else {
-      console.log("Login failed");
+    if (
+      !isEmailValid ||
+      !isPasswordValid ||
+      !isEmailRequiredValid ||
+      !isPasswordRequiredValid
+    ) {
+      console.log("Error");
+      return;
     }
+
+    try {
+      const data = await getToken(fields);
+      if (data) {
+        setToken(data.token, expiry);
+        setUser(data, expiry);
+        router.push("/");
+      } else {
+        console.log("Login failed");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
+
+  const emailHandler = (e) => {
+    setFields((prev) => ({ ...prev, email: e.target.value }));
+  };
+  const passwordHandler = (e) => {
+    setFields((prev) => ({ ...prev, password: e.target.value }));
+  };
+
+  const handleExpiryChange = (e) => {
+    setExpiry(e.target.checked);
   };
 
   return (
@@ -73,8 +100,8 @@ export default function Login() {
                     id="email"
                     type="email"
                     placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={fields.email}
+                    onChange={emailHandler}
                   />
                 </InputAndLabel>
 
@@ -86,8 +113,8 @@ export default function Login() {
                     id="password"
                     type="password"
                     placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={fields.password}
+                    onChange={passwordHandler}
                   />
                 </InputAndLabel>
 
@@ -96,6 +123,8 @@ export default function Login() {
                     <input
                       id="remember_me"
                       type="checkbox"
+                      onChange={handleExpiryChange}
+                      checked={fields.expiry}
                       className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
                     />
                     <label

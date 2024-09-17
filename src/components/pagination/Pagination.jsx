@@ -4,6 +4,14 @@ import arrowRight from "../../../public/icons/misc/arrowRight.svg";
 import Image from "next/image";
 
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
+  if (totalPages <= 1) {
+    return (
+      <div className="bg-primary-2 border border-primary-3 px-3 py-1 rounded">
+        <p className="text-body-2 text-primary-7"> Page 1 of 1</p>
+      </div>
+    );
+  }
+
   const renderPageNumbers = () => {
     const pageNumbers = [];
 

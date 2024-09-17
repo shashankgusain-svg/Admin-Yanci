@@ -7,11 +7,11 @@ import Modal from "@/components/modal/ModalIndex";
 import imagePlaceholder from "../../../../public/images/pi_placeholder.jpg";
 import { deleteUser, getUserDetails } from "@/services/api/userService";
 import KYCModal from "@/components/modals/KYCModal";
-import { useAuthStore } from "@/stores/authstore";
 import PDFViewer from "@/components/pdfViewer/PDFViewer";
+import { getAuthToken } from "@/services/api/cookies";
 
 export default function UserPage() {
-  const { token } = useAuthStore();
+  const token = getAuthToken();
 
   const [data, setData] = React.useState({
     profilePic: null,
@@ -49,7 +49,6 @@ export default function UserPage() {
 
   const handleDelete = async () => {
     const data = await deleteUser(userId, token);
-    console.log(data);
   };
 
   const [showDetails, setShowDetails] = React.useState(false);

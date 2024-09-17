@@ -1,4 +1,5 @@
-import { apiError, URL, getAuthToken } from "./helper";
+import { getAuthToken } from "./cookies";
+import { apiError, URL } from "./helper";
 
 // GET
 
@@ -8,7 +9,7 @@ export const getAllSubAdmins = async () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
+        Authorization: `Bearer ${await getAuthToken()}`,
       },
     });
     const data = await res.json();
@@ -25,7 +26,7 @@ export const addSubAdmin = async (payload) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
+        Authorization: `Bearer ${await getAuthToken()}`,
       },
       body: JSON.stringify({ ...payload }),
     });
@@ -44,9 +45,27 @@ export const updatePolicy = async (payload) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getAuthToken()}`,
+        Authorization: `Bearer ${await getAuthToken()}`,
       },
       body: JSON.stringify({ ...payload }),
+    });
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    apiError(error);
+  }
+};
+
+// DELETE
+
+export const deleteSubAdmin = async (_id) => {
+  try {
+    const res = await fetch(`${URL}admin/delete/sub-admin/${_id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await getAuthToken()}`,
+      },
     });
     const data = await res.json();
     return data;

@@ -10,8 +10,10 @@ export const getToken = async (credentials) => {
       },
       body: JSON.stringify(credentials),
     });
-    const data = await res.json();
-    return data;
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
   } catch (error) {
     apiError(error);
   }
