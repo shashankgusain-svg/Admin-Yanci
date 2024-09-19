@@ -18,7 +18,7 @@ import {
 import Modal from "@/components/modal/ModalIndex";
 import Button from "@/components/button/Button";
 import { userKeyTitleMapping } from "@/utils/seed";
-import { getBirthYear } from "@/utils/helpers";
+import { canEdit, getBirthYear } from "@/utils/helpers";
 
 const breadCrumbItems = [
   { name: "Home", Link: "/" },
@@ -49,6 +49,8 @@ export default function User() {
   const [page, setPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(0);
 
+  const [values, setValues] = React.useState(null);
+
   const columns = [
     {
       header: "P.I",
@@ -67,15 +69,14 @@ export default function User() {
     {
       header: "Name",
       key: "name",
-      render: (row) =>
+      render: (row) => (
         <Link
-            href={`/user/${row._id}`}
-            className="hover:underline text-primary-7"
-          >
-            <p>
-              {row.firstName ? `${row.firstName} ${row.lastName}` : "--"}
-            </p>
-          </Link>,
+          href={`/user/${row._id}`}
+          className="hover:underline text-primary-7"
+        >
+          <p>{row.firstName ? `${row.firstName} ${row.lastName}` : "--"}</p>
+        </Link>
+      ),
       sortable: true,
       onSort: () => {
         handleSort("firstName");
@@ -116,7 +117,7 @@ export default function User() {
     },
   ];
 
-  const fetchUsersData = async () => {
+  const fetchUsersData = async (startDate = "", endDate = "") => {
     setLoading(true);
     const result = await getUsersData({
       type: selectedOption,
@@ -124,11 +125,14 @@ export default function User() {
       sortField: sortField,
       page: page,
       limit: limit,
-      value: searchValue
+      value: searchValue,
+      startDate: startDate,
+      endDate: endDate,
     });
     setData((prevData) => ({
       ...prevData,
-      [selectedOption === "Blocked Users" ? "blocked" : "active"]: result.results,
+      [selectedOption === "Blocked Users" ? "blocked" : "active"]:
+        result.results,
     }));
     setTotalPages(result.totalPages || 1);
     setLoading(false);
@@ -157,7 +161,7 @@ export default function User() {
     } catch (error) {
       console.error("Error unblocking user:", error);
     }
-  }
+  };
 
   const onSearch = (event) => {
     const value = event.target.value;
@@ -165,8 +169,14 @@ export default function User() {
   };
 
   React.useEffect(() => {
+    if (values) {
+      const startDate = values[0]?.format("YYYY-MM-DD") || "";
+      const endDate = values[1]?.format("YYYY-MM-DD") || "";
+      fetchUsersData(startDate, endDate);
+      return;
+    }
     fetchUsersData();
-  }, [selectedOption, sortField, sortOrder, limit, page, searchValue]);
+  }, [selectedOption, sortField, sortOrder, limit, page, searchValue, values]);
 
   React.useEffect(() => {
     fetchUserStats();
@@ -174,41 +184,54 @@ export default function User() {
 
   // Dropdown Items
 
-  const blockedDroppdownItems = (row) => [
-    {
-      icon: viewDetails,
-      text: "View Details",
-      onClick: () => {
-        router.push(`/user/${row._id}`);
+  const blockedDroppdownItems = (row) => {
+    const items = [
+      {
+        icon: viewDetails,
+        text: "View Details",
+        onClick: () => {
+          router.push(`/user/${row._id}`);
+        },
       },
-    },
-    {
-      icon: unblockUser,
-      text: "Unblock User",
-      onClick: () => {
-        handleUnblock(row._id);
-      },
-    },
-  ];
+    ];
+    if (canEdit("User Management")) {
+      items.push({
+        icon: unblockUser,
+        text: "Unblock User",
+        onClick: () => {
+          handleUnblock(row._id);
+        },
+        className : "text-green-500"
+      });
+    }
+    return items;
+  };
 
-  const activeDroppdownItems = (row) => [
-    {
-      icon: viewDetails,
-      text: "View Details",
-      onClick: () => {
-        router.push(`/user/${row._id}`);
+  const activeDroppdownItems = (row) => {
+    const items = [
+      {
+        icon: viewDetails,
+        text: "View Details",
+        onClick: () => {
+          router.push(`/user/${row._id}`);
+        },
       },
-    },
-    {
-      icon: blockUserIcon,
-      text: "Block User",
-      onClick: () => {
-        setUserId(row._id);
-        setModalOpen(true);
-      },
-      className: "text-red-500",
-    },
-  ];
+    ];
+
+    if (canEdit("User Management")) {
+      items.push({
+        icon: blockUserIcon,
+        text: "Block User",
+        onClick: () => {
+          setUserId(row._id);
+          setModalOpen(true);
+        },
+        className: "text-red-500",
+      });
+    }
+
+    return items;
+  };
 
   const handleSort = (field) => {
     const isAsc = sortField === field && sortOrder === "asc";
@@ -243,6 +266,8 @@ export default function User() {
               setPage(1); // Reset to page 1 when limit changes
             },
           }}
+          dateValue={values}
+          dateOnChange={setValues}
         />
       ),
     },
@@ -271,6 +296,8 @@ export default function User() {
               setPage(1);
             },
           }}
+          dateValue={values}
+          dateOnChange={setValues}
         />
       ),
     },

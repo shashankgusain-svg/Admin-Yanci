@@ -5,12 +5,12 @@ import exportIcon from "../../../public/icons/misc/export.svg";
 import calender from "../../../public/icons/misc/calender.svg";
 import Image from "next/image";
 import Dropdown from "../dropdown/DropdownIndex";
-import DatePicker from "../datePicker/DatePicker";
 import Button from "../button/Button";
 import Pagination from "../pagination/Pagination";
 import LoadingAnimation from "../../../public/icons/animated/loading";
 import SortIcon from "../../../public/icons/misc/SortIcon";
 import { downloadCSV } from "@/utils/helpers";
+import CustomDatePicker from "../datePicker/DatePicker";
 
 export default function Table({
   columns = [],
@@ -27,6 +27,8 @@ export default function Table({
   isLoading = true,
   paginationProps,
   limitProps,
+  dateValue,
+  dateOnChange = () => {},
 }) {
   return (
     <div className="w-full flex flex-col relative">
@@ -51,7 +53,7 @@ export default function Table({
                 <Image src={calender} alt="Calender" />
               </Dropdown.Button>
               <Dropdown.Menu origin="top-right">
-                <DatePicker />
+                <CustomDatePicker values={dateValue} onChange={dateOnChange}/>
               </Dropdown.Menu>
             </Dropdown>
           ) : null}
@@ -60,7 +62,7 @@ export default function Table({
             <Button
               design="table"
               onClick={() => {
-                downloadCSV(columns,data);
+                downloadCSV(columns, data);
               }}
             >
               <Image src={exportIcon} alt="Export" />

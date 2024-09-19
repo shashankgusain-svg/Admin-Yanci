@@ -3,31 +3,13 @@ import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import StatsCard from "@/components/statsCard/StatsCard";
 import Toggle from "@/components/typeToggle/TypeToggle";
 import Table from "@/components/table/Table";
-import { getUserSupportDetails } from "@/services/api/userSupportService";
+import { getSupportStats, getUserSupportDetails } from "@/services/api/userSupportService";
 import editIcon from "../../../public/icons/misc/edit.svg";
 import deleteIcon from "../../../public/icons/misc/delete.svg";
 import respond from "../../../public/icons/misc/respond.svg";
 import StarRating from "../../../public/icons/misc/StarRating";
-
-const dummyStats = [
-  {
-    label: "Total Queries",
-    value: 46,
-  },
-  {
-    label: "Resolved Queries",
-    value: 46,
-  },
-  {
-    label: "Pending Queries",
-    value: 40,
-  },
-  {
-    label: "On Hold Queries",
-    value: 6,
-  },
-];
-
+import { supportKeyMapping } from "@/utils/seed";
+import { canEdit } from "@/utils/helpers";
 
 const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "User Support" }];
 
@@ -42,110 +24,6 @@ export default function UserSupport() {
   const [loading, setLoading] = React.useState(true);
 
   const [selectedOption, setSelectedOption] = React.useState("Queries");
-
-  const faqColumns = [
-    {
-      header: "Question",
-      key: "question",
-    },
-    {
-      header: "Answer",
-      key: "answer",
-      render: (row) => <div className="whitespace-normal">{row.answer}</div>,
-    },
-    {
-      header: "Type",
-      key: "type",
-    },
-    {
-      header: "Published on",
-      key: "createdAt",
-      isDate: true,
-    },
-    {
-      header: "Status",
-      key: "status",
-      render: (row) => (
-        <span
-          className={`rounded-full px-2 py-1 ${
-            row.status === "LIVE"
-              ? "bg-green-600 text-white"
-              : "bg-yellow-400 text-black"
-          }`}
-        >
-          {row.status}
-        </span>
-      ),
-    },
-  ];
-
-  const feedbackColumns = [
-    {
-      header: "Yanci ID",
-      key: "_id",
-    },
-    {
-      header: "Rating",
-      key: "answer",
-      render: (row) => (
-        <div className="flex gap-1">
-          {Array.from({ length: row.rating }, (_, i) => (
-            <StarRating />
-          ))}
-        </div>
-      ),
-    },
-    {
-      header: "Comments",
-      key: "description",
-    },
-    {
-      header: "Sent on",
-      key: "createdAt",
-    },
-  ];
-
-  const queriesColumns = [
-    {
-      header: "Yanci ID",
-      key: "user",
-      render: (row) => <div>{`#${row.user}`}</div>,
-    },
-    {
-      header: "Ticket no.",
-      key: "ticketNo",
-      render: (row) => <div>{`#${row.ticketNo}`}</div>,
-    },
-    {
-      header: "Comments",
-      key: "description",
-      render: (row) => (
-        <div className="whitespace-normal">{row.description}</div>
-      ),
-    },
-    {
-      header: "Sent on",
-      key: "createdAt",
-      isDate: true,
-    },
-    {
-      header: "Status",
-      key: "status",
-      render: (row) => (
-        <span
-          className={`rounded-full px-2 py-1 ${
-            row.status === "Resolved"
-              ? "bg-green-600 text-white"
-              : row.status === "Pending"
-              ? "bg-red-600 text-white"
-              : "bg-yellow-500 text-black"
-          }`}
-        >
-          {row.status}
-        </span>
-      ),
-    },
-  ];
 
   const [sortField, setSortField] = React.useState("");
   const [sortOrder, setSortOrder] = React.useState("asc");
@@ -185,9 +63,19 @@ export default function UserSupport() {
     setLoading(false);
   };
 
+  const fetchNotificationsStats = async () => {
+    const res = await getSupportStats({type:selectedOption});
+    const data = { ...res.data };
+    setStats(data);
+  };
+
   React.useEffect(() => {
     fetchUserSupportDetails();
   }, [selectedOption, sortField, sortOrder, limit, page, searchValue]);
+
+  React.useEffect(()=>{
+    fetchNotificationsStats();
+  },[selectedOption])
 
   const queriesDropdownItems = (row) => [
     {
@@ -223,6 +111,128 @@ export default function UserSupport() {
     },
   ];
 
+  const handleSort = (field) => {
+    const isAsc = sortField === field && sortOrder === "asc";
+    setSortField(field);
+    setSortOrder(isAsc ? "desc" : "asc");
+  };
+
+  const feedbackColumns = [
+    {
+      header: "Yanci ID",
+      key: "_id",
+    },
+    {
+      header: "Rating",
+      key: "answer",
+      render: (row) => (
+        <div className="flex gap-1">
+          {Array.from({ length: row.rating }, (_, i) => (
+            <StarRating />
+          ))}
+        </div>
+      ),
+    },
+    {
+      header: "Comments",
+      key: "description",
+    },
+    {
+      header: "Sent on",
+      key: "createdAt",
+      sortable: true,
+      onSort: () => {
+        handleSort("createdAt");
+      },
+    },
+  ];
+
+  const queriesColumns = [
+    {
+      header: "Yanci ID",
+      key: "user",
+      render: (row) => <div>{`#${row.user}`}</div>,
+    },
+    {
+      header: "Ticket no.",
+      key: "ticketNo",
+      render: (row) => <div>{`#${row.ticketNo}`}</div>,
+    },
+    {
+      header: "Comments",
+      key: "description",
+      render: (row) => (
+        <div className="whitespace-normal">{row.description}</div>
+      ),
+    },
+    {
+      header: "Sent on",
+      key: "createdAt",
+      isDate: true,
+      sortable: true,
+      onSort: () => {
+        handleSort("createdAt");
+      },
+    },
+    {
+      header: "Status",
+      key: "status",
+      render: (row) => (
+        <span
+          className={`rounded-full px-2 py-1 ${
+            row.status === "Resolved"
+              ? "bg-green-600 text-white"
+              : row.status === "Pending"
+              ? "bg-red-600 text-white"
+              : "bg-yellow-500 text-black"
+          }`}
+        >
+          {row.status}
+        </span>
+      ),
+    },
+  ];
+
+  const faqColumns = [
+    {
+      header: "Question",
+      key: "question",
+    },
+    {
+      header: "Answer",
+      key: "answer",
+      render: (row) => <div className="whitespace-normal">{row.answer}</div>,
+    },
+    {
+      header: "Type",
+      key: "type",
+    },
+    {
+      header: "Published on",
+      key: "createdAt",
+      isDate: true,
+      sortable: true,
+      onSort: () => {
+        handleSort("createdAt");
+      },
+    },
+    {
+      header: "Status",
+      key: "status",
+      render: (row) => (
+        <span
+          className={`rounded-full px-2 py-1 ${
+            row.status === "LIVE"
+              ? "bg-green-600 text-white"
+              : "bg-yellow-400 text-black"
+          }`}
+        >
+          {row.status}
+        </span>
+      ),
+    },
+  ];
+
   const userOptions = [
     {
       label: "Queries",
@@ -231,7 +241,7 @@ export default function UserSupport() {
           searchBar
           columns={queriesColumns}
           data={data.queries}
-          isDropdown
+          isDropdown={canEdit("User Support")}
           dropdownItems={(row) => queriesDropdownItems(row)}
           isLoading={loading}
           searchValue={searchValue}
@@ -283,7 +293,7 @@ export default function UserSupport() {
           searchBar
           columns={faqColumns}
           data={data.faqs}
-          isDropdown
+          isDropdown={canEdit("User Support")}
           dropdownItems={(row) => faqsDroppdownItems(row)}
           isLoading={loading}
           searchValue={searchValue}
@@ -310,8 +320,8 @@ export default function UserSupport() {
       <Breadcrumb items={breadCrumbItems} />
       <div className="flex flex-col gap-6">
         <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
-          {dummyStats.map((stat, index) => (
-            <StatsCard key={index} label={stat.label} value={stat.value} />
+          {Object.entries(stats).map(([key, value], index)=> (
+            <StatsCard key={index} label={supportKeyMapping[key] || key} value={value} />
           ))}
         </div>
         <Toggle

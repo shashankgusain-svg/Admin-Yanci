@@ -1,5 +1,5 @@
 import { getAuthToken } from "./cookies";
-import { URL, apiError } from "./helper";
+import { URL, apiError, responseValidator } from "./helper";
 
 // GET
 export const getUserSupportDetails = async (payload) => {
@@ -27,24 +27,29 @@ export const getUserSupportDetails = async (payload) => {
         Authorization: `Bearer ${await getAuthToken()}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res);
   } catch (error) {
     return apiError(error);
   }
 };
 
-export const getSupportStats = async () => {
+export const getSupportStats = async (payload) => {
+  let endpoint =
+    payload.type === "Queries"
+      ? `${URL}support/metrics?type=QUERY`
+      : payload.type === "Feedbacks"
+      ? `${URL}support/metrics?type=FEEDBACK`
+      : `${URL}support/metrics?type=FAQ`;
+
   try {
-    const res = await fetch(`${URL}adminuser/user-metrics`, {
+    const res = await fetch(endpoint, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${await getAuthToken()}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res);
   } catch (error) {
     return apiError(error);
   }
@@ -62,8 +67,7 @@ export const createNewFAQ = async (payload) => {
       },
       body: JSON.stringify({ ...payload }),
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res);
   } catch (error) {
     apiError(error);
   }

@@ -14,6 +14,7 @@ export const verifyEmail = (email, message = true) => {
     toast.error(`"${email}" is an invalid email address`, {
       toastId: "email-verification-error",
     });
+    return false;
   }
   return isValidEmail;
 };
@@ -77,6 +78,28 @@ export const getBirthYear = (birthdate) => {
   }
 
   return age > 0 ? age : "--";
+};
+
+export const canView = (permissionName) => {
+  const user = getUser();
+
+  if (!user || user.isSuperAdmin) return true;
+
+  const permission = user.adminPermission?.find(
+    (perm) => perm.permissionName === permissionName
+  );
+  return permission?.view ?? false;
+};
+
+export const canEdit = (permissionName) => {
+  const user = getUser();
+
+  if (!user || user.isSuperAdmin) return true;
+
+  const permission = user.adminPermission?.find(
+    (perm) => perm.permissionName === permissionName
+  );
+  return permission?.edit ?? false;
 };
 
 export const downloadCSV = (columns, data) => {

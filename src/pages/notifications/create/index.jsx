@@ -3,8 +3,11 @@ import React from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Button from "@/components/button/Button";
 import { createNotification } from "@/services/api/notificationsService";
+import { useRouter } from "next/router";
 
 export default function CreateNotification() {
+  const router = useRouter();
+
   const [notification, setNotification] = React.useState({
     title: "",
     targetCustomer: "",
@@ -62,7 +65,7 @@ export default function CreateNotification() {
     return month + "/" + day + "/" + year;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formattedNotification = notification.isScheduled
       ? {
@@ -80,7 +83,8 @@ export default function CreateNotification() {
           targetCustomer: notification.targetCustomer,
           mode: notification.mode,
         };
-    createNotification(formattedNotification);
+    await createNotification(formattedNotification);
+    router.push("/notifications");
   };
 
   const breadCrumbItems = [

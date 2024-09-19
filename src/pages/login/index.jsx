@@ -19,16 +19,8 @@ export default function Login() {
 
     const isEmailValid = verifyEmail(fields.email);
     const isPasswordValid = verifyPassword(fields.password);
-    const isEmailRequiredValid = isRequired(fields.email, "Email");
-    const isPasswordRequiredValid = isRequired(fields.password, "Password");
 
-    if (
-      !isEmailValid ||
-      !isPasswordValid ||
-      !isEmailRequiredValid ||
-      !isPasswordRequiredValid
-    ) {
-      console.log("Error");
+    if (!isEmailValid || !isPasswordValid) {
       return;
     }
 

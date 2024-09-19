@@ -1,4 +1,4 @@
-import { apiError, URL } from "./helper";
+import { apiError, responseValidator, URL } from "./helper";
 
 // POST
 export const getToken = async (credentials) => {
@@ -10,10 +10,7 @@ export const getToken = async (credentials) => {
       },
       body: JSON.stringify(credentials),
     });
-    if (res.ok) {
-      const data = await res.json();
-      return data;
-    }
+    return responseValidator(res, true);
   } catch (error) {
     apiError(error);
   }

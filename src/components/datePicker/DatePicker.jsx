@@ -1,46 +1,42 @@
-import { format } from "date-fns";
 import React from "react";
 import Button from "../button/Button";
-import Calender from "./Calender";
+import DatePicker from "react-multi-date-picker";
+import { DateObject } from "react-multi-date-picker";
 
-export default function DatePicker() {
-  const [startDate, setStartDate] = React.useState(new Date());
-  const [endDate, setEndDate] = React.useState(new Date());
-
-  const handleDateChange = (date, setDate) => {
-    setDate(date);
-  };
+export default function CustomDatePicker({ values, onChange }) {
+  const format = "YYYY-MM-DD"; // Format as per your requirement
+  const [selectedDates, setSelectedDates] = React.useState(values);
 
   return (
     <div className="date-picker flex flex-col gap-2 pb-1">
-      <div className="flex gap-10 py-4 px-8 bg-black-3">
-        <div className="flex flex-col gap-2">
-          <label className="text-body-2">From</label>
-          <input
-            type="text"
-            value={format(startDate, "yyyy-MM-dd")}
-            readOnly
-            className="text-body-2 h-8 w-full text-center"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-body-2">To</label>
-          <input
-            type="text"
-            value={format(startDate, "yyyy-MM-dd")}
-            readOnly
-            className="text-body-2 h-8 w-full text-center"
-          />
-        </div>
-      </div>
-
-      <div>
-        <Calender/>
-      </div>
+      <DatePicker
+        type="Calendar"
+        value={selectedDates}
+        onChange={setSelectedDates}
+        format={format}
+        range
+      />
 
       <div className="px-4 grid grid-cols-2 gap-2">
-        <Button design="primary">Remove</Button>
-        <Button>Apply</Button>
+        <Button
+          design="primary"
+          onClick={() => {
+            setSelectedDates(null);
+            onChange(null);
+          }}
+        >
+          Remove
+        </Button>
+        <Button
+          design="primary"
+          onClick={() => {
+            if (selectedDates.length === 2) {
+              onChange(selectedDates);
+            }
+          }}
+        >
+          Apply
+        </Button>
       </div>
     </div>
   );

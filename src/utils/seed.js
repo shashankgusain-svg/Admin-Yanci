@@ -32,3 +32,17 @@ export const kycVerificationStatusMapping = {
   hold : "On Hold",
   rejected: "Rejected"
 };
+
+export const supportKeyMapping = {
+  totalQuery: "Total Queries",
+  resolvedQuery: "Queries Resolved",
+  holdQuery: "Queries on Hold",
+  pendingQuery: "Pending Queries",
+  totalFeedback: "Total Feedback",
+  fourPlusFeedback: "4+ Feedback",
+  twoPlusFeedback: "2+ Feedback",
+  zeroPlusFeedback: "0+ Feedback",
+  totalFaq: "Total FAQs",
+  liveFaq: "Active FAQs",
+  inactiveFaq: "Inactive FAQs"
+};

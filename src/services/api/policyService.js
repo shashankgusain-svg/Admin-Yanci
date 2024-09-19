@@ -10,8 +10,7 @@ export const updatePolicy = async (payload) => {
       },
       body: JSON.stringify(payload),
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res,true);
   } catch (error) {
     apiError(error);
   }

@@ -1,5 +1,5 @@
 import { getAuthToken } from "./cookies";
-import { URL, apiError } from "./helper";
+import { URL, apiError, responseValidator } from "./helper";
 
 // GET
 
@@ -11,12 +11,15 @@ export const getNotificationDetails = async (payload) => {
 
   endpoint += `&title=${payload.value}`;
 
-  // if (payload.sortOrder) {
-  //   endpoint += `&sortOrder=${payload.sortOrder}`;
-  // }
-  // if (payload.sortField) {
-  //   endpoint += `&sortBy=${payload.sortField}`;
-  // }
+  if (payload.sortOrder) {
+    endpoint += `&sortOrder=${payload.sortOrder}`;
+  }
+  if (payload.sortField) {
+    endpoint += `&sortBy=${payload.sortField}`;
+  }
+
+  console.log(endpoint)
+
 
   try {
     const res = await fetch(endpoint, {
@@ -26,8 +29,7 @@ export const getNotificationDetails = async (payload) => {
         Authorization: `Bearer ${await getAuthToken()}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res);
   } catch (error) {
     return apiError(error);
   }
@@ -42,8 +44,7 @@ export const getNotificationsMetrics = async () => {
         Authorization: `Bearer ${await getAuthToken()}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res);
   } catch (error) {
     return apiError(error);
   }
@@ -61,8 +62,7 @@ export const createNotification = async (payload) => {
       },
       body: JSON.stringify(payload),
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res, true);
   } catch (error) {
     apiError(error);
   }

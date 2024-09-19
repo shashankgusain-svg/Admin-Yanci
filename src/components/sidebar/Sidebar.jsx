@@ -46,7 +46,7 @@ const sidebarBtns = [
   { name: "KYC", permissionName: "KYC", path: "/kyc", Icon: Kyc },
   {
     name: "Transactions",
-    name: "Transactions",
+    permissionName: "Transactions",
     path: "/transactions",
     Icon: Transactions,
   },

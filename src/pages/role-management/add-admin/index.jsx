@@ -4,6 +4,7 @@ import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import Button from "@/components/button/Button";
 import { addSubAdmin } from "@/services/api/adminService";
 import { useRouter } from "next/router";
+import { isRequired, verifyEmail, verifyPassword } from "@/utils/helpers";
 
 export default function index() {
   const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Sub Admin" }];
@@ -127,60 +128,23 @@ export default function index() {
     });
   };
 
-  const [errors, setErrors] = React.useState({
-    name: "",
-    email: "",
-    password: "",
-    phone: "",
-  });
-
-  const validateForm = () => {
-    const newErrors = {
-      name: "",
-      email: "",
-      password: "",
-      phone: "",
-    };
-
-    if (!newSubAdminDetails.name.trim()) {
-      newErrors.name = "Name is required.";
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!newSubAdminDetails.email.trim()) {
-      newErrors.email = "Email is required.";
-    } else if (!emailRegex.test(newSubAdminDetails.email)) {
-      newErrors.email = "Invalid email format.";
-    }
-
-    if (!newSubAdminDetails.password.trim()) {
-      newErrors.password = "Password is required.";
-    } else if (newSubAdminDetails.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters.";
-    }
-
-    const phoneRegex = /^(?:233|0)[2-5]\d{8}$/;
-    if (
-      newSubAdminDetails.phone.trim() &&
-      !phoneRegex.test(newSubAdminDetails.phone)
-    ) {
-      newErrors.phone = "Invalid phone number for Ghana.";
-    }
-
-    setErrors(newErrors);
-
-    return Object.values(newErrors).every((error) => error === "");
-  };
-
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const isValid = validateForm();
-    if (isValid) {
+    const isEmailValid = verifyEmail(newSubAdminDetails.email);
+    const isPasswordValid = verifyPassword(newSubAdminDetails.password);
+    const isNameValid = isRequired(newSubAdminDetails.name,"Name");
+
+    if (!isEmailValid || !isPasswordValid || !isNameValid) {
+      return;
+    }
+
+    try {
+      console.log(newSubAdminDetails)
       await addSubAdmin(newSubAdminDetails);
       setNewSubAdminDetails(defaultSubAdminDetails);
       router.push("/role-management");
-    } else {
-      console.log("Validation failed", errors);
+    } catch (error) {
+      console.error("Error creating admin.", error);
     }
   };
 
@@ -207,9 +171,6 @@ export default function index() {
                 value={newSubAdminDetails.name}
                 onChange={handleInputChange}
               />
-              {errors.name && (
-                <p className="text-red-600 text-sm">{errors.name}</p>
-              )}
             </InputAndLabel>
 
             <InputAndLabel>
@@ -223,9 +184,6 @@ export default function index() {
                 value={newSubAdminDetails.phone}
                 onChange={handleInputChange}
               />
-              {errors.phone && (
-                <p className="text-red-600 text-sm">{errors.phone}</p>
-              )}
             </InputAndLabel>
 
             <div className="col-span-2 flex flex-col gap-3 text-black-9 font-semibold">
@@ -245,9 +203,6 @@ export default function index() {
                     value={newSubAdminDetails.email}
                     onChange={handleInputChange}
                   />
-                  {errors.email && (
-                    <p className="text-red-600 text-sm">{errors.email}</p>
-                  )}
                 </InputAndLabel>
 
                 <InputAndLabel>
@@ -264,9 +219,6 @@ export default function index() {
                     value={newSubAdminDetails.password}
                     onChange={handleInputChange}
                   />
-                  {errors.password && (
-                    <p className="text-red-600 text-sm">{errors.password}</p>
-                  )}
                 </InputAndLabel>
               </div>
             </div>

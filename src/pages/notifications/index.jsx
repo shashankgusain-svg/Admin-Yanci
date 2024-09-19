@@ -18,6 +18,9 @@ export default function Notifications() {
   const [selectedOption, setSelectedOption] =
     React.useState("Sent Notifications");
 
+  const [sortField, setSortField] = React.useState("");
+  const [sortOrder, setSortOrder] = React.useState("asc");
+
   const [searchValue, setSearchValue] = React.useState("");
 
   const [limit, setLimit] = React.useState(10);
@@ -32,6 +35,12 @@ export default function Notifications() {
   const handleSearch = (event) => {
     const value = event.target.value;
     setSearchValue(value);
+  };
+
+  const handleSort = (field) => {
+    const isAsc = sortField === field && sortOrder === "asc";
+    setSortField(field);
+    setSortOrder(isAsc ? "desc" : "asc");
   };
 
   const sentNotificationColumns = [
@@ -53,10 +62,10 @@ export default function Notifications() {
     {
       header: "Sent At",
       key: "sentOn",
-      // sortable: true,
-      // onSort: () => {
-      //   handleSort("sentOn");
-      // },
+      sortable: true,
+      onSort: () => {
+        handleSort("sentOn");
+      },
       isDate: true,
     },
     {
@@ -84,10 +93,10 @@ export default function Notifications() {
     {
       header: "Scheduled On",
       key: "scheduledOn",
-      // sortable: true,
-      // onSort: () => {
-      //   handleSort("scheduledOn");
-      // },
+      sortable: true,
+      onSort: () => {
+        handleSort("scheduledOn");
+      },
       isDate: true,
     },
     {
@@ -102,12 +111,15 @@ export default function Notifications() {
       type: selectedOption,
       page: page,
       limit: limit,
-      value : searchValue
+      value: searchValue,
+      sortBy: sortField,
+      sortOrder: sortOrder,
     });
 
     setData((prevData) => ({
       ...prevData,
-      [selectedOption === "Sent Notifications" ? "sent" : "scheduled"]: result.data,
+      [selectedOption === "Sent Notifications" ? "sent" : "scheduled"]:
+        result.data,
     }));
     setTotalPages(result.totalPages || 1);
     setLoading(false);
@@ -121,7 +133,7 @@ export default function Notifications() {
 
   React.useEffect(() => {
     fetchNotifications();
-  }, [selectedOption, limit, page, searchValue]);
+  }, [selectedOption, limit, page, searchValue, sortField, sortOrder]);
 
   React.useEffect(() => {
     fetchNotificationsStats();

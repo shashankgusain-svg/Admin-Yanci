@@ -1,165 +1,75 @@
-/* .react-datepicker {
-  font-family: "Helvetica Neue", sans-serif;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 8px;
-  width: fit-content;
+.rmdp-container {
+  width: 100% !important;
 }
 
-.react-datepicker__header {
-  background-color: #75b6b2;
-  border-bottom: none;
-  padding: 10px 0;
-  border-radius: 8px 8px 0 0;
-}
-
-.react-datepicker__current-month {
-  font-size: 16px;
-  color: white;
-}
-
-.react-datepicker__day-names,
-.react-datepicker__week {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-}
-
-.react-datepicker__day-name,
-.react-datepicker__day {
-  font-size: 14px;
-  width: 40px;
-  line-height: 40px;
-  text-align: center;
-  margin: 2px;
-  border-radius: 50%;
-}
-
-.react-datepicker__day {
-  cursor: pointer;
-  color: #333;
-}
-
-.react-datepicker__day--selected {
-  background-color: #7bdcb5;
-  color: white;
-}
-
-.react-datepicker__day:hover {
-  background-color: #e6f7f5;
-}
-
-.custom-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 10px;
-  color: white;
-}
-
-.custom-header button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-.custom-header button:hover {
-  color: #e6f7f5;
-} */
-
-.react-date-picker__calendar {
-  display: block !important;
-}
-
-.react-date-picker__calendar,
-.react-date-picker__calendar.react-date-picker__calendar--open {
+.rmdp-container > div {
   position: relative !important;
-  inset: unset !important;
-  width: 100% !important;
-  height: auto !important;
+  left: auto !important;
+  bottom: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  /* visibility: visible !important; */
+  /* display: block !important; */
+  will-change: auto !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
 }
 
-.react-calendar {
+.rmdp-input {
   width: 100% !important;
+  background-color: #f6f6f6 !important;
   border: none !important;
+  text-align: center !important;
+  height: 32px !important;
+  border-radius: 0 !important;
+
+  &:focus{
+    border: 2px solid #35BAB2 !important;
+  }
 }
 
-.react-calendar__navigation {
-  @apply bg-primary-6 text-black-1 px-8 py-4;
-  height: auto !important;
-}
-
-.react-calendar__viewContainer {
-  padding: 4px 32px !important;
-}
-
-.react-date-picker__wrapper {
+.ep-arrow {
   display: none !important;
 }
 
-.react-calendar__month-view__weekdays{
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
+.rmdp-wrapper {
+  width: 100% !important;
+  box-shadow: none !important;
 }
 
-.react-calendar__month-view__weekdays__weekday {
-  color: gray !important;
-  font-weight: 500 !important;
+.rmdp-top-class {
+  width: 100% !important;
 }
 
-.react-calendar__month-view__weekdays__weekday abbr {
-  text-decoration: none !important;
-  letter-spacing: 1px !important;
+.rmdp-calendar {
+  width: 100% !important;
+  padding: 0 !important;
 }
 
-.react-calendar__month-view__days__day--weekend abbr{
-  color: black !important;
+.rmdp-header {
+  height: 56px !important;
+  display: grid !important;
+  background-color: #35bab2 !important;
 }
 
-.react-calendar__tile {
-  padding: 14px 10px !important;
-  background: none !important;
+.rmdp-header-values {
+  color: white !important;
+  font-size: 20px !important;
 }
 
-.react-calendar__tile abbr{
-  position: relative !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  font-size: 18px !important;
-  z-index: 20;
+.rmdp-day-picker,
+.rmdp-month-picker,
+.rmdp-year-picker {
+  width: 100% !important;
+
+  & > div {
+    width: 100% !important;
+  }
 }
 
-.react-calendar__tile abbr::after{
-  --size : 30px;
-  content: '';
-  width: var(--size);
-  height: var(--size);
-  @apply rounded-full;
-  display: none;
-  position: absolute;
-  z-index: -1;
-}
-
-.react-calendar__tile:hover abbr::after{
-  display: block !important;
-  @apply bg-primary-2;
-}
-
-.react-calendar__tile--active {
-  background: none !important;
-}
-
-.react-calendar__tile--active:hover abbr::after{
-  display: none;
-}
-
-.react-calendar__tile--active abbr::after{
-  display: block !important;
-  @apply bg-primary-6;
-}
-
-.react-calendar__navigation__label, .react-calendar__navigation__arrow{
-  background: none !important;
+.rmdp-week-day {
+  text-transform: uppercase !important;
+  color: #686868 !important;
+  font-size: 12px !important;
 }

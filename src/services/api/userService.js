@@ -1,5 +1,5 @@
 import { getAuthToken } from "./cookies";
-import { URL, apiError } from "./helper";
+import { URL, apiError, responseValidator } from "./helper";
 
 // GET
 
@@ -22,6 +22,10 @@ export const getUsersData = async (payload) => {
     endpoint += `&search=${encodeURIComponent(payload.value)}`;
   }
 
+  if(payload.startDate && payload.endDate){
+    endpoint += `&startDate=${payload.startDate}&endDate=${payload.endDate}`
+  }
+
   try {
     const res = await fetch(endpoint, {
       method: "GET",
@@ -30,8 +34,7 @@ export const getUsersData = async (payload) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res);
   } catch (error) {
     return apiError(error);
   }
@@ -47,8 +50,7 @@ export const getUserStats = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res);
   } catch (error) {
     return apiError(error);
   }
@@ -64,8 +66,7 @@ export const getUserDetails = async (userId) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res);
   } catch (error) {
     return apiError(error);
   }
@@ -81,8 +82,7 @@ export const getUserKYCDetails = async (userId) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res);
   } catch (error) {
     return apiError(error);
   }
@@ -101,8 +101,7 @@ export const deleteUser = async (userId) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res,true);
   } catch (error) {
     return apiError(error);
   }
@@ -121,8 +120,7 @@ export const blockUser = async (userId) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res,true);
   } catch (error) {
     return apiError(error);
   }

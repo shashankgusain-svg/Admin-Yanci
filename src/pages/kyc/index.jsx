@@ -15,6 +15,7 @@ import Modal from "@/components/modal/ModalIndex";
 import PDFViewer from "@/components/pdfViewer/PDFViewer";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import Button from "@/components/button/Button";
+import { canEdit } from "@/utils/helpers";
 
 export default function Kyc() {
   const [data, setData] = React.useState({ submitted: [], abandoned: [] });
@@ -42,6 +43,8 @@ export default function Kyc() {
     csdNo: "",
   });
 
+  const [values, setValues] = React.useState(null);
+
   const handleCSDNumberChange = (e) => {
     setVerificationData((prevData) => ({
       ...prevData,
@@ -59,7 +62,7 @@ export default function Kyc() {
     setModalType(null);
   };
 
-  const fetchKYCData = async () => {
+  const fetchKYCData = async (startDate = "", endDate = "") => {
     setLoading(true);
     const result = await getKYCData({
       type: selectedOption,
@@ -68,6 +71,8 @@ export default function Kyc() {
       page: page,
       limit: limit,
       value: searchValue,
+      startDate: startDate,
+      endDate: endDate,
     });
 
     setData((prevData) => ({
@@ -292,8 +297,14 @@ export default function Kyc() {
   ];
 
   React.useEffect(() => {
+    if (values) {
+      const startDate = values[0]?.format("YYYY-MM-DD") || "";
+      const endDate = values[1]?.format("YYYY-MM-DD") || "";
+      fetchKYCData(startDate, endDate);
+      return;
+    }
     fetchKYCData();
-  }, [selectedOption, sortField, sortOrder, limit, page, searchValue]);
+  }, [selectedOption, sortField, sortOrder, limit, page, searchValue, values]);
 
   React.useEffect(() => {
     fetchKYCStats();
@@ -355,7 +366,7 @@ export default function Kyc() {
           exportToCSV
           columns={submittedKYCsColumns}
           data={data.submitted}
-          isDropdown
+          isDropdown={canEdit("KYC")}
           dropdownItems={(row) => submittedDroppdownItems(row)}
           isLoading={loading}
           paginationProps={{
@@ -372,6 +383,8 @@ export default function Kyc() {
           }}
           searchValue={searchValue}
           onSearch={handleSearch}
+          dateValue={values}
+          dateOnChange={setValues}
         />
       ),
     },
@@ -384,7 +397,7 @@ export default function Kyc() {
           exportToCSV
           columns={abandoneddKYCsColumns}
           data={data.abandoned}
-          isDropdown
+          isDropdown={canEdit("KYC")}
           dropdownItems={(row) => abandonedDroppdownItems(row)}
           isLoading={loading}
           paginationProps={{
@@ -401,6 +414,8 @@ export default function Kyc() {
           }}
           searchValue={searchValue}
           onSearch={handleSearch}
+          dateValue={values}
+          dateOnChange={setValues}
         />
       ),
     },

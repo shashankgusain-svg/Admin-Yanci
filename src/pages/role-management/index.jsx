@@ -6,6 +6,7 @@ import Image from "next/image";
 import React from "react";
 import { useRouter } from "next/router";
 import { deleteSubAdmin, getAllSubAdmins } from "@/services/api/adminService";
+import { canEdit } from "@/utils/helpers";
 const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Sub Admin" }];
 
 export default function RoleManagement() {
@@ -48,29 +49,34 @@ export default function RoleManagement() {
     setLoading(false);
   };
 
-  const dropdownItems = (row) => [
-    {
-      icon: viewDetails,
-      text: "View Details",
-      onClick: () => {
-        router.push(`./role-management/${row._id}`);
+  const dropdownItems = (row) => {
+    const items = [
+      {
+        icon: viewDetails,
+        text: "View Details",
+        onClick: () => {
+          router.push(`./role-management/${row._id}`);
+        },
       },
-    },
-    {
-      icon: deleteRedIcon,
-      text: "Delete",
-      onClick: async () => {
-        try {
-          const res = await deleteSubAdmin(row._id);
-          const data = JSON.stringify(res);
-          fetchSubAdminDetails();
-        } catch (error) {
-          console.log(error);
-        }
-      },
-      className: "text-red-500",
-    },
-  ];
+    ];
+    if (canEdit("Role Management")) {
+      items.push({
+        icon: deleteRedIcon,
+        text: "Delete",
+        onClick: async () => {
+          try {
+            const res = await deleteSubAdmin(row._id);
+            const data = JSON.stringify(res);
+            fetchSubAdminDetails();
+          } catch (error) {
+            console.log(error);
+          }
+        },
+        className: "text-red-500",
+      });
+    }
+    return items;
+  };
 
   React.useEffect(() => {
     fetchSubAdminDetails();

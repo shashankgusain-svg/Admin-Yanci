@@ -9,6 +9,9 @@ import { deleteUser, getUserDetails } from "@/services/api/userService";
 import KYCModal from "@/components/modals/KYCModal";
 import PDFViewer from "@/components/pdfViewer/PDFViewer";
 import { getAuthToken } from "@/services/api/cookies";
+import { canEdit } from "@/utils/helpers";
+import deleteIcon from '../../../../public/icons/misc/deleteWhite.svg';
+import Image from "next/image";
 
 export default function UserPage() {
   const token = getAuthToken();
@@ -48,7 +51,8 @@ export default function UserPage() {
   }, [userId]);
 
   const handleDelete = async () => {
-    const data = await deleteUser(userId, token);
+    await deleteUser(userId, token);
+    router.push("/user");
   };
 
   const [showDetails, setShowDetails] = React.useState(false);
@@ -76,7 +80,7 @@ export default function UserPage() {
         >
           <Modal.Content>
             {data.csdFormLink ? (
-              <PDFViewer src={data.csdFormLink}/>
+              <PDFViewer src={data.csdFormLink} />
             ) : (
               <p className="text-black-5 text-heading-1">
                 CSD Form Not Available
@@ -258,9 +262,12 @@ export default function UserPage() {
                 />
               </InputAndLabel>
             </div>
-            <Button design="primary" style="negative" onClick={handleDelete}>
-              Delete User
-            </Button>
+            {canEdit("User Management") && (
+              <Button design="primary" title="Delete User" style="negative" onClick={handleDelete}>
+                <Image src={deleteIcon} alt="Delete Icon"/>
+                Delete User
+              </Button>
+            )}
           </div>
         </>
       )}

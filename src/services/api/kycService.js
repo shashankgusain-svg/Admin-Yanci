@@ -1,5 +1,5 @@
 import { getAuthToken } from "./cookies";
-import { URL, apiError } from "./helper";
+import { URL, apiError, responseValidator } from "./helper";
 
 // GET
 
@@ -20,7 +20,9 @@ export const getKYCData = async (payload) => {
     endpoint += `&search=${payload.value}`;
   }
 
-  console.log(endpoint);
+  if(payload.startDate && payload.endDate){
+    endpoint += `&startDate=${payload.startDate}&endDate=${payload.endDate}`
+  }
 
   try {
     const res = await fetch(endpoint, {
@@ -30,8 +32,7 @@ export const getKYCData = async (payload) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res);
   } catch (error) {
     return apiError(error);
   }
@@ -48,8 +49,7 @@ export const getKYCStats = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res);
   } catch (error) {
     return apiError(error);
   }
@@ -69,8 +69,8 @@ export const manageKYC = async (payload) => {
       },
       body: JSON.stringify(payload),
     });
-    const data = await res.json();
-    return data;
+    
+    return responseValidator(res,true);
   } catch (error) {
     return apiError(error);
   }

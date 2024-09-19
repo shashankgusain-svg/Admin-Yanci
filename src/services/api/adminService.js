@@ -1,5 +1,5 @@
 import { getAuthToken } from "./cookies";
-import { apiError, URL } from "./helper";
+import { apiError, responseValidator, URL } from "./helper";
 
 // GET
 
@@ -12,8 +12,22 @@ export const getAllSubAdmins = async () => {
         Authorization: `Bearer ${await getAuthToken()}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res);
+  } catch (error) {
+    return apiError(error);
+  }
+};
+
+export const getSubAdminDetails = async (_id) => {
+  try {
+    const res = await fetch(`${URL}admin/get-single-admin/${_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await getAuthToken()}`,
+      },
+    });
+    return responseValidator(res);
   } catch (error) {
     return apiError(error);
   }
@@ -30,8 +44,7 @@ export const addSubAdmin = async (payload) => {
       },
       body: JSON.stringify({ ...payload }),
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res,true);
   } catch (error) {
     apiError(error);
   }
@@ -49,8 +62,7 @@ export const updatePolicy = async (payload) => {
       },
       body: JSON.stringify({ ...payload }),
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res,true);
   } catch (error) {
     apiError(error);
   }
@@ -67,8 +79,7 @@ export const deleteSubAdmin = async (_id) => {
         Authorization: `Bearer ${await getAuthToken()}`,
       },
     });
-    const data = await res.json();
-    return data;
+    return responseValidator(res,true);
   } catch (error) {
     apiError(error);
   }
