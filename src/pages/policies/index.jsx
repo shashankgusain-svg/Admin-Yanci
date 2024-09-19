@@ -1,5 +1,10 @@
 import React from "react";
 
+import dynamic from "next/dynamic";
+import Head from "next/head";
+
+const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
+
 import Image from "next/image";
 import boldIcon from "../../../public/icons/text-editor/bold.svg";
 import italicIcon from "../../../public/icons/text-editor/italic.svg";
@@ -17,15 +22,32 @@ import Toggle from "@/components/typeToggle/TypeToggle";
 const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Policies" }];
 
 export default function index() {
+  const editor = React.useRef(null);
+  const [content, setContent] = React.useState("Worlds best html page");
+
   const userOptions = [
     { label: "Terms & Conditions", content: <p>T&C</p> },
     { label: "Privacy Policy", content: <p>Policy</p> },
   ];
 
+  const handleChange = (value) => {
+    setContent(value);
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
       <Toggle options={userOptions} />
+
+      <div className="h-full w-full max-w-report">
+        <JoditEditor
+          ref={editor} //This is important
+          value={content} //This is important
+          onChange={handleChange} //handle the changes
+          className="w-full h-[70%] bg-white"
+        />
+        <style>{`.jodit-wysiwyg{height:300px !important}`}</style>
+      </div>
     </div>
   );
 }

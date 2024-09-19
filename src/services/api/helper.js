@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 
-export const URL = "https://yanci-backend.vercel.app/v1/";
+export const URL = "https://api.investwithyanci.com/v1/";
 
 export const responseValidator = async (
   response,

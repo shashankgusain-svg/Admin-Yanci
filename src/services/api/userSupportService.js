@@ -72,3 +72,5 @@ export const createNewFAQ = async (payload) => {
     apiError(error);
   }
 };
+
+// PUT
