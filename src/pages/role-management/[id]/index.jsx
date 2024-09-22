@@ -73,8 +73,9 @@ export default function UpdateAdmin() {
             <InputAndLabel.Label htmlFor="phoneNo" className="text-primary-6">
               Phone No.
             </InputAndLabel.Label>
-            <InputAndLabel.Input
+            <InputAndLabel.PhoneInput
               disabled
+              disableDropdown
               type="text"
               name="phoneNo"
               id="phoneNo"

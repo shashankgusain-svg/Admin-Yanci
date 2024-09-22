@@ -1,6 +1,6 @@
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import imagePlaceholder from "../../../public/images/pi_placeholder.jpg";
-import StatsCard from "@/components/statsCard/StatsCard";
+import MetricsCard from "@/components/metricsCard/MetricsCard";
 import React from "react";
 import Toggle from "@/components/typeToggle/TypeToggle";
 import { useRouter } from "next/router";
@@ -11,14 +11,14 @@ import viewDetails from "../../../public/icons/misc/viewDetails.svg";
 import Link from "next/link";
 import {
   getUsersData,
-  getUserStats,
-  searchUser,
+  getUserMetrics,
   blockUser,
 } from "@/services/api/userService";
 import Modal from "@/components/modal/ModalIndex";
 import Button from "@/components/button/Button";
 import { userKeyTitleMapping } from "@/utils/seed";
 import { canEdit, getBirthYear } from "@/utils/helpers";
+import usePagination from "@/hooks/usePagination";
 
 const breadCrumbItems = [
   { name: "Home", Link: "/" },
@@ -27,13 +27,14 @@ const breadCrumbItems = [
 
 export default function User() {
   const router = useRouter();
+  const { limit, page, handleLimitChange, handlePageChange } = usePagination();
 
   // States
 
   const [isModalOpen, setModalOpen] = React.useState(false);
 
   const [data, setData] = React.useState({ active: [], blocked: [] });
-  const [stats, setStats] = React.useState({});
+  const [metrics, setMetrics] = React.useState({});
   const [userId, setUserId] = React.useState("");
 
   const [loading, setLoading] = React.useState(true);
@@ -44,9 +45,6 @@ export default function User() {
   const [sortOrder, setSortOrder] = React.useState("asc");
 
   const [searchValue, setSearchValue] = React.useState("");
-
-  const [limit, setLimit] = React.useState(10);
-  const [page, setPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(0);
 
   const [values, setValues] = React.useState(null);
@@ -138,17 +136,17 @@ export default function User() {
     setLoading(false);
   };
 
-  const fetchUserStats = async () => {
-    const result = await getUserStats();
+  const fetchUserMetrics = async () => {
+    const result = await getUserMetrics();
     const temp = { ...result.metrics };
-    setStats(temp);
+    setMetrics(temp);
   };
 
   const handleBlock = async () => {
     try {
       await blockUser(userId);
       setModalOpen(false);
-      fetchUsersData(selectedOption);
+      fetchUsersData();
     } catch (error) {
       console.error("Error blocking user:", error);
     }
@@ -157,7 +155,7 @@ export default function User() {
   const handleUnblock = async (userId) => {
     try {
       await blockUser(userId);
-      fetchUsersData(selectedOption);
+      fetchUsersData();
     } catch (error) {
       console.error("Error unblocking user:", error);
     }
@@ -179,7 +177,7 @@ export default function User() {
   }, [selectedOption, sortField, sortOrder, limit, page, searchValue, values]);
 
   React.useEffect(() => {
-    fetchUserStats();
+    fetchUserMetrics();
   }, []);
 
   // Dropdown Items
@@ -201,7 +199,7 @@ export default function User() {
         onClick: () => {
           handleUnblock(row._id);
         },
-        className : "text-green-500"
+        className: "text-green-500",
       });
     }
     return items;
@@ -257,14 +255,11 @@ export default function User() {
           paginationProps={{
             currentPage: page,
             totalPages,
-            onPageChange: (newPage) => setPage(newPage),
+            onPageChange: handlePageChange,
           }}
           limitProps={{
             selectedLimit: limit,
-            onLimitChange: (newLimit) => {
-              setLimit(newLimit);
-              setPage(1); // Reset to page 1 when limit changes
-            },
+            onLimitChange: handleLimitChange,
           }}
           dateValue={values}
           dateOnChange={setValues}
@@ -287,14 +282,11 @@ export default function User() {
           paginationProps={{
             currentPage: page,
             totalPages,
-            onPageChange: (newPage) => setPage(newPage),
+            handlePageChange,
           }}
           limitProps={{
             selectedLimit: limit,
-            onLimitChange: (newLimit) => {
-              setLimit(newLimit);
-              setPage(1);
-            },
+            onLimitChange: handleLimitChange,
           }}
           dateValue={values}
           dateOnChange={setValues}
@@ -338,8 +330,8 @@ export default function User() {
       <Breadcrumb items={breadCrumbItems} />
       <div className="flex flex-col gap-6">
         <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
-          {Object.entries(stats).map(([key, value], index) => (
-            <StatsCard
+          {Object.entries(metrics).map(([key, value], index) => (
+            <MetricsCard
               key={index}
               label={userKeyTitleMapping[key] || key}
               isPercentage={value.percent ? true : false}

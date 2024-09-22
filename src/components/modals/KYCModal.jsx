@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "../modal/ModalIndex";
 import { getUserKYCDetails } from "@/services/api/userService";
 import Image from "next/image";
+import InputAndLabel from "../inputandlabel/InputAndLabel";
 
 const Field = ({ label, value }) => {
   return (
@@ -66,7 +67,10 @@ export default function KYCModal({ userId, onClose }) {
                 label="Origin Country"
                 value={kycDetails.user.originCountry}
               />
-              <Field label="Phone Number" value={kycDetails.user.phone} />
+              <InputAndLabel>
+                <InputAndLabel.Label>Phone Number</InputAndLabel.Label>
+                <InputAndLabel.PhoneInput value={kycDetails.user.phone} disabled disableDropdown/>
+              </InputAndLabel>
             </div>
 
             {/* Address */}

@@ -33,7 +33,7 @@ export const getUserSupportDetails = async (payload) => {
   }
 };
 
-export const getSupportStats = async (payload) => {
+export const getSupportMetrics = async (payload) => {
   let endpoint =
     payload.type === "Queries"
       ? `${URL}support/metrics?type=QUERY`
@@ -67,10 +67,80 @@ export const createNewFAQ = async (payload) => {
       },
       body: JSON.stringify({ ...payload }),
     });
-    return responseValidator(res);
+    return responseValidator(res, true);
+  } catch (error) {
+    apiError(error);
+  }
+};
+
+// PATCH
+
+export const updateQueryStatus = async (payload) => {
+  try {
+    const res = await fetch(`${URL}support/ticket/${payload._id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await getAuthToken()}`,
+      },
+      body: JSON.stringify({ status: payload.status }),
+    });
+    return responseValidator(res, true);
   } catch (error) {
     apiError(error);
   }
 };
 
 // PUT
+
+export const updateFAQStatus = async (payload) => {
+  try {
+    const res = await fetch(`${URL}support/faq/update/status/${payload._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await getAuthToken()}`,
+      },
+      body: JSON.stringify({ status: payload.status }),
+    });
+    return responseValidator(res, true);
+  } catch (error) {
+    apiError(error);
+  }
+};
+
+export const updateFAQ = async (payload) => {
+  try {
+    const res = await fetch(`${URL}support/faq/update/${payload._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await getAuthToken()}`,
+      },
+      body: JSON.stringify({
+        question: payload.question,
+        answer: payload.answer,
+      }),
+    });
+    return responseValidator(res, true);
+  } catch (error) {
+    apiError(error);
+  }
+};
+
+// DELETE
+
+export const deleteFAQ = async (_id) => {
+  try {
+    const res = await fetch(`${URL}support/faq/delete/${_id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await getAuthToken()}`,
+      },
+    });
+    return responseValidator(res, true);
+  } catch (error) {
+    apiError(error);
+  }
+};

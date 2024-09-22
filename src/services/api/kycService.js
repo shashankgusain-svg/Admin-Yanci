@@ -38,7 +38,7 @@ export const getKYCData = async (payload) => {
   }
 };
 
-export const getKYCStats = async () => {
+export const getKYCMetrics = async () => {
   const token = await getAuthToken();
 
   try {

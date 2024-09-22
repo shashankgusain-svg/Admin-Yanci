@@ -8,6 +8,7 @@ import Button from "../button/Button";
 import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
 import Logo from "../../../public/icons/misc/Logo";
+import { canEdit } from "@/utils/helpers";
 
 export default function Navbar() {
   const router = useRouter();
@@ -16,23 +17,38 @@ export default function Navbar() {
   return (
     <nav className="navbar flex border-b-2 border-black-3 w-full bg-white sticky top-0 left-0 px-8 z-30">
       <div className="min-w-full flex justify-between items-center">
-        <Logo/>
+        <Logo />
         <div className="flex items-center gap-6 ">
-          {pathname === "/notifications" ? (
-            <Button className="font-normal h-11" onClick={()=>{router.push("notifications/create")}}>
-              <Image src={add} alt="Create new"/>
+          {pathname === "/notifications" && canEdit("Notifications") ? (
+            <Button
+              className="font-normal h-11"
+              onClick={() => {
+                router.push("notifications/create");
+              }}
+            >
+              <Image src={add} alt="Create new" />
               Create Notification
             </Button>
           ) : null}
-          {pathname === "/role-management" ? (
-            <Button className="font-normal h-11" onClick={()=>{router.push("role-management/add-admin")}}>
-              <Image src={add} alt="Add new"/>
+          {pathname === "/role-management" && canEdit("Role Management") ? (
+            <Button
+              className="font-normal h-11"
+              onClick={() => {
+                router.push("role-management/add-admin");
+              }}
+            >
+              <Image src={add} alt="Add new" />
               Add Sub Admin
             </Button>
           ) : null}
-          {pathname === "/support" ? (
-            <Button className="font-normal h-11" onClick={()=>{router.push("support/create-faq")}}>
-              <Image src={add} alt="Add new"/>
+          {pathname === "/support" && canEdit("User Support") ? (
+            <Button
+              className="font-normal h-11"
+              onClick={() => {
+                router.push("support/create-faq");
+              }}
+            >
+              <Image src={add} alt="Add new" />
               Create FAQ
             </Button>
           ) : null}
@@ -43,7 +59,11 @@ export default function Navbar() {
             href="/"
             className="profilePicture overflow-hidden rounded-full w-10 h-10 bg-cover bg-center"
           >
-            <Image className="object-cover" src={DummyImg} alt="Profile Image"/>
+            <Image
+              className="object-cover"
+              src={DummyImg}
+              alt="Profile Image"
+            />
           </Link>
         </div>
       </div>

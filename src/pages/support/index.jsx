@@ -1,25 +1,42 @@
 import React from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
-import StatsCard from "@/components/statsCard/StatsCard";
+import MetricsCard from "@/components/metricsCard/MetricsCard";
 import Toggle from "@/components/typeToggle/TypeToggle";
 import Table from "@/components/table/Table";
-import { getSupportStats, getUserSupportDetails } from "@/services/api/userSupportService";
+import Modal from "@/components/modal/ModalIndex";
+import Button from "@/components/button/Button";
+import {
+  deleteFAQ,
+  getSupportMetrics,
+  getUserSupportDetails,
+  updateFAQStatus,
+  updateQueryStatus,
+} from "@/services/api/userSupportService";
 import editIcon from "../../../public/icons/misc/edit.svg";
-import deleteIcon from "../../../public/icons/misc/delete.svg";
+import deleteIcon from "../../../public/icons/misc/deleteRed.svg";
+import verify from "../../../public/icons/misc/verify.svg";
+import history from "../../../public/icons/misc/history.svg";
+import reject from "../../../public/icons/misc/reject.svg";
 import respond from "../../../public/icons/misc/respond.svg";
 import StarRating from "../../../public/icons/misc/StarRating";
 import { supportKeyMapping } from "@/utils/seed";
 import { canEdit } from "@/utils/helpers";
+import { useRouter } from "next/router";
 
 const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "User Support" }];
 
 export default function UserSupport() {
+  const router = useRouter();
+
   const [data, setData] = React.useState({
     queries: [],
     feedbacks: [],
     faqs: [],
   });
-  const [stats, setStats] = React.useState({});
+  const [metrics, setMetrics] = React.useState({});
+
+  const [isModalOpen, setModalOpen] = React.useState(false);
+  const [userId, setUserId] = React.useState("");
 
   const [loading, setLoading] = React.useState(true);
 
@@ -63,53 +80,93 @@ export default function UserSupport() {
     setLoading(false);
   };
 
-  const fetchNotificationsStats = async () => {
-    const res = await getSupportStats({type:selectedOption});
+  const fetchSupportMetrics = async () => {
+    const res = await getSupportMetrics({ type: selectedOption });
     const data = { ...res.data };
-    setStats(data);
+    setMetrics(data);
   };
 
   React.useEffect(() => {
     fetchUserSupportDetails();
   }, [selectedOption, sortField, sortOrder, limit, page, searchValue]);
 
-  React.useEffect(()=>{
-    fetchNotificationsStats();
-  },[selectedOption])
+  React.useEffect(() => {
+    fetchSupportMetrics();
+  }, [selectedOption]);
 
-  const queriesDropdownItems = (row) => [
-    {
-      icon: respond,
-      text: "Respond",
-      onClick: () => {
-        router.push(`/user/${row._id}`);
+  const queriesDropdownItems = (row) => {
+    const items = [
+      {
+        icon: respond,
+        text: "Respond",
+        onClick: () => {
+          router.push(`/user/${row._id}`);
+        },
       },
-    },
-  ];
+    ];
+
+    if (row.status != "RESOLVED") {
+      items.push(
+        {
+          icon: verify,
+          text: "Resolve",
+          onClick: async () => {
+            await updateQueryStatus({ _id: row._id, status: "RESOLVED" });
+            fetchUserSupportDetails();
+          },
+        },
+        {
+          icon: history,
+          text: "Put on Hold",
+          onClick: async () => {
+            await updateQueryStatus({ _id: row._id, status: "HOLD" });
+            fetchUserSupportDetails();
+          },
+        }
+      );
+    }
+    return items;
+  };
 
   const faqsDroppdownItems = (row) => [
     {
       icon: editIcon,
       text: "Edit",
       onClick: () => {
-        router.push(`/user/${row._id}`);
+        router.push({
+          pathname: `/support/${row._id}`,
+          query: { question: row.question, answer: row.answer },
+        });
       },
     },
     {
-      icon: editIcon,
+      icon: reject,
       text: "Inactive",
-      onClick: () => {
-        router.push(`/user/${row._id}`);
+      onClick: async () => {
+        await updateFAQStatus({ _id: row._id, status: "INACTIVE" });
+        fetchUserSupportDetails();
       },
     },
     {
       icon: deleteIcon,
       text: "Delete",
-      onClick: () => {
-        router.push(`/user/${row._id}`);
+      onClick: async () => {
+        setUserId(row._id);
+        setModalOpen(true);
       },
+      className: "text-red-500",
     },
   ];
+
+  const handleDelete = async () => {
+    try {
+      await deleteFAQ(userId);
+      setModalOpen(false);
+      fetchUserSupportDetails();
+    } catch (error) {
+      console.error("Error blocking user:", error);
+    }
+  };
 
   const handleSort = (field) => {
     const isAsc = sortField === field && sortOrder === "asc";
@@ -179,15 +236,15 @@ export default function UserSupport() {
       key: "status",
       render: (row) => (
         <span
-          className={`rounded-full px-2 py-1 ${
-            row.status === "Resolved"
+          className={`rounded-full px-2 py-1 capitalize ${
+            row.status === "RESOLVED"
               ? "bg-green-600 text-white"
-              : row.status === "Pending"
+              : row.status === "PENDING"
               ? "bg-red-600 text-white"
-              : "bg-yellow-500 text-black"
+              : "bg-yellow-400 text-black"
           }`}
         >
-          {row.status}
+          {new String(row.status).toLowerCase()}
         </span>
       ),
     },
@@ -221,13 +278,13 @@ export default function UserSupport() {
       key: "status",
       render: (row) => (
         <span
-          className={`rounded-full px-2 py-1 ${
+          className={`rounded-full px-2 py-1 capitalizek ${
             row.status === "LIVE"
               ? "bg-green-600 text-white"
               : "bg-yellow-400 text-black"
           }`}
         >
-          {row.status}
+          {new String(row.status).toLowerCase()}
         </span>
       ),
     },
@@ -317,11 +374,44 @@ export default function UserSupport() {
 
   return (
     <div className="flex flex-col gap-6">
+      <Modal
+        isOpen={isModalOpen}
+        type="confirmation"
+        title="Are you sure you want to delete this FAQ from Yanci?"
+        message="You can not revert this change."
+        onClose={() => {
+          setModalOpen(false);
+        }}
+      >
+        <Modal.Footer>
+          <Button
+            design="secondary"
+            className="h-9 w-24"
+            onClick={() => {
+              setModalOpen(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            style="negative"
+            design="primary"
+            className="h-9"
+          >
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Breadcrumb items={breadCrumbItems} />
       <div className="flex flex-col gap-6">
         <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
-          {Object.entries(stats).map(([key, value], index)=> (
-            <StatsCard key={index} label={supportKeyMapping[key] || key} value={value} />
+          {Object.entries(metrics).map(([key, value], index) => (
+            <MetricsCard
+              key={index}
+              label={supportKeyMapping[key] || key}
+              value={value}
+            />
           ))}
         </div>
         <Toggle

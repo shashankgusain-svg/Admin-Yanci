@@ -40,7 +40,7 @@ export const getUsersData = async (payload) => {
   }
 };
 
-export const getUserStats = async () => {
+export const getUserMetrics = async () => {
   const token = await getAuthToken();
   try {
     const res = await fetch(`${URL}adminuser/user-metrics`, {

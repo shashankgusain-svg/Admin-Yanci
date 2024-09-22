@@ -1,11 +1,11 @@
 import React from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
-import StatsCard from "@/components/statsCard/StatsCard";
+import MetricsCard from "@/components/metricsCard/MetricsCard";
 import Toggle from "@/components/typeToggle/TypeToggle";
 import TradeDetails from "../../components/tables/TradeDetailsTable";
 import FundDetails from "../../components/tables/FundDetailsTable";
 
-const dummyStats = [
+const dummyMetrics = [
   {
     label: "Total Activity",
     percentageChange: 36,
@@ -64,8 +64,8 @@ export default function Transactions() {
       <Breadcrumb items={breadCrumbItems} />
       <div className="flex flex-col gap-6">
         <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
-          {dummyStats.map((stat, index) => (
-            <StatsCard
+          {dummyMetrics.map((stat, index) => (
+            <MetricsCard
               key={index}
               label={stat.label}
               isPercentage={stat.isPercentage ? stat.isPercentage : false}

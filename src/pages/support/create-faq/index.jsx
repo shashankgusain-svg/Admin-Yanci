@@ -1,6 +1,8 @@
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Button from "@/components/button/Button";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
+import { createNewFAQ } from "@/services/api/userSupportService";
+import { useRouter } from "next/router";
 import React from "react";
 
 const breadCrumbItems = [
@@ -10,9 +12,10 @@ const breadCrumbItems = [
 ];
 
 export default function index() {
+  const router = useRouter();
+
   const [fields, setFields] = React.useState({
     question: "",
-    type: "",
     answer: "",
   });
 
@@ -24,14 +27,23 @@ export default function index() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  }
+    try {
+      await createNewFAQ(fields);
+      router.push("/support");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
-      <form className="flex flex-col gap-6 max-w-report" onSubmit={handleSubmit}>
+      <form
+        className="flex flex-col gap-6 max-w-report"
+        onSubmit={handleSubmit}
+      >
         <InputAndLabel>
           <InputAndLabel.Label htmlFor="question" className="text-primary-6">
             Question
@@ -43,20 +55,6 @@ export default function index() {
             value={fields.question}
             onChange={handleChange}
           />
-        </InputAndLabel>
-        <InputAndLabel>
-          <InputAndLabel.Label htmlFor="type" className="text-primary-6">
-            Type
-          </InputAndLabel.Label>
-          <InputAndLabel.Select
-            name="type"
-            id="type"
-            onChange={handleChange}
-            value={fields.type}
-          >
-            <InputAndLabel.Option value="Returns">Returns</InputAndLabel.Option>
-            <InputAndLabel.Option value="Account">Account</InputAndLabel.Option>
-          </InputAndLabel.Select>
         </InputAndLabel>
         <InputAndLabel>
           <InputAndLabel.Label htmlFor="answer" className="text-primary-6">

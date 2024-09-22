@@ -1,0 +1,31 @@
+#myjoditEditor .jodit-wysiwyg {
+  padding-left: 10px;
+}
+#myjoditEditor ul {
+  list-style: inside;
+}
+
+#myjoditEditor ol {
+  list-style: inside;
+  list-style-type: number;
+}
+
+#myjoditEditor td {
+  border: solid 1px;
+}
+
+#mySecondJoditEditor .jodit-wysiwyg {
+  padding-left: 10px;
+}
+#mySecondJoditEditor ul {
+  list-style: inside;
+}
+
+#mySecondJoditEditor ol {
+  list-style: inside;
+  list-style-type: number;
+}
+
+#mySecondJoditEditor td {
+  border: solid 1px;
+}

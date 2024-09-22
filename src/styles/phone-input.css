@@ -1,0 +1,9 @@
+.custom-input-container{
+    width: 100% !important;
+    position: relative !important;
+}
+
+.custom-input{
+    width: 100% !important;
+    height: 47px !important;
+}

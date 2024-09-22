@@ -1,9 +1,9 @@
 import React from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
-import StatsCard from "@/components/statsCard/StatsCard";
+import MetricsCard from "@/components/metricsCard/MetricsCard";
 import Toggle from "@/components/typeToggle/TypeToggle";
 import Table from "@/components/table/Table";
-import { getKYCData, getKYCStats, manageKYC } from "@/services/api/kycService";
+import { getKYCData, getKYCMetrics, manageKYC } from "@/services/api/kycService";
 import verify from "../../../public/icons/misc/verify.svg";
 import history from "../../../public/icons/misc/history.svg";
 import reject from "../../../public/icons/misc/reject.svg";
@@ -16,10 +16,11 @@ import PDFViewer from "@/components/pdfViewer/PDFViewer";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import Button from "@/components/button/Button";
 import { canEdit } from "@/utils/helpers";
+import usePagination from "@/hooks/usePagination";
 
 export default function Kyc() {
   const [data, setData] = React.useState({ submitted: [], abandoned: [] });
-  const [stats, setStats] = React.useState({});
+  const [metrics, setMetrics] = React.useState({});
 
   const [loading, setLoading] = React.useState(true);
 
@@ -30,8 +31,13 @@ export default function Kyc() {
 
   const [searchValue, setSearchValue] = React.useState("");
 
-  const [limit, setLimit] = React.useState(10);
-  const [page, setPage] = React.useState(1);
+  const {
+    limit,
+    page,
+    handleLimitChange,
+    handlePageChange,
+  } = usePagination();
+
   const [totalPages, setTotalPages] = React.useState(0);
 
   const [modalType, setModalType] = React.useState(null);
@@ -84,10 +90,10 @@ export default function Kyc() {
     setLoading(false);
   };
 
-  const fetchKYCStats = async () => {
-    const res = await getKYCStats();
+  const fetchKYCMetrics = async () => {
+    const res = await getKYCMetrics();
     const data = { ...res };
-    setStats(data);
+    setMetrics(data);
   };
 
   const handleSort = (field) => {
@@ -307,41 +313,45 @@ export default function Kyc() {
   }, [selectedOption, sortField, sortOrder, limit, page, searchValue, values]);
 
   React.useEffect(() => {
-    fetchKYCStats();
+    fetchKYCMetrics();
   }, []);
 
-  const submittedDroppdownItems = (row) => [
-    {
-      icon: verify,
-      text: "Verify",
-      onClick: () => {
-        setVerificationData((prevData) => ({
-          ...prevData,
-          type: "verify",
-          userId: row.userId,
-        }));
-        setModalType("csdModal");
+  const submittedDroppdownItems = (row) => {
+    const items = [
+      {
+        icon: verify,
+        text: "Verify",
+        onClick: () => {
+          setVerificationData((prevData) => ({
+            ...prevData,
+            type: "verify",
+            userId: row.userId,
+          }));
+          setModalType("csdModal");
+        },
       },
-    },
-    {
-      icon: history,
-      text: "Put On Hold",
-      onClick: async () => {
-        await manageKYC({ type: "hold", userId: row.userId });
-        setModalType(null);
-        fetchKYCData();
+      {
+        icon: history,
+        text: "Put On Hold",
+        onClick: async () => {
+          await manageKYC({ type: "hold", userId: row.userId });
+          setModalType(null);
+          fetchKYCData();
+        },
       },
-    },
-    {
-      icon: reject,
-      text: "Reject",
-      onClick: async () => {
-        await manageKYC({ type: "reject", userId: row.userId });
-        setModalType(null);
-        fetchKYCData();
+      {
+        icon: reject,
+        text: "Reject",
+        onClick: async () => {
+          await manageKYC({ type: "reject", userId: row.userId });
+          setModalType(null);
+          fetchKYCData();
+        },
       },
-    },
-  ];
+    ];
+
+    return items;
+  };
 
   const abandonedDroppdownItems = (row) => [
     {
@@ -372,14 +382,11 @@ export default function Kyc() {
           paginationProps={{
             currentPage: page,
             totalPages,
-            onPageChange: (newPage) => setPage(newPage),
+            onPageChange: handlePageChange,
           }}
           limitProps={{
             selectedLimit: limit,
-            onLimitChange: (newLimit) => {
-              setLimit(newLimit);
-              setPage(1); // Reset to page 1 when limit changes
-            },
+            onLimitChange: handleLimitChange,
           }}
           searchValue={searchValue}
           onSearch={handleSearch}
@@ -403,14 +410,11 @@ export default function Kyc() {
           paginationProps={{
             currentPage: page,
             totalPages,
-            onPageChange: (newPage) => setPage(newPage),
+            onPageChange: handlePageChange,
           }}
           limitProps={{
             selectedLimit: limit,
-            onLimitChange: (newLimit) => {
-              setLimit(newLimit);
-              setPage(1); // Reset to page 1 when limit changes
-            },
+            onLimitChange: handleLimitChange,
           }}
           searchValue={searchValue}
           onSearch={handleSearch}
@@ -498,8 +502,8 @@ export default function Kyc() {
       <Breadcrumb items={breadCrumbItems} />
       <div className="flex flex-col gap-6">
         <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
-          {Object.entries(stats).map(([key, value], index) => (
-            <StatsCard
+          {Object.entries(metrics).map(([key, value], index) => (
+            <MetricsCard
               key={index}
               label={kycKeyTitleMapping[key] || key}
               value={value}

@@ -1,9 +1,9 @@
 import React from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
-import StatsCard from "@/components/statsCard/StatsCard";
+import MetricsCard from "@/components/metricsCard/MetricsCard";
 import RevenueTable from "@/components/tables/RevenueTable";
 
-const dummyStats = [
+const dummyMetrics = [
   {
     label: "Total Revenue",
     value: 522426,
@@ -57,8 +57,8 @@ export default function Revenue() {
       <Breadcrumb items={breadCrumbItems} />
       <div className="flex flex-col gap-6">
         <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
-          {dummyStats.map((stat, index) => (
-            <StatsCard
+          {dummyMetrics.map((stat, index) => (
+            <MetricsCard
               key={index}
               label={stat.label}
               isPercentage={stat.isPercentage ? stat.isPercentage : false}

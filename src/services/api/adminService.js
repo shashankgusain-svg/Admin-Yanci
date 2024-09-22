@@ -3,9 +3,19 @@ import { apiError, responseValidator, URL } from "./helper";
 
 // GET
 
-export const getAllSubAdmins = async () => {
+export const getAllSubAdmins = async (payload) => {
+  let endpoint = `${URL}admin/get-all?roleType=SUB`
+  
+  if (payload.limit){
+    endpoint+=`&limit=${payload.limit}`;
+  }
+
+  if (payload.page){
+    endpoint+=`&limit=${payload.page}`;
+  }
+
   try {
-    const res = await fetch(`${URL}admin/get-all?roleType=SUB`, {
+    const res = await fetch(endpoint, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

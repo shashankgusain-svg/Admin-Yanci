@@ -6,11 +6,13 @@ import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import { useRouter } from "next/router";
 import { getToken } from "@/services/api/authService";
 import { setToken, setUser } from "@/services/api/cookies";
-import { isRequired, verifyPassword, verifyEmail } from "@/utils/helpers";
+import { verifyPassword, verifyEmail } from "@/utils/helpers";
+import LoadingAnimation from "../../../public/icons/animated/loading";
 
 export default function Login() {
   const [fields, setFields] = React.useState({ email: "", password: "" });
   const [expiry, setExpiry] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const router = useRouter();
 
@@ -24,6 +26,8 @@ export default function Login() {
       return;
     }
 
+    setLoading(true);
+
     try {
       const data = await getToken(fields);
       if (data) {
@@ -35,6 +39,8 @@ export default function Login() {
       }
     } catch (error) {
       console.error("Error during login:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,6 +100,7 @@ export default function Login() {
                     placeholder="Enter your email"
                     value={fields.email}
                     onChange={emailHandler}
+                    disabled={loading}
                   />
                 </InputAndLabel>
 
@@ -107,6 +114,7 @@ export default function Login() {
                     placeholder="Enter your password"
                     value={fields.password}
                     onChange={passwordHandler}
+                    disabled={loading}
                   />
                 </InputAndLabel>
 
@@ -138,7 +146,7 @@ export default function Login() {
                 </div>
 
                 <Button className="w-60 mt-10" type="submit" style="primary">
-                  LOGIN
+                  {loading ? <LoadingAnimation theme="light" /> : "Login"}
                 </Button>
               </form>
             </div>

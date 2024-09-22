@@ -4,22 +4,20 @@ import { URL, apiError, responseValidator } from "./helper";
 // GET
 
 export const getNotificationDetails = async (payload) => {
-  let endpoint =
-    payload.type === "Sent Notifications"
-      ? `${URL}notify/list?`
-      : `${URL}notify/list?isScheduled=${true}`;
-
-  endpoint += `&title=${payload.value}`;
-
+  let endpoint = `${URL}notify/list?${
+    payload.type === "Sent Notifications" ? "isScheduled=false" : `isScheduled=true`
+  }`;
+  
+  endpoint += `&title=${encodeURIComponent(payload.value?.trim())}`;
+  endpoint += `&page=${payload.page}&limit=${payload.limit}`;
+  
   if (payload.sortOrder) {
     endpoint += `&sortOrder=${payload.sortOrder}`;
   }
+  
   if (payload.sortField) {
     endpoint += `&sortBy=${payload.sortField}`;
-  }
-
-  console.log(endpoint)
-
+  } 
 
   try {
     const res = await fetch(endpoint, {
@@ -29,6 +27,7 @@ export const getNotificationDetails = async (payload) => {
         Authorization: `Bearer ${await getAuthToken()}`,
       },
     });
+    console.log(JSON.stringify(res))
     return responseValidator(res);
   } catch (error) {
     return apiError(error);

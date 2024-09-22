@@ -4,14 +4,25 @@ import viewDetails from "../../../public/icons/misc/viewDetails.svg";
 import deleteRedIcon from "../../../public/icons/misc/deleteRed.svg";
 import Image from "next/image";
 import React from "react";
+import down from "../../../public/icons/misc/down.svg";
+import Modal from "@/components/modal/ModalIndex";
+import Button from "@/components/button/Button";
 import { useRouter } from "next/router";
 import { deleteSubAdmin, getAllSubAdmins } from "@/services/api/adminService";
 import { canEdit } from "@/utils/helpers";
+import usePagination from "@/hooks/usePagination";
 const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Sub Admin" }];
+import Pagination from "@/components/pagination/Pagination";
 
 export default function RoleManagement() {
+  const [isModalOpen, setModalOpen] = React.useState(false);
+  const [userId, setUserId] = React.useState("");
+  const {limit,page,handleLimitChange,handlePageChange} = usePagination();
+
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+
+  const [totalPages, setTotalPages] = React.useState(0);
 
   const router = useRouter();
 
@@ -44,9 +55,20 @@ export default function RoleManagement() {
 
   const fetchSubAdminDetails = async () => {
     setLoading(true);
-    const result = await getAllSubAdmins();
+    const result = await getAllSubAdmins({limit:limit,page:page});
     setData([...result.data]);
+    setTotalPages(result.totalPages || 1);
     setLoading(false);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteSubAdmin(userId);
+      setModalOpen(false);
+      fetchSubAdminDetails();
+    } catch (error) {
+      console.error("Error blocking user:", error);
+    }
   };
 
   const dropdownItems = (row) => {
@@ -64,13 +86,8 @@ export default function RoleManagement() {
         icon: deleteRedIcon,
         text: "Delete",
         onClick: async () => {
-          try {
-            const res = await deleteSubAdmin(row._id);
-            const data = JSON.stringify(res);
-            fetchSubAdminDetails();
-          } catch (error) {
-            console.log(error);
-          }
+          setUserId(row._id);
+          setModalOpen(true);
         },
         className: "text-red-500",
       });
@@ -80,10 +97,39 @@ export default function RoleManagement() {
 
   React.useEffect(() => {
     fetchSubAdminDetails();
-  }, []);
+  }, [page,limit]);
 
   return (
     <div className="flex flex-col gap-6">
+      <Modal
+        isOpen={isModalOpen}
+        type="confirmation"
+        title="Are you sure you want to delete this Sub-Admin from Yanci?"
+        message="You can not revert this change."
+        onClose={() => {
+          setModalOpen(false);
+        }}
+      >
+        <Modal.Footer>
+          <Button
+            design="secondary"
+            className="h-9 w-24"
+            onClick={() => {
+              setModalOpen(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            style="negative"
+            design="primary"
+            className="h-9"
+          >
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Breadcrumb items={breadCrumbItems} />
       <div>
         <h3 className="text-heading-6 font-semibold">Sub Admins</h3>
@@ -92,69 +138,110 @@ export default function RoleManagement() {
             <p className="text-black-6 text-heading-1">Loading Sub Admins</p>
           </div>
         ) : (
-          <div className="mt-4 rounded-xl border  border-primary-4 overflow-x-auto">
-            <table className="min-w-full bg-primary-2">
-              <thead className="h-14 p-4 border-b border-primary-3 w-full">
-                <tr className="w-full">
-                  {subAdminColumns.map((col, index) => (
-                    <th
-                      className="text-left text-heading-6 font-semibold text-primary-8 table-header"
-                      key={index}
-                    >
-                      {col.header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="bg-white">
-                {data.map((row) => (
-                  <tr
-                    key={row._id}
-                    className="border-b-0.3 last:border-none border-primary-8 hover:bg-primary-1"
-                  >
-                    {subAdminColumns.map((col, colIndex) => (
-                      <td
-                        key={colIndex}
-                        className="table-cell h-12 text-left whitespace-nowrap text-sm text-gray-700"
+          <div className="mt-4 rounded-xl border border-primary-4 overflow-x-auto">
+            <div>
+              <table className="min-w-full bg-primary-2">
+                <thead className="h-14 p-4 border-b border-primary-3 w-full">
+                  <tr className="w-full">
+                    {subAdminColumns.map((col, index) => (
+                      <th
+                        className="text-left text-heading-6 font-semibold text-primary-8 table-header"
+                        key={index}
                       >
-                        {col.render ? (
-                          col.render(row)
-                        ) : !row[col.key] ? (
-                          <>--</>
-                        ) : (
-                          row[col.key]
-                        )}
-                      </td>
+                        {col.header}
+                      </th>
                     ))}
-                    <td>
-                      <Dropdown>
-                        <Dropdown.Button
-                          type="clean"
-                          className="table-cell px-1"
-                        >
-                          <span className="font-bold">&#8942;</span>
-                        </Dropdown.Button>
-                        <Dropdown.Menu origin="top-right">
-                          {dropdownItems(row).map((dropdownItem, index) => (
-                            <Dropdown.Item
-                              onClick={dropdownItem.onClick}
-                              key={index}
-                              className={dropdownItem.className}
-                            >
-                              <Image
-                                src={dropdownItem.icon}
-                                alt="View Details"
-                              />
-                              <p>{dropdownItem.text}</p>
-                            </Dropdown.Item>
-                          ))}
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white">
+                  {data.map((row) => (
+                    <tr
+                      key={row._id}
+                      className="border-b-0.3 last:border-none border-primary-8 hover:bg-primary-1"
+                    >
+                      {subAdminColumns.map((col, colIndex) => (
+                        <td
+                          key={colIndex}
+                          className="table-cell h-12 text-left whitespace-nowrap text-sm text-gray-700"
+                        >
+                          {col.render ? (
+                            col.render(row)
+                          ) : !row[col.key] ? (
+                            <>--</>
+                          ) : (
+                            row[col.key]
+                          )}
+                        </td>
+                      ))}
+                      <td>
+                        <Dropdown>
+                          <Dropdown.Button
+                            type="clean"
+                            className="table-cell px-1"
+                          >
+                            <span className="font-bold">&#8942;</span>
+                          </Dropdown.Button>
+                          <Dropdown.Menu origin="top-right">
+                            {dropdownItems(row).map((dropdownItem, index) => (
+                              <Dropdown.Item
+                                onClick={dropdownItem.onClick}
+                                key={index}
+                                className={dropdownItem.className}
+                              >
+                                <Image
+                                  src={dropdownItem.icon}
+                                  alt="View Details"
+                                />
+                                <p>{dropdownItem.text}</p>
+                              </Dropdown.Item>
+                            ))}
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="table-bottom flex flex-wrap justify-between items-center gap-x-2 gap-y-5 p-4 bg-white  border-t-0 rounded-b-xl min-w-full">
+                <div className="flex items-center gap-2">
+                  <p className="text-body-2 text-black-7">Entries per page</p>
+                  <Dropdown>
+                    <Dropdown.Button>
+                      {limit}
+                      <Image src={down} alt="Down" />
+                    </Dropdown.Button>
+                    <Dropdown.Menu origin="bottom-right">
+                      <Dropdown.Item
+                        onClick={() => {
+                          handleLimitChange(10);
+                        }}
+                      >
+                        10
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          handleLimitChange(20);
+                        }}
+                      >
+                        20
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          handleLimitChange(30);
+                        }}
+                      >
+                        30
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+                <Pagination
+                  currentPage={page}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </div>
+            </div>
           </div>
         )}
       </div>

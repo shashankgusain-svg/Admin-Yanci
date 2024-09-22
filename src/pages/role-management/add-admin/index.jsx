@@ -69,6 +69,7 @@ export default function index() {
       ...prevState,
       [name]: value,
     }));
+    console.log(newSubAdminDetails)
   };
 
   const handleCheckboxChange = (index, type) => {
@@ -132,14 +133,14 @@ export default function index() {
     e.preventDefault();
     const isEmailValid = verifyEmail(newSubAdminDetails.email);
     const isPasswordValid = verifyPassword(newSubAdminDetails.password);
-    const isNameValid = isRequired(newSubAdminDetails.name,"Name");
+    const isNameValid = isRequired(newSubAdminDetails.name, "Name");
 
     if (!isEmailValid || !isPasswordValid || !isNameValid) {
       return;
     }
 
     try {
-      console.log(newSubAdminDetails)
+      console.log(newSubAdminDetails);
       await addSubAdmin(newSubAdminDetails);
       setNewSubAdminDetails(defaultSubAdminDetails);
       router.push("/role-management");
@@ -177,13 +178,7 @@ export default function index() {
               <InputAndLabel.Label htmlFor="phoneNo" className="text-primary-6">
                 Phone No. (Optional)
               </InputAndLabel.Label>
-              <InputAndLabel.Input
-                type="text"
-                name="phone"
-                id="phoneNo"
-                value={newSubAdminDetails.phone}
-                onChange={handleInputChange}
-              />
+              <InputAndLabel.PhoneInput onChange={handleInputChange} value={newSubAdminDetails.phone}/>
             </InputAndLabel>
 
             <div className="col-span-2 flex flex-col gap-3 text-black-9 font-semibold">
@@ -253,7 +248,7 @@ export default function index() {
                         onChange={handleToggleViewAndEditForAll}
                         className="form-checkbox text-primary-7"
                       />
-                      <p>View & Edit</p>
+                      <p>Edit</p>
                     </div>
                   </th>
                 </tr>

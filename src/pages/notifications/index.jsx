@@ -1,6 +1,6 @@
 import React from "react";
 import Toggle from "@/components/typeToggle/TypeToggle";
-import StatsCard from "@/components/statsCard/StatsCard";
+import MetricsCard from "@/components/metricsCard/MetricsCard";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Table from "@/components/table/Table";
 import {
@@ -8,10 +8,11 @@ import {
   getNotificationsMetrics,
 } from "@/services/api/notificationsService";
 import { notificationsKeyTitleMapping } from "@/utils/seed";
+import usePagination from "@/hooks/usePagination";
 
 export default function Notifications() {
   const [data, setData] = React.useState({ sent: [], scheduled: [] });
-  const [stats, setStats] = React.useState({});
+  const [metrics, setMetrics] = React.useState({});
 
   const [loading, setLoading] = React.useState(true);
 
@@ -23,8 +24,8 @@ export default function Notifications() {
 
   const [searchValue, setSearchValue] = React.useState("");
 
-  const [limit, setLimit] = React.useState(10);
-  const [page, setPage] = React.useState(1);
+  const {limit,handleLimitChange,handlePageChange,page} = usePagination();
+
   const [totalPages, setTotalPages] = React.useState(0);
 
   const breadCrumbItems = [
@@ -125,10 +126,10 @@ export default function Notifications() {
     setLoading(false);
   };
 
-  const fetchNotificationsStats = async () => {
+  const fetchNotificationsMetrics = async () => {
     const res = await getNotificationsMetrics();
     const data = { ...res.data };
-    setStats(data);
+    setMetrics(data);
   };
 
   React.useEffect(() => {
@@ -136,15 +137,8 @@ export default function Notifications() {
   }, [selectedOption, limit, page, searchValue, sortField, sortOrder]);
 
   React.useEffect(() => {
-    fetchNotificationsStats();
+    fetchNotificationsMetrics();
   }, []);
-
-  // const handleSort = (field) => {
-  //   const isAsc = sortField === field && sortOrder === "asc";
-  //   setSortField(field);
-  //   setSortOrder(isAsc ? "desc" : "asc");
-  //   fetchUsersData(selectedOption); // Refetch data with the new sort
-  // };
 
   const userOptions = [
     {
@@ -160,14 +154,11 @@ export default function Notifications() {
           paginationProps={{
             currentPage: page,
             totalPages,
-            onPageChange: (newPage) => setPage(newPage),
+            onPageChange: handlePageChange,
           }}
           limitProps={{
             selectedLimit: limit,
-            onLimitChange: (newLimit) => {
-              setLimit(newLimit);
-              setPage(1); // Reset to page 1 when limit changes
-            },
+            onLimitChange: handleLimitChange,
           }}
         />
       ),
@@ -185,14 +176,11 @@ export default function Notifications() {
           paginationProps={{
             currentPage: page,
             totalPages,
-            onPageChange: (newPage) => setPage(newPage),
+            onPageChange: handlePageChange,
           }}
           limitProps={{
             selectedLimit: limit,
-            onLimitChange: (newLimit) => {
-              setLimit(newLimit);
-              setPage(1); // Reset to page 1 when limit changes
-            },
+            onLimitChange: handleLimitChange,
           }}
         />
       ),
@@ -204,8 +192,8 @@ export default function Notifications() {
       <Breadcrumb items={breadCrumbItems} />
       <div className="flex flex-col gap-6">
         <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
-          {Object.entries(stats).map(([key, value], index) => (
-            <StatsCard
+          {Object.entries(metrics).map(([key, value], index) => (
+            <MetricsCard
               key={index}
               label={notificationsKeyTitleMapping[key] || key}
               isPercentage={false}
