@@ -29,14 +29,14 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const data = await getToken(fields);
-      if (data) {
-        setToken(data.token, expiry);
-        setUser(data, expiry);
-        router.push("/");
-      } else {
-        console.log("Login failed");
+      const res = await getToken(fields);
+      console.log(res);
+      if (res.status === false) {
+        return;
       }
+      setToken(res.token, expiry);
+      setUser(res, expiry);
+      router.push("/");
     } catch (error) {
       console.error("Error during login:", error);
     } finally {

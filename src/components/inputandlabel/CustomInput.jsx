@@ -1,19 +1,29 @@
 import React from "react";
+import PasswordIcon from "../../../public/icons/misc/passwordIcon";
 
 export default function CustomInput({
   type = "text",
   name,
   id,
-  value="",
-  onChange=()=>{},
-  placeHolder="",
+  value = "",
+  onChange = () => {},
+  placeHolder = "",
   required = false,
   disabled = false,
   className = "",
   ...rest
 }) {
+  const [passwordShown, setPasswordShown] = React.useState(false);
+
+  const handleToggle = () => {
+    console.log(passwordShown)
+    setPasswordShown(!passwordShown);
+  };
+
   return type === "status" ? (
-    <div className={`custom-input w-full flex items-center border border-black-5 bg-black-4 rounded-lg`}>
+    <div
+      className={`custom-input w-full flex items-center border border-black-5 bg-black-4 rounded-lg`}
+    >
       <span
         className={`inline-flex items-center px-3 py-0.5 rounded-full text-sm ${
           value === "Successful"
@@ -26,6 +36,26 @@ export default function CustomInput({
         {value}
       </span>
     </div>
+  ) : type === "password" ? (
+      <div className="custom-input flex items-center border border-black-5 bg-white rounded-lg">
+        <input
+          type={passwordShown ? "text" : "password"}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeHolder}
+          required={required}
+          disabled={disabled}
+          className={`
+          ${disabled === true ? "bg-black-4" : null}
+          w-full text-body-2 bg-none focus:outline-none
+        ${className}`}
+          {...rest}
+        />
+        <button type="button" onClick={handleToggle}>
+          <PasswordIcon type={passwordShown ? "open" : "close"} />
+        </button>
+      </div>
   ) : (
     <input
       type={type}

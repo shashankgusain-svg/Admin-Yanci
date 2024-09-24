@@ -32,7 +32,14 @@ const dummyMetrics = [
 ];
 
 export default function Home() {
-  const [user, setUser] = React.useState({user:{},token:"",});
+  const [user, setUser] = React.useState({
+    user: {
+      user: {
+        name : ""
+      },
+    },
+    token: "",
+  });
 
   React.useEffect(() => {
     const fetchUserData = async () => {
@@ -40,13 +47,16 @@ export default function Home() {
       setUser({ ...temp });
     };
     fetchUserData();
-  }, []); 
+  }, []);
 
   return (
     <div className="flex flex-col gap-6">
       <div>
         <h2 className="text-heading-2 text-black-13 font-semibold">
-          Hi <span className="text-primary-6">{user.user.name || "Name Unavailable From API"}</span>
+          Hi{" "}
+          <span className="text-primary-6">
+            {user.user.name || "Name Unavailable From API"}
+          </span>
         </h2>
         <p className="text-heading-5 text-black-13 font-semibold mt-1">
           Welcome to Yanci

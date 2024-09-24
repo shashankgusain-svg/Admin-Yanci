@@ -4,14 +4,14 @@ import { apiError, responseValidator, URL } from "./helper";
 // GET
 
 export const getAllSubAdmins = async (payload) => {
-  let endpoint = `${URL}admin/get-all?roleType=SUB`
-  
-  if (payload.limit){
-    endpoint+=`&limit=${payload.limit}`;
+  let endpoint = `${URL}admin/get-all?roleType=SUB`;
+
+  if (payload.limit) {
+    endpoint += `&limit=${payload.limit}`;
   }
 
-  if (payload.page){
-    endpoint+=`&limit=${payload.page}`;
+  if (payload.page) {
+    endpoint += `&limit=${payload.page}`;
   }
 
   try {
@@ -64,15 +64,15 @@ export const addSubAdmin = async (payload) => {
 
 export const updatePolicy = async (payload) => {
   try {
-    const res = await fetch(`${URL}admin/create-sub-admin`, {
-      method: "POST",
+    const res = await fetch(`${URL}policy/updatepolicy`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${await getAuthToken()}`,
       },
-      body: JSON.stringify({ ...payload }),
+      body: JSON.stringify(payload),
     });
-    return responseValidator(res,true);
+    return responseValidator(res, true);
   } catch (error) {
     apiError(error);
   }
@@ -89,7 +89,7 @@ export const deleteSubAdmin = async (_id) => {
         Authorization: `Bearer ${await getAuthToken()}`,
       },
     });
-    return responseValidator(res,true);
+    return responseValidator(res, true);
   } catch (error) {
     apiError(error);
   }

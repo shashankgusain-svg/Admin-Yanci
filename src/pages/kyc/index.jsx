@@ -115,7 +115,7 @@ export default function Kyc() {
         <div
           className="w-10 h-10 bg-cover rounded-full block"
           style={
-            data.profilePic
+            row.profilePic
               ? { backgroundImage: `url(${row.profilePic})` }
               : { backgroundImage: `url(${imagePlaceholder.src})` }
           }
@@ -229,7 +229,7 @@ export default function Kyc() {
         <div
           className="w-10 h-10 bg-cover rounded-full block"
           style={
-            data.profilePic
+            row.profilePic
               ? { backgroundImage: `url(${row.profilePic})` }
               : { backgroundImage: `url(${imagePlaceholder.src})` }
           }

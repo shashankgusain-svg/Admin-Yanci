@@ -52,16 +52,16 @@ export default function User() {
   const columns = [
     {
       header: "P.I",
-      key: "profilePic",
+      key: "passportPic.url",
       render: (row) => (
         <div
           className="w-10 h-10 bg-cover rounded-full block"
           style={
-            data.profilePic
-              ? { backgroundImage: `url(${row.profilePic})` }
+            row.passportPic.url
+              ? { backgroundImage: `url(${row.passportPic.url})` }
               : { backgroundImage: `url(${imagePlaceholder.src})` }
           }
-        />
+      />
       ),
     },
     {

@@ -68,9 +68,37 @@
     @apply scale-100;
   }
 
-  textarea:focus, input:focus{
+  textarea:focus,
+  input:focus {
     @apply outline outline-primary-6 outline-2;
-}
+
+    input::-ms-reveal,
+    input::-ms-clear {
+      display: none !important;
+    }
+  }
+
+  .jodit-wysiwyg ul,
+  .jodit-wysiwyg ol,
+  .updatePreview ul,
+  .updatePreview ol {
+    list-style-position: inside !important;
+  }
+
+  .jodit-wysiwyg,
+  .updatePreview ul {
+    list-style: inside !important;
+  }
+
+  .jodit-wysiwyg ol,
+  .updatePreview ol {
+    list-style-type: decimal;
+  }
+
+  .jodit-wysiwyg td,
+  .updatePreview td {
+    border: solid 1px;
+  }
 }
 
 @layer components {

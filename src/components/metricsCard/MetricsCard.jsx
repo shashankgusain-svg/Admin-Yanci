@@ -6,12 +6,14 @@ export default function MetricsCard({
   isPercentage = false,
   isDollar = false,
   percentageChange,
-  value,
+  value = 0,
   isPositiveChange,
 }) {
   return (
     <div className="metricsCard flex flex-col min-h-full gap-2 justify-between bg-white border border-black-5 p-4">
-      <p className="uppercase whitespace-normal text-xs font-bold text-gray-500">{label}</p>
+      <p className="uppercase whitespace-normal text-xs font-bold text-gray-500">
+        {label}
+      </p>
       <div
         className={`flex flex-wrap items-end justify-between text-label-1 font-bold ${
           isPositiveChange ? "text-green-500" : "text-red-500"

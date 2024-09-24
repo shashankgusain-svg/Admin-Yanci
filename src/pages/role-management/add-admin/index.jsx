@@ -69,7 +69,7 @@ export default function index() {
       ...prevState,
       [name]: value,
     }));
-    console.log(newSubAdminDetails)
+    console.log(newSubAdminDetails);
   };
 
   const handleCheckboxChange = (index, type) => {
@@ -140,8 +140,10 @@ export default function index() {
     }
 
     try {
-      console.log(newSubAdminDetails);
-      await addSubAdmin(newSubAdminDetails);
+      const res = await addSubAdmin(newSubAdminDetails);
+      if (res.status === false) {
+        return;
+      }
       setNewSubAdminDetails(defaultSubAdminDetails);
       router.push("/role-management");
     } catch (error) {
@@ -178,7 +180,10 @@ export default function index() {
               <InputAndLabel.Label htmlFor="phoneNo" className="text-primary-6">
                 Phone No. (Optional)
               </InputAndLabel.Label>
-              <InputAndLabel.PhoneInput onChange={handleInputChange} value={newSubAdminDetails.phone}/>
+              <InputAndLabel.PhoneInput
+                onChange={handleInputChange}
+                value={newSubAdminDetails.phone}
+              />
             </InputAndLabel>
 
             <div className="col-span-2 flex flex-col gap-3 text-black-9 font-semibold">

@@ -14,7 +14,6 @@ export const responseValidator = async (
         toastId: `API-Response-success-${Math.random()}`,
       });
     }
-    console.log(res)
     return res;
   } else if (response.status == 401) {
     toast.error(
@@ -31,7 +30,7 @@ export const responseValidator = async (
     return { status: false, code: 413, message: "file-size-too-large" };
   } else if (response.status >= 400 && response.status < 500) {
     const res = await response.json();
-    if (!isToaster) {
+    if (isToaster) {
       toast.error(res.message, {
         toastId: `API-400-error${Math.random()}`,
       });
@@ -39,7 +38,7 @@ export const responseValidator = async (
     return { status: false, code: res.code, message: res.message };
   } else if (response.status >= 500) {
     const res = await response.json();
-    toast.error(res, {
+    toast.error(res.message, {
       toastId: `API-500-error${Math.random()}`,
     });
     return {
@@ -60,7 +59,6 @@ export const responseValidator = async (
 };
 
 export const apiError = (e) => {
-  console.log(e);
   if (e.name === "AbortError") {
   } else {
     toast.error("Takes more than the usual time. Please refresh the page.", {

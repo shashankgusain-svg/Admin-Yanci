@@ -10,7 +10,7 @@ import KYCModal from "@/components/modals/KYCModal";
 import PDFViewer from "@/components/pdfViewer/PDFViewer";
 import { getAuthToken } from "@/services/api/cookies";
 import { canEdit } from "@/utils/helpers";
-import deleteIcon from '../../../../public/icons/misc/deleteWhite.svg';
+import deleteIcon from "../../../../public/icons/misc/deleteWhite.svg";
 import Image from "next/image";
 
 export default function UserPage() {
@@ -197,12 +197,12 @@ export default function UserPage() {
 
               <InputAndLabel>
                 <InputAndLabel.Label htmlFor="phone">Phone</InputAndLabel.Label>
-                <InputAndLabel.Input
+                <InputAndLabel.PhoneInput
                   disabled
+                  disableDropdown
                   name="phone"
                   id="phone"
                   value={data.phone}
-                  required
                 />
               </InputAndLabel>
 
@@ -263,8 +263,13 @@ export default function UserPage() {
               </InputAndLabel>
             </div>
             {canEdit("User Management") && (
-              <Button design="primary" title="Delete User" style="negative" onClick={handleDelete}>
-                <Image src={deleteIcon} alt="Delete Icon"/>
+              <Button
+                design="primary"
+                title="Delete User"
+                style="negative"
+                onClick={handleDelete}
+              >
+                <Image src={deleteIcon} alt="Delete Icon" />
                 Delete User
               </Button>
             )}
