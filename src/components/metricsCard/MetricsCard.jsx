@@ -10,7 +10,7 @@ export default function MetricsCard({
   isPositiveChange,
 }) {
   return (
-    <div className="metricsCard flex flex-col min-h-full gap-2 justify-between bg-white border border-black-5 p-4">
+    <div className="metricsCard fadeIn flex flex-col min-h-full gap-2 justify-between bg-white border border-black-5 p-4">
       <p className="uppercase whitespace-normal text-xs font-bold text-gray-500">
         {label}
       </p>

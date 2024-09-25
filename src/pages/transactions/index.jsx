@@ -8,42 +8,42 @@ import FundDetails from "../../components/tables/FundDetailsTable";
 const dummyMetrics = [
   {
     label: "Total Activity",
-    percentageChange: 36,
-    value: 2426,
+    percentageChange: 0,
+    value: 0,
     isPositiveChange: true,
   },
   {
     label: "Total Trading Activity",
-    percentageChange: 36,
-    value: 2426,
+    percentageChange: 0,
+    value: 0,
     isPositiveChange: true,
   },
   {
     label: "Daily Average Trade",
-    percentageChange: 36,
+    percentageChange: 0,
     isPercentage: true,
-    value: 42,
+    value: 0,
     isPositiveChange: false,
   },
   {
     label: "Trading Days",
-    percentageChange: 36,
+    percentageChange: 0,
     isPercentage: true,
-    value: 62,
+    value: 0,
     isPositiveChange: true,
   },
   {
     label: "Buying Activity (VOL.)",
-    percentageChange: 36,
+    percentageChange: 0,
     isPercentage: true,
-    value: 62,
+    value: 0,
     isPositiveChange: true,
   },
   {
     label: "Selling Activity (VOL.)",
-    percentageChange: 36,
+    percentageChange: 0,
     isPercentage: true,
-    value: 62,
+    value: 0,
     isPositiveChange: true,
   },
 ];
@@ -56,7 +56,7 @@ const userOptions = [
   },
 ];
 
-const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Transactions" }];
+const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Transactions" }];
 
 export default function Transactions() {
   return (

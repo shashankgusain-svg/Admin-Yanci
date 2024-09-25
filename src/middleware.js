@@ -60,10 +60,8 @@ export default function middleware(req) {
       );
 
       if (!hasViewPermission) {
-        console.log(
-          `User lacks view permission for ${permissionName}, redirecting to /403`
-        );
-        return NextResponse.redirect(new URL("/403", req.url));
+        url.pathname = "/";
+        return NextResponse.redirect(url);
       }
     }
   }

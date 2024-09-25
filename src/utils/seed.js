@@ -6,7 +6,7 @@ export const kycKeyTitleMapping = {
   pendingApprovalsCount: "Pending Approvals Count",
   pendingApprovalsPercentChange: "Pending Approvals Percentage Change",
   abandonedKycsCount: "Abandoned KYC Count",
-  abandonedKycsPercentChange: "Abandoned KYC Percentage Change"
+  abandonedKycsPercentChange: "Abandoned KYC Percentage Change",
 };
 
 export const notificationsKeyTitleMapping = {
@@ -14,7 +14,7 @@ export const notificationsKeyTitleMapping = {
   sentNotifications: "Sent Notifications",
   scheduledNotifications: "Scheduled Notifications",
   viaEmail: "Via Email",
-  viaSms: "Via SMS"
+  viaSms: "Via SMS",
 };
 
 export const userKeyTitleMapping = {
@@ -22,15 +22,15 @@ export const userKeyTitleMapping = {
   activeUsers: "Active Users",
   inactiveUsers: "Inactive Users",
   fundedAccounts: "Funded Accounts",
-  unfundedAccounts: "Unfunded Accounts"
+  unfundedAccounts: "Unfunded Accounts",
 };
 
 export const kycVerificationStatusMapping = {
   inpipeline: "On Hold",
   verified: "Verified",
   pending: "On Hold",
-  hold : "On Hold",
-  rejected: "Rejected"
+  hold: "On Hold",
+  rejected: "Rejected",
 };
 
 export const supportKeyMapping = {
@@ -44,5 +44,14 @@ export const supportKeyMapping = {
   zeroPlusFeedback: "0+ Feedback",
   totalFaq: "Total FAQs",
   liveFaq: "Active FAQs",
-  inactiveFaq: "Inactive FAQs"
+  inactiveFaq: "Inactive FAQs",
+};
+
+export const targetCustomerValueMapping = {
+  ALL_UNFUNDED_ACCOUNTS: "All Funded Accounts",
+  NO_TRANSACTION_MADE: "No Transaction Made",
+  MONTHLY_ACTIVE_USERS: "Monthly Active Users",
+  NON_ACTIVE_USERS: "Non Active Users",
+  ABANDONED_KYC: "Abandoned KYC",
+  NEW_USERS: "New Users",
 };

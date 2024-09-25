@@ -272,4 +272,46 @@
       max-width: 1700px;
     }
   }
+
+  .popAndAppear {
+    animation: popAndAppear ease 300ms;
+    animation-direction: normal;
+  }
+
+  .slideAndAppear{
+    animation: slideAndAppear ease 300ms;
+    animation-direction: normal;
+  }
+
+  .fadeIn {
+    animation: fadeIn ease-in 500ms;
+    animation-direction: normal;
+  }
+
+  @keyframes popAndAppear {
+    0% {
+      transform: scale(98%);
+    }
+    100% {
+      transform: scale(100%);
+    }
+  }
+
+  @keyframes slideAndAppear {
+    0% {
+      transform: translateY(15px);
+    }
+    100% {
+      transform: translateY(0%);
+    }
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
 }

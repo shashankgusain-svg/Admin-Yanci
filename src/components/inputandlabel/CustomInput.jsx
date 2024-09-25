@@ -16,7 +16,6 @@ export default function CustomInput({
   const [passwordShown, setPasswordShown] = React.useState(false);
 
   const handleToggle = () => {
-    console.log(passwordShown)
     setPasswordShown(!passwordShown);
   };
 

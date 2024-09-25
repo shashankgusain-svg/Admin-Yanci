@@ -23,7 +23,7 @@ import { supportKeyMapping } from "@/utils/seed";
 import { canEdit } from "@/utils/helpers";
 import { useRouter } from "next/router";
 
-const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "User Support" }];
+const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "User Support" }];
 
 export default function UserSupport() {
   const router = useRouter();
@@ -198,6 +198,7 @@ export default function UserSupport() {
       header: "Sent on",
       key: "createdAt",
       sortable: true,
+      isDate : true,
       onSort: () => {
         handleSort("createdAt");
       },
@@ -261,10 +262,6 @@ export default function UserSupport() {
       render: (row) => <div className="whitespace-normal">{row.answer}</div>,
     },
     {
-      header: "Type",
-      key: "type",
-    },
-    {
       header: "Published on",
       key: "createdAt",
       isDate: true,
@@ -278,7 +275,7 @@ export default function UserSupport() {
       key: "status",
       render: (row) => (
         <span
-          className={`rounded-full px-2 py-1 capitalizek ${
+          className={`rounded-full px-2 py-1 capitalize ${
             row.status === "LIVE"
               ? "bg-green-600 text-white"
               : "bg-yellow-400 text-black"

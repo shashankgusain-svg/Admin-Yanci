@@ -3,53 +3,45 @@ import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import MetricsCard from "@/components/metricsCard/MetricsCard";
 import Toggle from "@/components/typeToggle/TypeToggle";
 import Table from "@/components/table/Table";
-import { getKYCData, getKYCMetrics, manageKYC } from "@/services/api/kycService";
-import verify from "../../../public/icons/misc/verify.svg";
-import history from "../../../public/icons/misc/history.svg";
-import reject from "../../../public/icons/misc/reject.svg";
-import Link from "next/link";
-import imagePlaceholder from "../../../public/images/pi_placeholder.jpg";
+import {
+  getKYCData,
+  getKYCMetrics,
+  manageKYC,
+} from "@/services/api/kycService";
 import KYCModal from "@/components/modals/KYCModal";
-import { kycKeyTitleMapping, kycVerificationStatusMapping } from "@/utils/seed";
+import { kycKeyTitleMapping } from "@/utils/seed";
 import Modal from "@/components/modal/ModalIndex";
-import PDFViewer from "@/components/pdfViewer/PDFViewer";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import Button from "@/components/button/Button";
-import { canEdit } from "@/utils/helpers";
+import { canEdit, downloadFile } from "@/utils/helpers";
 import usePagination from "@/hooks/usePagination";
+import { abandonedKycColumns, submittedKycColumns } from "@/config/tableConfig";
+import useTableSorting from "@/hooks/useTableSort";
+import useSearch from "@/hooks/useSearch";
+import {
+  getSubmittedKycDropdownItems,
+  getAbandonedKycDropdownItems,
+} from "@/config/dropdownConfig";
 
 export default function Kyc() {
   const [data, setData] = React.useState({ submitted: [], abandoned: [] });
   const [metrics, setMetrics] = React.useState({});
-
   const [loading, setLoading] = React.useState(true);
-
   const [selectedOption, setSelectedOption] = React.useState("Submitted KYCs");
-
-  const [sortField, setSortField] = React.useState("");
-  const [sortOrder, setSortOrder] = React.useState("asc");
-
-  const [searchValue, setSearchValue] = React.useState("");
-
-  const {
-    limit,
-    page,
-    handleLimitChange,
-    handlePageChange,
-  } = usePagination();
-
-  const [totalPages, setTotalPages] = React.useState(0);
-
   const [modalType, setModalType] = React.useState(null);
   const [userId, setUserId] = React.useState("");
   const [csdFormLink, setCsdFormLink] = React.useState(null);
+  const [totalPages, setTotalPages] = React.useState(0);
+  const [values, setValues] = React.useState(null);
   const [verificationData, setVerificationData] = React.useState({
     type: null,
     userId: null,
     csdNo: "",
   });
 
-  const [values, setValues] = React.useState(null);
+  const { sortField, sortOrder, handleSort } = useTableSorting();
+  const { searchValue, onSearch } = useSearch();
+  const { limit, page, handleLimitChange, handlePageChange } = usePagination();
 
   const handleCSDNumberChange = (e) => {
     setVerificationData((prevData) => ({
@@ -96,217 +88,9 @@ export default function Kyc() {
     setMetrics(data);
   };
 
-  const handleSort = (field) => {
-    const isAsc = sortField === field && sortOrder === "asc";
-    setSortField(field);
-    setSortOrder(isAsc ? "desc" : "asc");
-  };
-
-  const handleSearch = (event) => {
-    const value = event.target.value;
-    setSearchValue(value);
-  };
-
-  const submittedKYCsColumns = [
-    {
-      header: "P.I",
-      key: "profilePic",
-      render: (row) => (
-        <div
-          className="w-10 h-10 bg-cover rounded-full block"
-          style={
-            row.profilePic
-              ? { backgroundImage: `url(${row.profilePic})` }
-              : { backgroundImage: `url(${imagePlaceholder.src})` }
-          }
-        />
-      ),
-    },
-    {
-      header: "Name",
-      key: "name",
-      render: (row) => (
-        <Link
-          href={`/user/${row.userId}`}
-          className="hover:underline text-primary-7"
-        >
-          <p>{row.name ? row.name : "--"}</p>
-        </Link>
-      ),
-    },
-    {
-      header: "Submission Date",
-      key: "createdDate",
-      sortable: true,
-      onSort: () => {
-        handleSort("createdAt");
-      },
-      isDate: true,
-    },
-    {
-      header: "Yanci ID",
-      key: "userId",
-      render: (row) => (
-        <Link
-          href={`/user/${row.userId}`}
-          className="hover:underline text-primary-7"
-        >
-          <p>{row.userId ? row.userId : "--"}</p>
-        </Link>
-      ),
-    },
-    {
-      header: "CSD No",
-      key: "csdNo",
-    },
-    {
-      header: "Nationality",
-      key: "nationality",
-    },
-    {
-      header: "Phone",
-      key: "phone",
-    },
-    {
-      header: "Email",
-      key: "email",
-    },
-    {
-      header: "KYC Details",
-      key: "kycDetailsLink",
-      render: (row) => (
-        <button
-          className="hover:underline text-blue-700"
-          onClick={() => {
-            setUserId(row.userId);
-            setModalType("details");
-          }}
-        >
-          View Details
-        </button>
-      ),
-    },
-    {
-      header: "CSD Form",
-      key: "csdFormLink",
-      render: (row) => (
-        <button
-          className="hover:underline text-blue-700"
-          onClick={() => {
-            setCsdFormLink(row.csdFormLink);
-            setModalType("csdForm");
-          }}
-        >
-          View Form
-        </button>
-      ),
-    },
-    {
-      header: "Verification",
-      key: "verificationStatus",
-      render: (row) => (
-        <span
-          className={`inline-flex capitalize items-center px-3 py-0.5 rounded-full text-sm font-medium ${
-            row.verificationStatus === "verified"
-              ? "bg-green-500 text-white"
-              : row.verificationStatus === "rejected"
-              ? "bg-red-500 text-white"
-              : "bg-yellow-400 text-black"
-          }`}
-        >
-          {kycVerificationStatusMapping[row.verificationStatus] ||
-            row.verificationStatus}
-        </span>
-      ),
-    },
-  ];
-
-  const abandoneddKYCsColumns = [
-    {
-      header: "P.I",
-      key: "profilePic",
-      render: (row) => (
-        <div
-          className="w-10 h-10 bg-cover rounded-full block"
-          style={
-            row.profilePic
-              ? { backgroundImage: `url(${row.profilePic})` }
-              : { backgroundImage: `url(${imagePlaceholder.src})` }
-          }
-        />
-      ),
-    },
-    {
-      header: "Name",
-      key: "name",
-      render: (row) => (
-        <Link
-          href={`/user/${row.userId}`}
-          className="hover:underline text-primary-7"
-        >
-          <p>{row.name === null || row.name === " " ? "--" : row.name}</p>
-        </Link>
-      ),
-    },
-    {
-      header: "Created Date",
-      key: "createdDate",
-      sortable: true,
-      onSort: () => {
-        handleSort("createdAt");
-      },
-      isDate: true,
-    },
-    {
-      header: "ID",
-      key: "userId",
-      render: (row) => (
-        <Link
-          href={`/user/${row.userId}`}
-          className="hover:underline text-primary-7"
-        >
-          <p>{row.userId ? row.userId : "--"}</p>
-        </Link>
-      ),
-    },
-    {
-      header: "Nationality",
-      key: "nationality",
-    },
-    {
-      header: "Phone",
-      key: "phone",
-    },
-    {
-      header: "Email",
-      key: "email",
-    },
-    {
-      header: "KYC Details",
-      key: "kycDetailsLink",
-      render: (row) => (
-        <button
-          className="hover:underline text-blue-700"
-          onClick={() => {
-            setUserId(row.userId);
-            setModalType("details");
-          }}
-        >
-          View Details
-        </button>
-      ),
-    },
-    {
-      header: "Abandoned at",
-      key: "abandonedAt",
-    },
-  ];
-
   React.useEffect(() => {
     if (values) {
-      const startDate = values[0]?.format("YYYY-MM-DD") || "";
-      const endDate = values[1]?.format("YYYY-MM-DD") || "";
-      fetchKYCData(startDate, endDate);
+      fetchKYCData(values[0], values[1]);
       return;
     }
     fetchKYCData();
@@ -316,53 +100,8 @@ export default function Kyc() {
     fetchKYCMetrics();
   }, []);
 
-  const submittedDroppdownItems = (row) => {
-    const items = [
-      {
-        icon: verify,
-        text: "Verify",
-        onClick: () => {
-          setVerificationData((prevData) => ({
-            ...prevData,
-            type: "verify",
-            userId: row.userId,
-          }));
-          setModalType("csdModal");
-        },
-      },
-      {
-        icon: history,
-        text: "Put On Hold",
-        onClick: async () => {
-          await manageKYC({ type: "hold", userId: row.userId });
-          setModalType(null);
-          fetchKYCData();
-        },
-      },
-      {
-        icon: reject,
-        text: "Reject",
-        onClick: async () => {
-          await manageKYC({ type: "reject", userId: row.userId });
-          setModalType(null);
-          fetchKYCData();
-        },
-      },
-    ];
-
-    return items;
-  };
-
-  const abandonedDroppdownItems = (row) => [
-    {
-      icon: history,
-      text: "Remind user",
-      onClick: () => {},
-    },
-  ];
-
   const breadCrumbItems = [
-    { name: "Home", Link: "/" },
+    { name: "Home", link: "/" },
     { name: "KYC Management" },
   ];
 
@@ -374,10 +113,23 @@ export default function Kyc() {
           searchBar
           datePicker
           exportToCSV
-          columns={submittedKYCsColumns}
+          columns={submittedKycColumns({
+            handleSort,
+            setModalType,
+            setCsdFormLink,
+            setUserId,
+          })}
           data={data.submitted}
           isDropdown={canEdit("KYC")}
-          dropdownItems={(row) => submittedDroppdownItems(row)}
+          dropdownItems={(row) =>
+            getSubmittedKycDropdownItems({
+              row,
+              setModalType,
+              setVerificationData,
+              fetchKYCData,
+              manageKYC,
+            })
+          }
           isLoading={loading}
           paginationProps={{
             currentPage: page,
@@ -389,7 +141,7 @@ export default function Kyc() {
             onLimitChange: handleLimitChange,
           }}
           searchValue={searchValue}
-          onSearch={handleSearch}
+          onSearch={onSearch}
           dateValue={values}
           dateOnChange={setValues}
         />
@@ -402,10 +154,10 @@ export default function Kyc() {
           searchBar
           datePicker
           exportToCSV
-          columns={abandoneddKYCsColumns}
+          columns={abandonedKycColumns({handleSort, setModalType, setUserId})}
           data={data.abandoned}
           isDropdown={canEdit("KYC")}
-          dropdownItems={(row) => abandonedDroppdownItems(row)}
+          dropdownItems={(row) => getAbandonedKycDropdownItems({row})}
           isLoading={loading}
           paginationProps={{
             currentPage: page,
@@ -417,7 +169,7 @@ export default function Kyc() {
             onLimitChange: handleLimitChange,
           }}
           searchValue={searchValue}
-          onSearch={handleSearch}
+          onSearch={onSearch}
           dateValue={values}
           dateOnChange={setValues}
         />
@@ -435,15 +187,19 @@ export default function Kyc() {
       {/* For CSD Form */}
       {modalType === "csdForm" ? (
         <Modal
-          download={() => {}}
           title="CSD Form"
           type="document"
           isOpen={true}
           onClose={closeModal}
+          download={() => downloadFile(csdFormLink, "CSD_Form.pdf")}
         >
           <Modal.Content>
             {csdFormLink ? (
-              <PDFViewer src={csdFormLink} />
+              <iframe
+                src={`${csdFormLink}#toolbar=0`}
+                className="w-full h-full"
+                title="CSD Form PDF"
+              ></iframe>
             ) : (
               <p className="text-black-5 text-heading-1">
                 CSD Form Not Available
@@ -506,7 +262,9 @@ export default function Kyc() {
             <MetricsCard
               key={index}
               label={kycKeyTitleMapping[key] || key}
-              value={value}
+              value={value.percent ? value.percent : value.count}
+              percentageChange={value.percentChange}
+              isPositiveChange={true}
             />
           ))}
         </div>

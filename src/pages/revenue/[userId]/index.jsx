@@ -8,7 +8,7 @@ export default function index() {
   const { userId } = router.query;
 
   const breadCrumbItems = [
-    { name: "Home", Link: "/" },
+    { name: "Home", link: "/" },
     { name: "Revenue Management" },
     { name: userId },
   ];

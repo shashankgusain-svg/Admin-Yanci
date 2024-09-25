@@ -25,7 +25,7 @@ const SidebarBtn = ({ children, path, isActive, className = "" }) => {
       href={path}
       replace
       className={`
-        sidebarBtn h-9 flex items-center gap-2 hover:bg-primary-2 
+        sidebarBtn h-9 flex items-center gap-2 hover:bg-primary-2 transition-all ease-in-out hover:scale-[95%] hover:ease-in-out hover:duration-150
         ${isActive ? "bg-primary-6 text-white" : "text-primary-6 bg-white"}
         ${className}
       `}

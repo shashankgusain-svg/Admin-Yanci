@@ -6,48 +6,48 @@ import RevenueTable from "@/components/tables/RevenueTable";
 const dummyMetrics = [
   {
     label: "Total Revenue",
-    value: 522426,
+    value: 0,
     isDollar: true,
-    percentageChange : 36
+    percentageChange : 0
   },
   {
     label: "Yanci Fee",
-    value: 522426,
+    value: 0,
     isDollar: true,
-    percentageChange : 36
+    percentageChange : 0
   },
   {
     label: "TTB Fee",
-    value: 522426,
+    value: 0,
     isDollar: true,
-    percentageChange : 36,
+    percentageChange : 0,
     isPositiveChange : true,
   },
   {
     label: "GSE Fee",
-    value: 522426,
+    value: 0,
     isDollar: true,
-    percentageChange : 36,
+    percentageChange : 0,
     isPositiveChange : true,
   },
   {
     label: "SEC Fee",
-    value: 522426,
+    value: 0,
     isDollar: true,
-    percentageChange : 36,
+    percentageChange : 0,
     isPositiveChange : true,
   },
   {
     label: "CSD Fee",
-    value: 522426,
+    value: 0,
     isDollar: true,
-    percentageChange : 36,
+    percentageChange : 0,
     isPositiveChange : true,
   },
 ];
 
 const breadCrumbItems = [
-  { name: "Home", Link: "/" },
+  { name: "Home", link: "/" },
   { name: "Revenue Management" },
 ];
 

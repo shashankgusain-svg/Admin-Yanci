@@ -1,7 +1,7 @@
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import React from "react";
 
-const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Audit Logs" }];
+const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Audit Logs" }];
 
 export default function RoleManagement() {
   return (

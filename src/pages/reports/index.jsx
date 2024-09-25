@@ -7,7 +7,7 @@ import Modal from "@/components/modal/ModalIndex";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 
 export default function Reports() {
-  const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Reports" }];
+  const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Reports" }];
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   return (

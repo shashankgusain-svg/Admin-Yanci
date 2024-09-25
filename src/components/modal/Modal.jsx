@@ -20,7 +20,7 @@ export default function Modal({
       return (
         <div className="layout-container fixed w-full inset-0 z-50 flex items-center justify-center bg-black-13 bg-opacity-50">
           <div
-            className={`bg-white w-full max-w-confirmation flex flex-col rounded-lg shadow-lg ${className}`}
+            className={`popAndAppear bg-white w-full max-w-confirmation flex flex-col rounded-lg shadow-lg ${className}`}
           >
             <div className="flex justify-between items-start py-4 px-6 gap-4">
               <div className="flex flex-col gap-4 justify-start items-start">
@@ -36,7 +36,7 @@ export default function Modal({
                 onClick={onClose}
                 className="text-gray-500 hover:text-gray-700"
               >
-                <Image src={closeIcon} alt="Close"/>
+                <Image src={closeIcon} alt="Close" />
               </button>
             </div>
             {children}
@@ -46,7 +46,9 @@ export default function Modal({
     case "document":
       return (
         <div className="layout-container fixed inset-0 z-50 flex items-center justify-center bg-black-13 bg-opacity-50">
-          <div className={`h-5/6 max-w-document w-full bg-white flex flex-col rounded-lg shadow-lg ${className}`}>
+          <div
+            className={`popAndAppear h-5/6 max-w-document w-full bg-white flex flex-col rounded-lg shadow-lg ${className}`}
+          >
             <div className="flex justify-between items-start py-4 px-6 gap-4">
               <div className="flex flex-col gap-4 justify-start items-start">
                 {title ? (
@@ -60,17 +62,19 @@ export default function Modal({
               <div className="flex gap-4">
                 {download ? (
                   <button
+                    title="Download CSD Form"
                     onClick={download}
                     className="text-gray-500 hover:text-gray-700"
                   >
-                    <Image src={downloadIcon} alt="Download"/>
+                    <Image src={downloadIcon} alt="Download" />
                   </button>
                 ) : null}
                 <button
                   onClick={onClose}
+                  title="Close"
                   className="text-gray-500 hover:text-gray-700"
                 >
-                  <Image src={closeIcon} alt="Close"/>
+                  <Image src={closeIcon} alt="Close" />
                 </button>
               </div>
             </div>
@@ -81,7 +85,9 @@ export default function Modal({
     case "detail":
       return (
         <div className="layout-container fixed inset-0 z-50 flex items-center justify-center bg-black-13 bg-opacity-50">
-          <div className={`h-5/6 max-w-details w-full bg-white flex flex-col rounded-lg shadow-lg ${className}`}>
+          <div
+            className={`popAndAppear h-5/6 max-w-details w-full bg-white flex flex-col rounded-lg shadow-lg ${className}`}
+          >
             <div className="flex justify-between items-start py-4 px-6 gap-4">
               <div className="flex flex-col gap-4 justify-start items-start">
                 {title ? (
@@ -96,7 +102,7 @@ export default function Modal({
                 onClick={onClose}
                 className="text-gray-500 hover:text-gray-700"
               >
-                <Image src={closeIcon} alt="Close"/>
+                <Image src={closeIcon} alt="Close" />
               </button>
             </div>
             {children}

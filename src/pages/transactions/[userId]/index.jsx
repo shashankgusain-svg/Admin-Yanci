@@ -8,8 +8,8 @@ export default function TransactionIndividual() {
   const { userId } = router.query;
 
   const breadCrumbItems = [
-    { name: "Home", Link: "/" },
-    { name: "Transactions", Link: "/" },
+    { name: "Home", link: "/" },
+    { name: "Transactions", link: "/" },
     { name: userId },
   ];
 

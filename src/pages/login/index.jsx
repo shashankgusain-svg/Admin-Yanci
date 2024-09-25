@@ -30,7 +30,6 @@ export default function Login() {
 
     try {
       const res = await getToken(fields);
-      console.log(res);
       if (res.status === false) {
         return;
       }
@@ -145,8 +144,8 @@ export default function Login() {
                   </div>
                 </div>
 
-                <Button className="w-60 mt-10" type="submit" style="primary">
-                  {loading ? <LoadingAnimation theme="light" /> : "Login"}
+                <Button isLoading={loading} className="w-60 mt-10" type="submit" style="primary">
+                  Login
                 </Button>
               </form>
             </div>

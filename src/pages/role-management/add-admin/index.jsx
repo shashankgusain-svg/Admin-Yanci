@@ -7,7 +7,10 @@ import { useRouter } from "next/router";
 import { isRequired, verifyEmail, verifyPassword } from "@/utils/helpers";
 
 export default function index() {
-  const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Sub Admin" }];
+  const breadCrumbItems = [
+    { name: "Home", link: "/" },
+    { name: "Sub Admin" },
+  ];
 
   const defaultSubAdminDetails = {
     name: "",
@@ -69,7 +72,6 @@ export default function index() {
       ...prevState,
       [name]: value,
     }));
-    console.log(newSubAdminDetails);
   };
 
   const handleCheckboxChange = (index, type) => {
@@ -139,8 +141,26 @@ export default function index() {
       return;
     }
 
+    const atLeastOnePermissionSelected = newSubAdminDetails.permissions.some(
+      (permission) => permission.view || permission.edit
+    );
+
+    if (!atLeastOnePermissionSelected) {
+      isRequired("", "Feature", true);
+      return;
+    }
+
+    const filteredPermissions = newSubAdminDetails.permissions.filter(
+      (permission) => permission.view || permission.edit
+    );
+
+    const submissionData = {
+      ...newSubAdminDetails,
+      permissions: filteredPermissions,
+    };
+
     try {
-      const res = await addSubAdmin(newSubAdminDetails);
+      const res = await addSubAdmin(submissionData);
       if (res.status === false) {
         return;
       }

@@ -2,17 +2,20 @@ import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Button from "@/components/button/Button";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import { createNewFAQ } from "@/services/api/userSupportService";
+import { isRequired } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import React from "react";
 
 const breadCrumbItems = [
-  { name: "Home", Link: "/" },
-  { name: "User Support" },
+  { name: "Home", link: "/" },
+  { name: "User Support", link : "/support" },
   { name: "Create FAQ" },
 ];
 
 export default function index() {
   const router = useRouter();
+
+  const [loading, setLoading] = React.useState(false);
 
   const [fields, setFields] = React.useState({
     question: "",
@@ -30,7 +33,15 @@ export default function index() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      if (
+        !isRequired(fields.question, "Question", true) ||
+        !isRequired(fields.answer, "Answer", true)
+      ) {
+        return;
+      }
+      setLoading(true);
       await createNewFAQ(fields);
+      setLoading(false);
       router.push("/support");
     } catch (error) {
       console.log(error);
@@ -69,7 +80,7 @@ export default function index() {
             onChange={handleChange}
           />
         </InputAndLabel>
-        <Button className="w-72" type="submit">
+        <Button className="w-72" type="submit" isLoading={loading} title="Publish">
           Publish
         </Button>
       </form>

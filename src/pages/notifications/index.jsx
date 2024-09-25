@@ -7,7 +7,10 @@ import {
   getNotificationDetails,
   getNotificationsMetrics,
 } from "@/services/api/notificationsService";
-import { notificationsKeyTitleMapping } from "@/utils/seed";
+import {
+  notificationsKeyTitleMapping,
+  targetCustomerValueMapping,
+} from "@/utils/seed";
 import usePagination from "@/hooks/usePagination";
 
 export default function Notifications() {
@@ -24,12 +27,12 @@ export default function Notifications() {
 
   const [searchValue, setSearchValue] = React.useState("");
 
-  const {limit,handleLimitChange,handlePageChange,page} = usePagination();
+  const { limit, handleLimitChange, handlePageChange, page } = usePagination();
 
   const [totalPages, setTotalPages] = React.useState(0);
 
   const breadCrumbItems = [
-    { name: "Home", Link: "/" },
+    { name: "Home", link: "/" },
     { name: "Notification Management" },
   ];
 
@@ -58,7 +61,8 @@ export default function Notifications() {
     },
     {
       header: "Audience",
-      key: "targetCustomer",
+      key: "audience",
+      render: (row) => <>{targetCustomerValueMapping[row.audience]}</>,
     },
     {
       header: "Sent At",
@@ -90,6 +94,7 @@ export default function Notifications() {
     {
       header: "Audience",
       key: "audience",
+      render: (row) => <>{targetCustomerValueMapping[row.audience]}</>,
     },
     {
       header: "Scheduled On",

@@ -11,8 +11,9 @@ import { useRouter } from "next/router";
 import { deleteSubAdmin, getAllSubAdmins } from "@/services/api/adminService";
 import { canEdit } from "@/utils/helpers";
 import usePagination from "@/hooks/usePagination";
-const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Sub Admin" }];
+const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Sub Admin" }];
 import Pagination from "@/components/pagination/Pagination";
+import LoadingAnimation from "../../../public/icons/animated/loading";
 
 export default function RoleManagement() {
   const [isModalOpen, setModalOpen] = React.useState(false);
@@ -135,10 +136,10 @@ export default function RoleManagement() {
         <h3 className="text-heading-6 font-semibold">Sub Admins</h3>
         {loading ? (
           <div className="mt-4 w-full">
-            <p className="text-black-6 text-heading-1">Loading Sub Admins</p>
+            <LoadingAnimation/>
           </div>
         ) : (
-          <div className="mt-4 rounded-xl border border-primary-4 overflow-x-auto">
+          <div className="mt-4 rounded-xl border border-primary-4 overflow-x-auto slideAndAppear">
             <div>
               <table className="min-w-full bg-primary-2">
                 <thead className="h-14 p-4 border-b border-primary-3 w-full">
@@ -157,7 +158,7 @@ export default function RoleManagement() {
                   {data.map((row) => (
                     <tr
                       key={row._id}
-                      className="border-b-0.3 last:border-none border-primary-8 hover:bg-primary-1"
+                      className="border-b-0.3 fadeIn last:border-none border-primary-8 hover:bg-primary-1"
                     >
                       {subAdminColumns.map((col, colIndex) => (
                         <td

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import React from "react";
 
 const breadCrumbItems = [
-  { name: "Home", Link: "/" },
+  { name: "Home", link: "/" },
   { name: "User Support" },
   { name: "Create FAQ" },
 ];

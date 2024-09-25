@@ -27,7 +27,6 @@ export const getNotificationDetails = async (payload) => {
         Authorization: `Bearer ${await getAuthToken()}`,
       },
     });
-    console.log(JSON.stringify(res))
     return responseValidator(res);
   } catch (error) {
     return apiError(error);

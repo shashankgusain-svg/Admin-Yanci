@@ -29,7 +29,8 @@ export const verifyPassword = (password, message = true) => {
     return false;
   }
 
-  const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+  const passwordRegex =
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
   const isValidPassword = passwordRegex.test(password);
 
   if (!isValidPassword) {
@@ -109,14 +110,18 @@ export const downloadCSV = (columns, data) => {
     return;
   }
 
-  const headers = columns.map((col) => col.header).join(",");
+  const exportableColumns = columns.filter((col) => col.csvExport !== false);
+
+  const headers = exportableColumns.map((col) => col.header).join(",");
 
   const csvData = data.map((row) =>
-    columns
+    exportableColumns
       .map((col) => {
-        const cellData = col.isDate
-          ? new Date(row[col.key]).toDateString()
-          : row[col.key];
+        const cellData =
+          typeof col.csvExport === "function"
+            ? col.csvExport(row)
+            : row[col.key];
+
         return typeof cellData === "string"
           ? `"${cellData.replace(/"/g, '""')}"`
           : cellData;
@@ -137,3 +142,26 @@ export const downloadCSV = (columns, data) => {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 };
+
+export async function downloadFile(url, filename) {
+  try {
+    const fileName = window.prompt("Enter file name for the CSD Form", "csdForm.pdf");
+
+    if (!fileName) {
+      return;
+    }
+
+    const response = await fetch(url);
+    const blob = await response.blob();
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (error) {
+    console.error("Failed to download the file", error);
+  }
+}

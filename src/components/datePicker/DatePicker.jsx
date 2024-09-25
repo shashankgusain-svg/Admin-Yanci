@@ -4,7 +4,7 @@ import DatePicker from "react-multi-date-picker";
 import { DateObject } from "react-multi-date-picker";
 
 export default function CustomDatePicker({ values, onChange }) {
-  const format = "YYYY-MM-DD"; // Format as per your requirement
+  const format = "YYYY-MM-DD";
   const [selectedDates, setSelectedDates] = React.useState(values);
 
   return (
@@ -21,8 +21,10 @@ export default function CustomDatePicker({ values, onChange }) {
         <Button
           design="primary"
           onClick={() => {
-            setSelectedDates(null);
-            onChange(null);
+            if (selectedDates != null) {
+              setSelectedDates(null);
+              onChange(null);
+            }
           }}
         >
           Remove
@@ -30,7 +32,7 @@ export default function CustomDatePicker({ values, onChange }) {
         <Button
           design="primary"
           onClick={() => {
-            if (selectedDates.length === 2) {
+            if (selectedDates != null) {
               onChange(selectedDates);
             }
           }}

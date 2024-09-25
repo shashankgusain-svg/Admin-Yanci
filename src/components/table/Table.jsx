@@ -31,7 +31,7 @@ export default function Table({
   dateOnChange = () => {},
 }) {
   return (
-    <div className="w-full flex flex-col relative">
+    <div className="w-full flex flex-col relative slideAndAppear">
       {/* Header */}
       <div className="min-w-full flex flex-wrap justify-between items-center gap-x-10 gap-y-5 p-4 bg-primary-2 rounded-t-xl border border-primary-3 border-b-0">
         <div className="flex items-center flex-wrap gap-y-4">
@@ -49,7 +49,7 @@ export default function Table({
         <div className="flex items-center gap-3 flex-wrap">
           {datePicker ? (
             <Dropdown>
-              <Dropdown.Button>
+              <Dropdown.Button title="Date Picker">
                 <Image src={calender} alt="Calender" />
               </Dropdown.Button>
               <Dropdown.Menu origin="top-right">
@@ -64,6 +64,7 @@ export default function Table({
               onClick={() => {
                 downloadCSV(columns, data);
               }}
+              title="Export to CSV"
             >
               <Image src={exportIcon} alt="Export" />
               <p>Export to CSV</p>

@@ -5,10 +5,6 @@ import React from "react";
 import Toggle from "@/components/typeToggle/TypeToggle";
 import { useRouter } from "next/router";
 import Table from "@/components/table/Table";
-import unblockUser from "../../../public/icons/misc/unblock.svg";
-import blockUserIcon from "../../../public/icons/misc/block.svg";
-import viewDetails from "../../../public/icons/misc/viewDetails.svg";
-import Link from "next/link";
 import {
   getUsersData,
   getUserMetrics,
@@ -17,103 +13,35 @@ import {
 import Modal from "@/components/modal/ModalIndex";
 import Button from "@/components/button/Button";
 import { userKeyTitleMapping } from "@/utils/seed";
-import { canEdit, getBirthYear } from "@/utils/helpers";
 import usePagination from "@/hooks/usePagination";
+import { userColumns } from "@/config/tableConfig";
+import useTableSorting from "@/hooks/useTableSort";
+import useSearch from "@/hooks/useSearch";
+import {
+  getActiveDropdownItems,
+  getBlockedDropdownItems,
+} from "@/config/dropdownConfig";
 
 const breadCrumbItems = [
-  { name: "Home", Link: "/" },
+  { name: "Home", link: "/" },
   { name: "User Management" },
 ];
 
 export default function User() {
   const router = useRouter();
   const { limit, page, handleLimitChange, handlePageChange } = usePagination();
+  const { sortField, sortOrder, handleSort } = useTableSorting();
+  const { searchValue, onSearch } = useSearch();
 
   // States
-
   const [isModalOpen, setModalOpen] = React.useState(false);
-
   const [data, setData] = React.useState({ active: [], blocked: [] });
   const [metrics, setMetrics] = React.useState({});
   const [userId, setUserId] = React.useState("");
-
   const [loading, setLoading] = React.useState(true);
-
   const [selectedOption, setSelectedOption] = React.useState("Active Users");
-
-  const [sortField, setSortField] = React.useState("");
-  const [sortOrder, setSortOrder] = React.useState("asc");
-
-  const [searchValue, setSearchValue] = React.useState("");
   const [totalPages, setTotalPages] = React.useState(0);
-
   const [values, setValues] = React.useState(null);
-
-  const columns = [
-    {
-      header: "P.I",
-      key: "passportPic.url",
-      render: (row) => (
-        <div
-          className="w-10 h-10 bg-cover rounded-full block"
-          style={
-            row.passportPic.url
-              ? { backgroundImage: `url(${row.passportPic.url})` }
-              : { backgroundImage: `url(${imagePlaceholder.src})` }
-          }
-      />
-      ),
-    },
-    {
-      header: "Name",
-      key: "name",
-      render: (row) => (
-        <Link
-          href={`/user/${row._id}`}
-          className="hover:underline text-primary-7"
-        >
-          <p>{row.firstName ? `${row.firstName} ${row.lastName}` : "--"}</p>
-        </Link>
-      ),
-      sortable: true,
-      onSort: () => {
-        handleSort("firstName");
-      },
-    },
-    {
-      header: "ID",
-      key: "_id",
-      render: (row) =>
-        !row._id ? (
-          "..."
-        ) : (
-          <Link
-            href={`/user/${row._id}`}
-            className="hover:underline text-primary-7"
-          >
-            <p>{row._id}</p>
-          </Link>
-        ),
-    },
-    {
-      header: "Age",
-      key: "age",
-      render: (row) => <>{getBirthYear(row.dob)}</>,
-    },
-    { header: "Gender", key: "gender" },
-    { header: "Nationality", key: "nationality" },
-    { header: "Phone", key: "phone" },
-    { header: "Email", key: "email" },
-    {
-      header: "Created Date",
-      key: "createdAt",
-      sortable: true,
-      onSort: () => {
-        handleSort("createdAt");
-      },
-      isDate: true,
-    },
-  ];
 
   const fetchUsersData = async (startDate = "", endDate = "") => {
     setLoading(true);
@@ -144,7 +72,9 @@ export default function User() {
 
   const handleBlock = async () => {
     try {
+      setLoading(true);
       await blockUser(userId);
+      setLoading(false);
       setModalOpen(false);
       fetchUsersData();
     } catch (error) {
@@ -161,11 +91,6 @@ export default function User() {
     }
   };
 
-  const onSearch = (event) => {
-    const value = event.target.value;
-    setSearchValue(value);
-  };
-
   React.useEffect(() => {
     if (values) {
       const startDate = values[0]?.format("YYYY-MM-DD") || "";
@@ -178,64 +103,9 @@ export default function User() {
 
   React.useEffect(() => {
     fetchUserMetrics();
-  }, []);
+  }, [data]);
 
-  // Dropdown Items
-
-  const blockedDroppdownItems = (row) => {
-    const items = [
-      {
-        icon: viewDetails,
-        text: "View Details",
-        onClick: () => {
-          router.push(`/user/${row._id}`);
-        },
-      },
-    ];
-    if (canEdit("User Management")) {
-      items.push({
-        icon: unblockUser,
-        text: "Unblock User",
-        onClick: () => {
-          handleUnblock(row._id);
-        },
-        className: "text-green-500",
-      });
-    }
-    return items;
-  };
-
-  const activeDroppdownItems = (row) => {
-    const items = [
-      {
-        icon: viewDetails,
-        text: "View Details",
-        onClick: () => {
-          router.push(`/user/${row._id}`);
-        },
-      },
-    ];
-
-    if (canEdit("User Management")) {
-      items.push({
-        icon: blockUserIcon,
-        text: "Block User",
-        onClick: () => {
-          setUserId(row._id);
-          setModalOpen(true);
-        },
-        className: "text-red-500",
-      });
-    }
-
-    return items;
-  };
-
-  const handleSort = (field) => {
-    const isAsc = sortField === field && sortOrder === "asc";
-    setSortField(field);
-    setSortOrder(isAsc ? "desc" : "asc");
-  };
+  const columns = userColumns({ handleSort, imagePlaceholder });
 
   const userOptions = [
     {
@@ -248,7 +118,9 @@ export default function User() {
           columns={columns}
           data={data.active}
           isDropdown
-          dropdownItems={(row) => activeDroppdownItems(row)}
+          dropdownItems={(row) =>
+            getActiveDropdownItems({ row, setModalOpen, setUserId })
+          }
           isLoading={loading}
           searchValue={searchValue}
           onSearch={onSearch}
@@ -276,9 +148,12 @@ export default function User() {
           columns={columns}
           data={data.blocked}
           isDropdown
-          dropdownItems={(row) => blockedDroppdownItems(row)}
+          dropdownItems={(row) =>
+            getBlockedDropdownItems({ handleUnblock, router, row })
+          }
           isLoading={loading}
           searchValue={searchValue}
+          onSearch={onSearch}
           paginationProps={{
             currentPage: page,
             totalPages,
@@ -322,6 +197,7 @@ export default function User() {
             style="negative"
             design="primary"
             className="h-9"
+            isLoading={loading}
           >
             Block
           </Button>

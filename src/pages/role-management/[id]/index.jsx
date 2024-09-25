@@ -8,7 +8,7 @@ export default function UpdateAdmin() {
   const router = useRouter();
   const { id } = router.query;
 
-  const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Sub Admin" }];
+  const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Sub Admin" }];
 
   const [subAdminDetails, setSubAdminDetails] = React.useState({
     name: "",
@@ -125,7 +125,7 @@ export default function UpdateAdmin() {
                     checked={areAllPermissionsChecked("edit")}
                     className="form-checkbox text-primary-7 h-5 w-5 mr-2"
                   />
-                  <p>View & Edit</p>
+                  <p>Edit</p>
                 </div>
               </th>
             </tr>

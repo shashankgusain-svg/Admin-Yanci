@@ -7,15 +7,11 @@ import Modal from "@/components/modal/ModalIndex";
 import imagePlaceholder from "../../../../public/images/pi_placeholder.jpg";
 import { deleteUser, getUserDetails } from "@/services/api/userService";
 import KYCModal from "@/components/modals/KYCModal";
-import PDFViewer from "@/components/pdfViewer/PDFViewer";
-import { getAuthToken } from "@/services/api/cookies";
-import { canEdit } from "@/utils/helpers";
+import { canEdit, downloadFile } from "@/utils/helpers";
 import deleteIcon from "../../../../public/icons/misc/deleteWhite.svg";
 import Image from "next/image";
 
 export default function UserPage() {
-  const token = getAuthToken();
-
   const [data, setData] = React.useState({
     profilePic: null,
     name: "",
@@ -28,13 +24,13 @@ export default function UserPage() {
     createdDate: "",
   });
   const [loading, setLoading] = React.useState(true);
-
+  const [isModalOpen, setModalOpen] = React.useState(false);
   const router = useRouter();
   const { userId } = router.query;
 
   const breadCrumbItems = [
-    { name: "Home", Link: "/" },
-    { name: "User Management", Link: "/" },
+    { name: "Home", link: "/" },
+    { name: "User Management", link: "/user" },
     { name: data.name },
   ];
 
@@ -51,7 +47,9 @@ export default function UserPage() {
   }, [userId]);
 
   const handleDelete = async () => {
-    await deleteUser(userId, token);
+    setLoading(true);
+    await deleteUser(userId);
+    setLoading(false);
     router.push("/user");
   };
 
@@ -68,27 +66,61 @@ export default function UserPage() {
           }}
         />
       ) : null}
-      {showForm ? (
-        <Modal
-          download={() => {}}
-          title="CSD Form"
-          type="document"
-          isOpen={true}
-          onClose={(prev) => {
-            setShowForm(!prev);
-          }}
-        >
-          <Modal.Content>
-            {data.csdFormLink ? (
-              <PDFViewer src={data.csdFormLink} />
-            ) : (
-              <p className="text-black-5 text-heading-1">
-                CSD Form Not Available
-              </p>
-            )}
-          </Modal.Content>
-        </Modal>
-      ) : null}
+      <Modal
+        title="CSD Form"
+        type="document"
+        isOpen={showForm}
+        onClose={(prev) => {
+          setShowForm(!prev);
+        }}
+        download={() => downloadFile(data.csdFormLink, "CSD_Form.pdf")}
+      >
+        <Modal.Content>
+          {data.csdFormLink ? (
+            <iframe
+              src={`${data.csdFormLink}#toolbar=0`}
+              className="w-full h-full"
+              title="CSD Form PDF"
+            ></iframe>
+          ) : (
+            <p className="text-black-5 text-heading-1">
+              CSD Form Not Available
+            </p>
+          )}
+        </Modal.Content>
+      </Modal>
+      <Modal
+        isOpen={isModalOpen}
+        type="confirmation"
+        title="Are you sure you want to delete this user from Yanci?"
+        message="You can't revert this change."
+        onClose={() => {
+          setModalOpen(false);
+        }}
+      >
+        <Modal.Footer>
+          <Button
+            design="secondary"
+            className="h-9 w-24"
+            onClick={() => {
+              setModalOpen(false);
+            }}
+            title="Cancel Delete"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            style="negative"
+            design="primary"
+            className="h-9"
+            title="Delete"
+            isLoading={loading}
+          >
+            Delete User
+          </Button>
+        </Modal.Footer>
+      </Modal>
       {loading ? (
         <p className="text-black-5 text-heading-1">Loading User Details</p>
       ) : (
@@ -267,7 +299,9 @@ export default function UserPage() {
                 design="primary"
                 title="Delete User"
                 style="negative"
-                onClick={handleDelete}
+                onClick={() => {
+                  setModalOpen(true);
+                }}
               >
                 <Image src={deleteIcon} alt="Delete Icon" />
                 Delete User

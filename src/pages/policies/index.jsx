@@ -10,7 +10,7 @@ import { isRequired } from "@/utils/helpers";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
-const breadCrumbItems = [{ name: "Home", Link: "/" }, { name: "Policies" }];
+const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Policies" }];
 
 export default function PoliciesPage() {
   const [selectedOption, setSelectedOption] = useState("Terms & Conditions");
@@ -73,7 +73,7 @@ export default function PoliciesPage() {
   const handleUpdate = async () => {
     const policyData = {
       userType: content.userType,
-      policyType: selectedOption === "Terms & Conditions" ? "Terms" : "Privacy",
+      policyType: selectedOption === "Terms & Conditions" ? "Terms & Conditions" : "Privacy",
       description:
         selectedOption === "Terms & Conditions"
           ? content.terms
@@ -128,7 +128,7 @@ export default function PoliciesPage() {
             <InputAndLabel.Option value="App users">
               App users
             </InputAndLabel.Option>
-            <InputAndLabel.Option value="Sub admins">
+            <InputAndLabel.Option value="Subadmins">
               Sub admins
             </InputAndLabel.Option>
           </InputAndLabel.Select>

@@ -3,30 +3,30 @@ import { getUser } from "@/services/api/cookies";
 import React from "react";
 
 const dummyMetrics = [
-  {
-    label: "Total Users",
-    percentageChange: 36,
-    value: 2426,
-    isPositiveChange: true,
-  },
+  // {
+  //   label: "Total Users",
+  //   percentageChange: 0,
+  //   value: 0,
+  //   isPositiveChange: true,
+  // },
   {
     label: "Trading Volume",
-    percentageChange: 36,
+    percentageChange: 0,
     isDollar: true,
-    value: 12426,
+    value: 0,
     isPositiveChange: true,
   },
   {
     label: "Total Orders",
-    percentageChange: 36,
-    value: 426,
+    percentageChange: 0,
+    value: 0,
     isPositiveChange: true,
   },
   {
     label: "Total Revenue",
-    percentageChange: 36,
+    percentageChange: 0,
     isDollar: true,
-    value: 522426,
+    value: 0,
     isPositiveChange: true,
   },
 ];

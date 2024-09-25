@@ -5,7 +5,7 @@ import Image from "next/image";
 import Button from "@/components/button/Button";
 
 const breadCrumbItems = [
-  { name: "Home", Link: "/" },
+  { name: "Home", link: "/" },
   { name: "Stock Management" },
 ];
 

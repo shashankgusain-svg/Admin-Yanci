@@ -4,10 +4,11 @@ import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Button from "@/components/button/Button";
 import { createNotification } from "@/services/api/notificationsService";
 import { useRouter } from "next/router";
+import { isRequired } from "@/utils/helpers";
 
 export default function CreateNotification() {
   const router = useRouter();
-
+  const [loading, setLoading] = React.useState(false);
   const [notification, setNotification] = React.useState({
     title: "",
     targetCustomer: "",
@@ -67,6 +68,26 @@ export default function CreateNotification() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (
+      !isRequired(notification.title, "Notification's Title", true) ||
+      !isRequired(
+        notification.description,
+        "Notification's Description",
+        true
+      ) ||
+      !isRequired(notification.mode, "Notification's Mode", true) ||
+      !isRequired(
+        notification.targetCustomer,
+        "Notification's Target Customer",
+        true
+      )
+    ) {
+      return;
+    }
+
+    setLoading(true);
+
     const formattedNotification = notification.isScheduled
       ? {
           title: notification.title,
@@ -83,13 +104,15 @@ export default function CreateNotification() {
           targetCustomer: notification.targetCustomer,
           mode: notification.mode,
         };
+
     await createNotification(formattedNotification);
+    setLoading(false);
     router.push("/notifications");
   };
 
   const breadCrumbItems = [
-    { name: "Home", Link: "/" },
-    { name: "Notification Management" },
+    { name: "Home", link: "/" },
+    { name: "Notification Management", link: "/notifications" },
     { name: "Create Notification" },
   ];
 
@@ -248,7 +271,13 @@ export default function CreateNotification() {
             </div>
           ) : null}
         </div>
-        <Button type="submit" className="max-w-72" design="submit">
+        <Button
+          title="Send Notification"
+          type="submit"
+          isLoading={loading}
+          className="max-w-72"
+          design="submit"
+        >
           Send Notification
         </Button>
       </form>

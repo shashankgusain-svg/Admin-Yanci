@@ -24,6 +24,8 @@ export const getKYCData = async (payload) => {
     endpoint += `&startDate=${payload.startDate}&endDate=${payload.endDate}`
   }
 
+  console.log(endpoint)
+
   try {
     const res = await fetch(endpoint, {
       method: "GET",
