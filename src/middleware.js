@@ -1,18 +1,18 @@
 const { NextResponse } = require("next/server");
 
 const protectedRoutes = {
-  "/user": "User Management",
-  "/kyc": "KYC",
-  "/transactions": "Transactions",
-  "/revenue": "Revenue",
-  "/reports": "Reports",
-  "/stock": "Stock Management",
-  "/notifications": "Notifications",
-  "/role-management": "Role Management",
-  "/support": "User Support",
-  "/audit-logs": "Audit Logs",
-  "/policies": "Policies",
-  "/referrals": "Referrals",
+  "/user": { permissionName: "User Management", requiresEdit: false },
+  "/kyc": { permissionName: "KYC", requiresEdit: false },
+  "/transactions": { permissionName: "Transactions", requiresEdit: false },
+  "/revenue": { permissionName: "Revenue", requiresEdit: false },
+  "/reports": { permissionName: "Reports", requiresEdit: false },
+  "/stock": { permissionName: "Stock Management", requiresEdit: false },
+  "/notifications": { permissionName: "Notifications", requiresEdit: false },
+  "/role-management": { permissionName: "Role Management", requiresEdit: false },
+  "/support": { permissionName: "User Support", requiresEdit: true }, // User support needs both view and edit for some paths
+  "/audit-logs": { permissionName: "Audit Logs", requiresEdit: false },
+  "/policies": { permissionName: "Policies", requiresEdit: false },
+  "/referrals": { permissionName: "Referrals", requiresEdit: false },
 };
 
 export default function middleware(req) {
@@ -26,19 +26,18 @@ export default function middleware(req) {
     return NextResponse.redirect(url);
   }
 
-  if (!token && Object.keys(protectedRoutes).includes(url.pathname)) {
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
-  }
+  const isProtectedRoute = Object.keys(protectedRoutes).some((route) =>
+    url.pathname.startsWith(route)
+  );
 
-  if(!token && url.pathname === "/"){
+  if (!token && (isProtectedRoute || url.pathname === "/")) {
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
   if (userCookie) {
     let user;
-    
+
     try {
       user = JSON.parse(userCookie.value);
     } catch (error) {
@@ -52,14 +51,39 @@ export default function middleware(req) {
     }
 
     const { pathname } = url;
-    if (protectedRoutes[pathname]) {
-      const permissionName = protectedRoutes[pathname];
 
-      const hasViewPermission = user.adminPermission?.some(
-        (perm) => perm.permissionName === permissionName && perm.view === true
+    const matchedRoute = Object.keys(protectedRoutes).find((route) =>
+      pathname.startsWith(route)
+    );
+
+    if (matchedRoute) {
+      const routeConfig = protectedRoutes[matchedRoute];
+      const permissionName = routeConfig.permissionName;
+
+      const userPermissions = user.adminPermission?.find(
+        (perm) => perm.permissionName === permissionName
       );
 
+      if (!userPermissions) {
+        url.pathname = "/";
+        return NextResponse.redirect(url);
+      }
+
+      const hasViewPermission = userPermissions.view === true;
+
       if (!hasViewPermission) {
+        url.pathname = "/";
+        return NextResponse.redirect(url);
+      }
+
+      const requiresEditPermission = routeConfig.requiresEdit;
+
+      const isEditRoute =
+        pathname.includes("/create") ||
+        pathname.includes("/edit") ||
+        pathname.includes("/update");
+
+      if (requiresEditPermission && isEditRoute && !userPermissions.edit) {
         url.pathname = "/";
         return NextResponse.redirect(url);
       }

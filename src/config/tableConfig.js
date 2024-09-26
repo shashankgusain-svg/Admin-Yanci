@@ -1,7 +1,13 @@
 import { getBirthYear } from "@/utils/helpers";
 import Link from "next/link";
-import { kycVerificationStatusMapping } from "@/utils/seed";
+import {
+  kycVerificationStatusMapping,
+  targetCustomerValueMapping,
+} from "@/utils/seed";
 import imagePlaceholder from "../../public/images/pi_placeholder.jpg";
+import StarRating from "../../public/icons/misc/StarRating";
+
+// USERS
 
 export const userColumns = (payload) => {
   const { handleSort } = payload;
@@ -75,6 +81,8 @@ export const userColumns = (payload) => {
     },
   ];
 };
+
+// KYC
 
 export const submittedKycColumns = (payload) => {
   const { handleSort, setModalType, setCsdFormLink, setUserId } = payload;
@@ -281,3 +289,205 @@ export const abandonedKycColumns = (payload) => {
     },
   ];
 };
+
+// NOTIFICATIONS
+
+export const sentNotificationColumns = (payload) => {
+  const { handleSort } = payload;
+
+  return [
+    {
+      header: "Title",
+      key: "title",
+    },
+    {
+      header: "Description",
+      key: "description",
+      render: (row) => (
+        <div className=" whitespace-normal">{row.description}</div>
+      ),
+    },
+    {
+      header: "Audience",
+      key: "audience",
+      render: (row) => <>{targetCustomerValueMapping[row.audience]}</>,
+    },
+    {
+      header: "Sent At",
+      key: "sentOn",
+      sortable: true,
+      onSort: () => {
+        handleSort("sentOn");
+      },
+      isDate: true,
+    },
+    {
+      header: "Mode",
+      key: "mode",
+    },
+  ];
+};
+
+export const scheduledNotificationColumns = (payload) => {
+  const { handleSort } = payload;
+
+  return [
+    {
+      header: "Title",
+      key: "title",
+    },
+    {
+      header: "Description",
+      key: "description",
+      render: (row) => (
+        <div className=" whitespace-normal">{row.description}</div>
+      ),
+    },
+    {
+      header: "Audience",
+      key: "audience",
+      render: (row) => <>{targetCustomerValueMapping[row.audience]}</>,
+    },
+    {
+      header: "Scheduled On",
+      key: "scheduledOn",
+      sortable: true,
+      onSort: () => {
+        handleSort("scheduledOn");
+      },
+      isDate: true,
+    },
+    {
+      header: "Mode",
+      key: "mode",
+    },
+  ];
+};
+
+// SUPPORT
+
+export const feedbackColumns = (payload) => {
+  const { handleSort } = payload;
+
+  return [
+    {
+      header: "Yanci ID",
+      key: "_id",
+    },
+    {
+      header: "Rating",
+      key: "answer",
+      render: (row) => (
+        <div className="flex gap-1">
+          {Array.from({ length: row.rating }, (_, i) => (
+            <StarRating />
+          ))}
+        </div>
+      ),
+    },
+    {
+      header: "Comments",
+      key: "description",
+    },
+    {
+      header: "Sent on",
+      key: "createdAt",
+      sortable: true,
+      isDate: true,
+      onSort: () => {
+        handleSort("createdAt");
+      },
+    },
+  ];
+};
+
+export const queriesColumns = (payload) => {
+  const { handleSort } = payload;
+
+  return [
+    {
+      header: "Yanci ID",
+      key: "user",
+      render: (row) => <div>{`#${row.user}`}</div>,
+    },
+    {
+      header: "Ticket no.",
+      key: "ticketNo",
+      render: (row) => <div>{`#${row.ticketNo}`}</div>,
+    },
+    {
+      header: "Comments",
+      key: "description",
+      render: (row) => (
+        <div className="whitespace-normal">{row.description}</div>
+      ),
+    },
+    {
+      header: "Sent on",
+      key: "createdAt",
+      isDate: true,
+      sortable: true,
+      onSort: () => {
+        handleSort("createdAt");
+      },
+    },
+    {
+      header: "Status",
+      key: "status",
+      render: (row) => (
+        <span
+          className={`rounded-full px-2 py-1 capitalize ${
+            row.status === "RESOLVED"
+              ? "bg-green-600 text-white"
+              : row.status === "PENDING"
+              ? "bg-red-600 text-white"
+              : "bg-yellow-400 text-black"
+          }`}
+        >
+          {new String(row.status).toLowerCase()}
+        </span>
+      ),
+    }
+  ];
+};
+
+export const faqColumns = (payload) => {
+  const { handleSort } = payload;
+
+  return [
+    {
+      header: "Question",
+      key: "question",
+    },
+    {
+      header: "Answer",
+      key: "answer",
+      render: (row) => <div className="whitespace-normal">{row.answer}</div>,
+    },
+    {
+      header: "Published on",
+      key: "createdAt",
+      isDate: true,
+      sortable: true,
+      onSort: () => {
+        handleSort("createdAt");
+      },
+    },
+    {
+      header: "Status",
+      key: "status",
+      render: (row) => (
+        <span
+          className={`rounded-full px-2 py-1 capitalize ${
+            row.status === "LIVE"
+              ? "bg-green-600 text-white"
+              : "bg-yellow-400 text-black"
+          }`}
+        >
+          {new String(row.status).toLowerCase()}
+        </span>
+      ),
+    }
+  ];
+};
+

@@ -11,7 +11,7 @@ export const getAllSubAdmins = async (payload) => {
   }
 
   if (payload.page) {
-    endpoint += `&limit=${payload.page}`;
+    endpoint += `&page=${payload.page}`;
   }
 
   try {

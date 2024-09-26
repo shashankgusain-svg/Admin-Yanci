@@ -1,7 +1,5 @@
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Dropdown from "@/components/dropdown/DropdownIndex";
-import viewDetails from "../../../public/icons/misc/viewDetails.svg";
-import deleteRedIcon from "../../../public/icons/misc/deleteRed.svg";
 import Image from "next/image";
 import React from "react";
 import down from "../../../public/icons/misc/down.svg";
@@ -14,11 +12,12 @@ import usePagination from "@/hooks/usePagination";
 const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Sub Admin" }];
 import Pagination from "@/components/pagination/Pagination";
 import LoadingAnimation from "../../../public/icons/animated/loading";
+import { getSubAdminDropdownItems } from "@/config/dropdownConfig";
 
 export default function RoleManagement() {
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [userId, setUserId] = React.useState("");
-  const {limit,page,handleLimitChange,handlePageChange} = usePagination();
+  const { limit, page, handleLimitChange, handlePageChange } = usePagination();
 
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -56,7 +55,7 @@ export default function RoleManagement() {
 
   const fetchSubAdminDetails = async () => {
     setLoading(true);
-    const result = await getAllSubAdmins({limit:limit,page:page});
+    const result = await getAllSubAdmins({ limit: limit, page: page });
     setData([...result.data]);
     setTotalPages(result.totalPages || 1);
     setLoading(false);
@@ -72,33 +71,9 @@ export default function RoleManagement() {
     }
   };
 
-  const dropdownItems = (row) => {
-    const items = [
-      {
-        icon: viewDetails,
-        text: "View Details",
-        onClick: () => {
-          router.push(`./role-management/${row._id}`);
-        },
-      },
-    ];
-    if (canEdit("Role Management")) {
-      items.push({
-        icon: deleteRedIcon,
-        text: "Delete",
-        onClick: async () => {
-          setUserId(row._id);
-          setModalOpen(true);
-        },
-        className: "text-red-500",
-      });
-    }
-    return items;
-  };
-
   React.useEffect(() => {
     fetchSubAdminDetails();
-  }, [page,limit]);
+  }, [page, limit]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -136,7 +111,7 @@ export default function RoleManagement() {
         <h3 className="text-heading-6 font-semibold">Sub Admins</h3>
         {loading ? (
           <div className="mt-4 w-full">
-            <LoadingAnimation/>
+            <LoadingAnimation />
           </div>
         ) : (
           <div className="mt-4 rounded-xl border border-primary-4 overflow-x-auto slideAndAppear">
@@ -183,7 +158,12 @@ export default function RoleManagement() {
                             <span className="font-bold">&#8942;</span>
                           </Dropdown.Button>
                           <Dropdown.Menu origin="top-right">
-                            {dropdownItems(row).map((dropdownItem, index) => (
+                            {getSubAdminDropdownItems({
+                              row,
+                              setModalOpen,
+                              setUserId,
+                              router
+                            }).map((dropdownItem, index) => (
                               <Dropdown.Item
                                 onClick={dropdownItem.onClick}
                                 key={index}

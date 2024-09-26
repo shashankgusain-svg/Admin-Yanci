@@ -19,6 +19,8 @@ export const getUserSupportDetails = async (payload) => {
     endpoint += `&sortBy=${payload.sortField}`;
   }
 
+  console.log(endpoint)
+
   try {
     const res = await fetch(endpoint, {
       method: "GET",

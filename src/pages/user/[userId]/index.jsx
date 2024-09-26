@@ -10,6 +10,7 @@ import KYCModal from "@/components/modals/KYCModal";
 import { canEdit, downloadFile } from "@/utils/helpers";
 import deleteIcon from "../../../../public/icons/misc/deleteWhite.svg";
 import Image from "next/image";
+import LoadingAnimation from "../../../../public/icons/animated/loading";
 
 export default function UserPage() {
   const [data, setData] = React.useState({
@@ -122,7 +123,7 @@ export default function UserPage() {
         </Modal.Footer>
       </Modal>
       {loading ? (
-        <p className="text-black-5 text-heading-1">Loading User Details</p>
+        <LoadingAnimation/>
       ) : (
         <>
           <Breadcrumb items={breadCrumbItems} />

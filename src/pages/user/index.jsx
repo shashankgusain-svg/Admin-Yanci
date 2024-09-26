@@ -105,8 +105,6 @@ export default function User() {
     fetchUserMetrics();
   }, [data]);
 
-  const columns = userColumns({ handleSort, imagePlaceholder });
-
   const userOptions = [
     {
       label: "Active Users",
@@ -115,11 +113,11 @@ export default function User() {
           searchBar
           datePicker
           exportToCSV
-          columns={columns}
+          columns={userColumns({ handleSort })}
           data={data.active}
           isDropdown
           dropdownItems={(row) =>
-            getActiveDropdownItems({ row, setModalOpen, setUserId })
+            getActiveDropdownItems({ row, setModalOpen, router, setUserId })
           }
           isLoading={loading}
           searchValue={searchValue}
@@ -145,7 +143,7 @@ export default function User() {
           searchBar
           datePicker
           exportToCSV
-          columns={columns}
+          columns={userColumns({ handleSort })}
           data={data.blocked}
           isDropdown
           dropdownItems={(row) =>
@@ -213,7 +211,7 @@ export default function User() {
               isPercentage={value.percent ? true : false}
               percentageChange={value.percentChange}
               value={value.percent ? value.percent : value.count}
-              isPositiveChange={true}
+              isPositiveChange={value.percentChange < 0 ? false : true}
             />
           ))}
         </div>

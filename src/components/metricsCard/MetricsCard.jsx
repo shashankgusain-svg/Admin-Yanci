@@ -27,7 +27,7 @@ export default function MetricsCard({
         {percentageChange ? (
           <div className="flex items-center gap-1">
             <div className="flex items-center">
-              <p>{isPositiveChange ? "+" : "-"}</p>
+              <p>{isPositiveChange ? "+" : null}</p>
               <p>{percentageChange}%</p>
             </div>
             {isPositiveChange ? (

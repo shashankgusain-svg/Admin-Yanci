@@ -13,7 +13,7 @@ import { kycKeyTitleMapping } from "@/utils/seed";
 import Modal from "@/components/modal/ModalIndex";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import Button from "@/components/button/Button";
-import { canEdit, downloadFile } from "@/utils/helpers";
+import { canEdit, downloadFile, isRequired } from "@/utils/helpers";
 import usePagination from "@/hooks/usePagination";
 import { abandonedKycColumns, submittedKycColumns } from "@/config/tableConfig";
 import useTableSorting from "@/hooks/useTableSort";
@@ -244,6 +244,9 @@ export default function Kyc() {
               design="primary"
               className="h-9"
               onClick={async () => {
+                if(!isRequired(verificationData.csdNo,"CSD No",true)){
+                  return;
+                }
                 await manageKYC(verificationData);
                 setModalType(null);
                 fetchKYCData();
@@ -264,7 +267,7 @@ export default function Kyc() {
               label={kycKeyTitleMapping[key] || key}
               value={value.percent ? value.percent : value.count}
               percentageChange={value.percentChange}
-              isPositiveChange={true}
+              isPositiveChange={value.percentChange < 0 ? false : true}
             />
           ))}
         </div>

@@ -3,6 +3,7 @@ import Modal from "../modal/ModalIndex";
 import { getUserKYCDetails } from "@/services/api/userService";
 import Image from "next/image";
 import InputAndLabel from "../inputandlabel/InputAndLabel";
+import LoadingAnimation from "../../../public/icons/animated/loading";
 
 const Field = ({ label, value }) => {
   return (
@@ -43,7 +44,7 @@ export default function KYCModal({ userId, onClose }) {
     <Modal title="KYC Details" isOpen={true} onClose={onClose} type="detail">
       <Modal.Content>
         {kycDetails && loading ? (
-          <p className="text-black-5 text-heading-1">Loading KYC Details</p>
+          <LoadingAnimation theme="dark" />
         ) : (
           <div className="flex flex-col gap-6 h-full pb-20">
             {/* User */}
@@ -69,7 +70,11 @@ export default function KYCModal({ userId, onClose }) {
               />
               <InputAndLabel>
                 <InputAndLabel.Label>Phone Number</InputAndLabel.Label>
-                <InputAndLabel.PhoneInput value={kycDetails.user.phone} disabled disableDropdown/>
+                <InputAndLabel.PhoneInput
+                  value={kycDetails.user.phone}
+                  disabled
+                  disableDropdown
+                />
               </InputAndLabel>
             </div>
 

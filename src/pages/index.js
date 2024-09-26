@@ -54,7 +54,7 @@ export default function Home() {
       <div>
         <h2 className="text-heading-2 text-black-13 font-semibold">
           Hi{" "}
-          <span className="text-primary-6">
+          <span className="text-primary-6 fadeIn">
             {user.user.name || "Name Unavailable From API"}
           </span>
         </h2>

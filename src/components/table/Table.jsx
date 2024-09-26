@@ -22,7 +22,7 @@ export default function Table({
   datePicker = false,
   exportToCSV = false,
   isDropdown = false,
-  dropdownItems,
+  dropdownItems = [],
   data = [],
   isLoading = true,
   paginationProps,
@@ -125,7 +125,7 @@ export default function Table({
                   ))}
 
                   {/* For Dropdown */}
-                  {isDropdown ? (
+                  {isDropdown? (
                     <td>
                       <Dropdown>
                         <Dropdown.Button

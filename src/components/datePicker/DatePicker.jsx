@@ -1,7 +1,6 @@
 import React from "react";
 import Button from "../button/Button";
 import DatePicker from "react-multi-date-picker";
-import { DateObject } from "react-multi-date-picker";
 
 export default function CustomDatePicker({ values, onChange }) {
   const format = "YYYY-MM-DD";

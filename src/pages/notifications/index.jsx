@@ -12,6 +12,12 @@ import {
   targetCustomerValueMapping,
 } from "@/utils/seed";
 import usePagination from "@/hooks/usePagination";
+import useTableSorting from "@/hooks/useTableSort";
+import useSearch from "@/hooks/useSearch";
+import {
+  scheduledNotificationColumns,
+  sentNotificationColumns,
+} from "@/config/tableConfig";
 
 export default function Notifications() {
   const [data, setData] = React.useState({ sent: [], scheduled: [] });
@@ -22,93 +28,14 @@ export default function Notifications() {
   const [selectedOption, setSelectedOption] =
     React.useState("Sent Notifications");
 
-  const [sortField, setSortField] = React.useState("");
-  const [sortOrder, setSortOrder] = React.useState("asc");
-
-  const [searchValue, setSearchValue] = React.useState("");
-
+  const { searchValue, onSearch } = useSearch();
   const { limit, handleLimitChange, handlePageChange, page } = usePagination();
-
+  const { handleSort, sortField, sortOrder } = useTableSorting();
   const [totalPages, setTotalPages] = React.useState(0);
 
   const breadCrumbItems = [
     { name: "Home", link: "/" },
     { name: "Notification Management" },
-  ];
-
-  const handleSearch = (event) => {
-    const value = event.target.value;
-    setSearchValue(value);
-  };
-
-  const handleSort = (field) => {
-    const isAsc = sortField === field && sortOrder === "asc";
-    setSortField(field);
-    setSortOrder(isAsc ? "desc" : "asc");
-  };
-
-  const sentNotificationColumns = [
-    {
-      header: "Title",
-      key: "title",
-    },
-    {
-      header: "Description",
-      key: "description",
-      render: (row) => (
-        <div className=" whitespace-normal">{row.description}</div>
-      ),
-    },
-    {
-      header: "Audience",
-      key: "audience",
-      render: (row) => <>{targetCustomerValueMapping[row.audience]}</>,
-    },
-    {
-      header: "Sent At",
-      key: "sentOn",
-      sortable: true,
-      onSort: () => {
-        handleSort("sentOn");
-      },
-      isDate: true,
-    },
-    {
-      header: "Mode",
-      key: "mode",
-    },
-  ];
-
-  const scheduledNotificationColumns = [
-    {
-      header: "Title",
-      key: "title",
-    },
-    {
-      header: "Description",
-      key: "description",
-      render: (row) => (
-        <div className=" whitespace-normal">{row.description}</div>
-      ),
-    },
-    {
-      header: "Audience",
-      key: "audience",
-      render: (row) => <>{targetCustomerValueMapping[row.audience]}</>,
-    },
-    {
-      header: "Scheduled On",
-      key: "scheduledOn",
-      sortable: true,
-      onSort: () => {
-        handleSort("scheduledOn");
-      },
-      isDate: true,
-    },
-    {
-      header: "Mode",
-      key: "mode",
-    },
   ];
 
   const fetchNotifications = async () => {
@@ -151,10 +78,10 @@ export default function Notifications() {
       content: (
         <Table
           searchBar
-          columns={sentNotificationColumns}
+          columns={sentNotificationColumns({ handleSort })}
           data={data.sent}
           isLoading={loading}
-          onSearch={handleSearch}
+          onSearch={onSearch}
           searchValue={searchValue}
           paginationProps={{
             currentPage: page,
@@ -173,10 +100,10 @@ export default function Notifications() {
       content: (
         <Table
           searchBar
-          columns={scheduledNotificationColumns}
+          columns={scheduledNotificationColumns({ handleSort })}
           data={data.scheduled}
           isLoading={loading}
-          onSearch={handleSearch}
+          onSearch={onSearch}
           searchValue={searchValue}
           paginationProps={{
             currentPage: page,

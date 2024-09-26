@@ -85,14 +85,14 @@
     list-style-position: inside !important;
   }
 
-  .jodit-wysiwyg,
+  .jodit-wysiwyg ul,
   .updatePreview ul {
     list-style: inside !important;
   }
 
   .jodit-wysiwyg ol,
   .updatePreview ol {
-    list-style-type: decimal;
+    list-style-type: decimal !important;
   }
 
   .jodit-wysiwyg td,
