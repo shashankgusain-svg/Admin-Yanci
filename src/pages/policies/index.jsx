@@ -6,7 +6,9 @@ import Toggle from "@/components/typeToggle/TypeToggle";
 import Modal from "@/components/modal/ModalIndex";
 import { updatePolicy } from "@/services/api/adminService";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
+import parse from "html-react-parser";
 import { isRequired } from "@/utils/helpers";
+import { editorConfig } from "@/config/joditEditorConfig";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -73,7 +75,10 @@ export default function PoliciesPage() {
   const handleUpdate = async () => {
     const policyData = {
       userType: content.userType,
-      policyType: selectedOption === "Terms & Conditions" ? "Terms & Conditions" : "Privacy",
+      policyType:
+        selectedOption === "Terms & Conditions"
+          ? "Terms & Conditions"
+          : "Privacy",
       description:
         selectedOption === "Terms & Conditions"
           ? content.terms
@@ -145,6 +150,7 @@ export default function PoliciesPage() {
             }
             onChange={handleContentChange}
             className="w-full h-[70%] bg-white"
+            config = {editorConfig}
           />
           <style>{`.jodit-wysiwyg{height:300px !important}`}</style>
         </div>
@@ -162,7 +168,7 @@ export default function PoliciesPage() {
           onClose={() => setIsModalOpen(false)}
         >
           <Modal.Content>
-            <div className="updatePreview" dangerouslySetInnerHTML={{ __html: previewContent }} />
+            <div className="updatePreview">{parse(previewContent)}</div>
           </Modal.Content>
           <Modal.Footer>
             <Button onClick={handleUpdate}>Confirm Update</Button>
