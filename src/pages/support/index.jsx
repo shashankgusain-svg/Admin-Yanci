@@ -106,6 +106,7 @@ export default function UserSupport() {
       content: (
         <Table
           searchBar
+          searchPlaceHolder="Search using Ticket no. or Comments"
           columns={queriesColumns({ handleSort })}
           data={data.queries}
           isDropdown={canEdit("User Support")}

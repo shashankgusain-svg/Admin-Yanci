@@ -299,13 +299,24 @@ export const sentNotificationColumns = (payload) => {
     {
       header: "Title",
       key: "title",
+      render: (row) => {
+        return (
+          <div className="whitespace-nowrap text-ellipsis overflow-hidden max-w-72">
+            {row.title}
+          </div>
+        );
+      },
     },
     {
       header: "Description",
       key: "description",
-      render: (row) => (
-        <div className=" whitespace-normal">{row.description}</div>
-      ),
+      render: (row) => {
+        return (
+          <div className="whitespace-nowrap text-ellipsis overflow-hidden max-w-72">
+            {row.description}
+          </div>
+        );
+      },
     },
     {
       header: "Audience",
@@ -335,13 +346,24 @@ export const scheduledNotificationColumns = (payload) => {
     {
       header: "Title",
       key: "title",
+      render: (row) => {
+        return (
+          <div className="whitespace-nowrap text-ellipsis overflow-hidden max-w-72">
+            {row.title}
+          </div>
+        );
+      },
     },
     {
       header: "Description",
       key: "description",
-      render: (row) => (
-        <div className=" whitespace-normal">{row.description}</div>
-      ),
+      render: (row) => {
+        return (
+          <div className="whitespace-nowrap text-ellipsis overflow-hidden max-w-72">
+            {row.description}
+          </div>
+        );
+      },
     },
     {
       header: "Audience",
@@ -388,6 +410,13 @@ export const feedbackColumns = (payload) => {
     {
       header: "Comments",
       key: "description",
+      render: (row) => {
+        return (
+          <div className="whitespace-nowrap text-ellipsis overflow-hidden max-w-72">
+            {row.description}
+          </div>
+        );
+      },
     },
     {
       header: "Sent on",
@@ -418,9 +447,13 @@ export const queriesColumns = (payload) => {
     {
       header: "Comments",
       key: "description",
-      render: (row) => (
-        <div className="whitespace-normal">{row.description}</div>
-      ),
+      render: (row) => {
+        return (
+          <div className="whitespace-nowrap text-ellipsis overflow-hidden max-w-72">
+            {row.description}
+          </div>
+        );
+      },
     },
     {
       header: "Sent on",
@@ -447,7 +480,7 @@ export const queriesColumns = (payload) => {
           {new String(row.status).toLowerCase()}
         </span>
       ),
-    }
+    },
   ];
 };
 
@@ -458,11 +491,24 @@ export const faqColumns = (payload) => {
     {
       header: "Question",
       key: "question",
+      render: (row) => {
+        return (
+          <div className="whitespace-nowrap text-ellipsis overflow-hidden max-w-72">
+            {row.question}
+          </div>
+        );
+      },
     },
     {
       header: "Answer",
       key: "answer",
-      render: (row) => <div className="whitespace-normal">{row.answer}</div>,
+      render: (row) => {
+        return (
+          <div className="whitespace-nowrap text-ellipsis overflow-hidden max-w-72">
+            {row.answer}
+          </div>
+        );
+      },
     },
     {
       header: "Published on",
@@ -487,7 +533,6 @@ export const faqColumns = (payload) => {
           {new String(row.status).toLowerCase()}
         </span>
       ),
-    }
+    },
   ];
 };
-

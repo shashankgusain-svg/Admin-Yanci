@@ -65,6 +65,8 @@ export default function index() {
             placeHolder="FAQ Question"
             value={fields.question}
             onChange={handleChange}
+            maxLength={150}
+            showLimit
           />
         </InputAndLabel>
         <InputAndLabel>
@@ -78,6 +80,8 @@ export default function index() {
             className="min-h-32"
             value={fields.answer}
             onChange={handleChange}
+            maxLength={500}
+            showLimit
           />
         </InputAndLabel>
         <Button className="w-72" type="submit" isLoading={loading} title="Publish">

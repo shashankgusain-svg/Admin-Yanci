@@ -193,6 +193,8 @@ export default function index() {
                 id="fullName"
                 value={newSubAdminDetails.name}
                 onChange={handleInputChange}
+                maxLength={100}
+                showLimit
               />
             </InputAndLabel>
 
@@ -206,9 +208,9 @@ export default function index() {
               />
             </InputAndLabel>
 
-            <div className="col-span-2 flex flex-col gap-3 text-black-9 font-semibold">
-              <p className="body-2">Set Credentials</p>
-              <div className="grid grid-cols-2 gap-16">
+            <div className="col-span-2 flex flex-col gap-3 text-black-9">
+              <p className="body-2 font-semibold">Set Credentials</p>
+              <div className="w-full max-w-roleMgmt grid grid-cols-2 gap-10">
                 <InputAndLabel>
                   <InputAndLabel.Label
                     htmlFor="email"
@@ -222,6 +224,8 @@ export default function index() {
                     id="email"
                     value={newSubAdminDetails.email}
                     onChange={handleInputChange}
+                    maxLength={254}
+                    showLimit
                   />
                 </InputAndLabel>
 

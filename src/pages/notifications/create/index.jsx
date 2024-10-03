@@ -133,6 +133,8 @@ export default function CreateNotification() {
               name="title"
               value={notification.title}
               onChange={handleChange}
+              maxLength={60}
+              showLimit
             />
           </InputAndLabel>
 
@@ -204,6 +206,8 @@ export default function CreateNotification() {
               value={notification.description}
               onChange={handleChange}
               placeHolder="Notification Text"
+              maxLength={200}
+              showLimit
             />
           </InputAndLabel>
 
