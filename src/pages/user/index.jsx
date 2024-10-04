@@ -113,7 +113,7 @@ export default function User() {
           searchBar
           datePicker
           exportToCSV
-          columns={userColumns({ handleSort })}
+          columns={userColumns({ handleSort, sortField, sortOrder })}
           data={data.active}
           isDropdown
           dropdownItems={(row) =>

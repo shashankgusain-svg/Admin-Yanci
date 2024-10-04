@@ -92,7 +92,15 @@ export default function Table({
                   >
                     {col.header}
                     {col.sortable ? (
-                      <button onClick={col.onSort} className="block">
+                      <button
+                        onClick={col.onSort}
+                        className="block"
+                        title={
+                          col.sortOrder === "asc"
+                            ? "Ascending"
+                            : "Descending"
+                        }
+                      >
                         <SortIcon />
                       </button>
                     ) : null}

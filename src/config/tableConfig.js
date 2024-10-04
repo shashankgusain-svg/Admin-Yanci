@@ -10,7 +10,7 @@ import StarRating from "../../public/icons/misc/StarRating";
 // USERS
 
 export const userColumns = (payload) => {
-  const { handleSort } = payload;
+  const { handleSort, sortOrder } = payload;
 
   return [
     {
@@ -44,6 +44,7 @@ export const userColumns = (payload) => {
       onSort: () => {
         handleSort("firstName");
       },
+      sortOrder : sortOrder
     },
     {
       header: "ID",
@@ -78,6 +79,7 @@ export const userColumns = (payload) => {
       },
       csvExport: (row) => new Date(row.createdAt).toDateString(),
       isDate: true,
+      sortOrder : sortOrder
     },
   ];
 };
@@ -85,7 +87,7 @@ export const userColumns = (payload) => {
 // KYC
 
 export const submittedKycColumns = (payload) => {
-  const { handleSort, setModalType, setCsdFormLink, setUserId } = payload;
+  const { handleSort, setModalType, setCsdFormLink, sortOrder, setUserId } = payload;
 
   return [
     {
@@ -122,6 +124,7 @@ export const submittedKycColumns = (payload) => {
       onSort: () => {
         handleSort("createdAt");
       },
+      sortOrder : sortOrder,
       isDate: true,
       csvExport: (row) => new Date(row.createdDate).toDateString(),
     },
@@ -205,7 +208,7 @@ export const submittedKycColumns = (payload) => {
 };
 
 export const abandonedKycColumns = (payload) => {
-  const { handleSort, setModalType, setUserId } = payload;
+  const { handleSort, setModalType, setUserId, sortOrder } = payload;
 
   return [
     {
@@ -242,6 +245,7 @@ export const abandonedKycColumns = (payload) => {
         handleSort("createdAt");
       },
       isDate: true,
+      sortOrder : sortOrder,
       csvExport: (row) => new Date(row.createdDate).toDateString(),
     },
     {
@@ -293,7 +297,7 @@ export const abandonedKycColumns = (payload) => {
 // NOTIFICATIONS
 
 export const sentNotificationColumns = (payload) => {
-  const { handleSort } = payload;
+  const { handleSort, sortOrder } = payload;
 
   return [
     {
@@ -331,6 +335,7 @@ export const sentNotificationColumns = (payload) => {
         handleSort("sentOn");
       },
       isDate: true,
+      sortOrder : sortOrder,
     },
     {
       header: "Mode",
@@ -340,7 +345,7 @@ export const sentNotificationColumns = (payload) => {
 };
 
 export const scheduledNotificationColumns = (payload) => {
-  const { handleSort } = payload;
+  const { handleSort, sortOrder } = payload;
 
   return [
     {
@@ -378,6 +383,7 @@ export const scheduledNotificationColumns = (payload) => {
         handleSort("scheduledOn");
       },
       isDate: true,
+      sortOrder : sortOrder,
     },
     {
       header: "Mode",
@@ -389,7 +395,7 @@ export const scheduledNotificationColumns = (payload) => {
 // SUPPORT
 
 export const feedbackColumns = (payload) => {
-  const { handleSort } = payload;
+  const { handleSort, sortOrder } = payload;
 
   return [
     {
@@ -426,12 +432,13 @@ export const feedbackColumns = (payload) => {
       onSort: () => {
         handleSort("createdAt");
       },
+      sortOrder : sortOrder
     },
   ];
 };
 
 export const queriesColumns = (payload) => {
-  const { handleSort } = payload;
+  const { handleSort, sortOrder } = payload;
 
   return [
     {
@@ -463,6 +470,7 @@ export const queriesColumns = (payload) => {
       onSort: () => {
         handleSort("createdAt");
       },
+      sortOrder : sortOrder
     },
     {
       header: "Status",
@@ -485,7 +493,7 @@ export const queriesColumns = (payload) => {
 };
 
 export const faqColumns = (payload) => {
-  const { handleSort } = payload;
+  const { handleSort, sortOrder } = payload;
 
   return [
     {
@@ -518,6 +526,7 @@ export const faqColumns = (payload) => {
       onSort: () => {
         handleSort("createdAt");
       },
+      sortOrder : sortOrder
     },
     {
       header: "Status",

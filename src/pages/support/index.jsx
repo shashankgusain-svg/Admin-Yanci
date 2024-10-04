@@ -107,7 +107,7 @@ export default function UserSupport() {
         <Table
           searchBar
           searchPlaceHolder="Search using Ticket no. or Comments"
-          columns={queriesColumns({ handleSort })}
+          columns={queriesColumns({ handleSort, sortOrder })}
           data={data.queries}
           isDropdown={canEdit("User Support")}
           dropdownItems={(row) =>
@@ -138,7 +138,7 @@ export default function UserSupport() {
       content: (
         <Table
           searchBar
-          columns={feedbackColumns({ handleSort })}
+          columns={feedbackColumns({ handleSort, sortOrder })}
           data={data.feedbacks}
           isLoading={loading}
           searchValue={searchValue}
@@ -160,7 +160,7 @@ export default function UserSupport() {
       content: (
         <Table
           searchBar
-          columns={faqColumns({ handleSort })}
+          columns={faqColumns({ handleSort, sortOrder })}
           data={data.faqs}
           isDropdown={canEdit("User Support")}
           dropdownItems={(row) =>

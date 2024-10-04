@@ -78,7 +78,7 @@ export default function Notifications() {
       content: (
         <Table
           searchBar
-          columns={sentNotificationColumns({ handleSort })}
+          columns={sentNotificationColumns({ handleSort, sortOrder })}
           data={data.sent}
           isLoading={loading}
           onSearch={onSearch}
@@ -100,7 +100,7 @@ export default function Notifications() {
       content: (
         <Table
           searchBar
-          columns={scheduledNotificationColumns({ handleSort })}
+          columns={scheduledNotificationColumns({ handleSort, sortOrder })}
           data={data.scheduled}
           isLoading={loading}
           onSearch={onSearch}

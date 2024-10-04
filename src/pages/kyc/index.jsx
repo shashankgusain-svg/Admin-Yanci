@@ -118,6 +118,7 @@ export default function Kyc() {
             setModalType,
             setCsdFormLink,
             setUserId,
+            sortOrder
           })}
           data={data.submitted}
           isDropdown={canEdit("KYC")}
@@ -154,7 +155,7 @@ export default function Kyc() {
           searchBar
           datePicker
           exportToCSV
-          columns={abandonedKycColumns({handleSort, setModalType, setUserId})}
+          columns={abandonedKycColumns({handleSort, setModalType, setUserId, sortOrder})}
           data={data.abandoned}
           isDropdown={canEdit("KYC")}
           dropdownItems={(row) => getAbandonedKycDropdownItems({row})}
