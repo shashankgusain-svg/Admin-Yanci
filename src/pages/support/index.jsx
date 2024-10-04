@@ -88,7 +88,7 @@ export default function UserSupport() {
 
   React.useEffect(() => {
     fetchSupportMetrics();
-  }, [selectedOption]);
+  }, [selectedOption, data]);
 
   const handleDelete = async () => {
     try {

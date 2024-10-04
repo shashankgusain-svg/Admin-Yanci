@@ -70,7 +70,7 @@ export default function Notifications() {
 
   React.useEffect(() => {
     fetchNotificationsMetrics();
-  }, []);
+  }, [data]);
 
   const userOptions = [
     {

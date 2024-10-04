@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Button from "@/components/button/Button";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
@@ -9,6 +9,7 @@ import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import parse from "html-react-parser";
 import { isRequired } from "@/utils/helpers";
 import { editorConfig } from "@/config/joditEditorConfig";
+import { getPolicy } from "@/services/api/policyService";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -16,14 +17,34 @@ const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Policies" }];
 
 export default function PoliciesPage() {
   const [selectedOption, setSelectedOption] = useState("Terms & Conditions");
+  const [savedData,setSavedData] = useState('')
   const [content, setContent] = useState({
     terms: "",
     privacy: "",
-    userType: "",
+    userType: "App users",
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewContent, setPreviewContent] = useState("");
   const editorRef = useRef(null);
+
+  useEffect(() => {
+    const fetchPolicyData = async () => {
+      try {
+        const response = await getPolicy(content?.userType, selectedOption !== 'Privacy Policy' ? selectedOption : 'Privacy');
+        
+        setContent(prevContent => ({
+          ...prevContent,  
+          privacy: selectedOption === 'Privacy Policy' ? (response?.data?.description || prevContent.privacy) : prevContent.privacy, 
+          terms: selectedOption !== 'Privacy Policy' ? (response?.data?.description || prevContent.terms) : prevContent.terms
+        }));
+       
+      } catch (error) {
+        console.error("Error in fetching policy:", error);
+      }
+    };
+
+    fetchPolicyData();
+  }, [selectedOption,content.userType]);
 
   const userOptions = [
     {
@@ -64,17 +85,18 @@ export default function PoliciesPage() {
   };
 
   const resetForm = () => {
-    setContent({
-      terms: "",
-      privacy: "",
-      userType: "",
-    });
-    setSelectedOption("Terms & Conditions");
+    // setContent({
+    //   terms: "",
+    //   privacy: "",
+    //   userType: "",
+    // });
+    // setSelectedOption("Terms & Conditions");
   };
 
   const handleUpdate = async () => {
     const policyData = {
       userType: content.userType,
+      notifyUsers:true,
       policyType:
         selectedOption === "Terms & Conditions"
           ? "Terms & Conditions"
@@ -127,9 +149,7 @@ export default function PoliciesPage() {
             onChange={handleUserTypeChange}
             value={content.userType}
           >
-            <InputAndLabel.Option value="">
-              Select user type
-            </InputAndLabel.Option>
+            
             <InputAndLabel.Option value="App users">
               App users
             </InputAndLabel.Option>
@@ -148,6 +168,7 @@ export default function PoliciesPage() {
                 ? content.terms
                 : content.privacy
             }
+            
             onChange={handleContentChange}
             className="w-full h-[70%] bg-white"
             config = {editorConfig}

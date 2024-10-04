@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import NotificationRound from "../../../public/icons/navbar/notification-round.svg";
 import add from "../../../public/icons/misc/add.svg";
@@ -9,10 +9,12 @@ import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
 import Logo from "../../../public/icons/misc/Logo";
 import { canEdit } from "@/utils/helpers";
+import TradingFeeModal from "../modals/TradingFeeModal";
 
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <nav className="navbar flex border-b-2 border-black-3 w-full bg-white sticky top-0 left-0 px-8 z-30">
@@ -40,6 +42,18 @@ export default function Navbar() {
               <Image src={add} alt="Add new" />
               Add Sub Admin
             </Button>
+          ) : null}
+          {pathname === "/revenue" && canEdit("Revenue") ? (
+            <Button
+              className="font-normal h-11"
+              onClick={() => setIsModalOpen(true)}
+            >
+              {/* <Image src={add} alt="Add new" /> */}
+              Edit trading fee
+            </Button>
+          ) : null}
+          {isModalOpen ? (
+            <TradingFeeModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
           ) : null}
           {pathname === "/support" && canEdit("User Support") ? (
             <Button
