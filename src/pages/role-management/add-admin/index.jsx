@@ -7,10 +7,7 @@ import { useRouter } from "next/router";
 import { isRequired, verifyEmail, verifyPassword } from "@/utils/helpers";
 
 export default function index() {
-  const breadCrumbItems = [
-    { name: "Home", link: "/" },
-    { name: "Sub Admin" },
-  ];
+  const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Sub Admin" }];
 
   const defaultSubAdminDetails = {
     name: "",
@@ -154,10 +151,16 @@ export default function index() {
       (permission) => permission.view || permission.edit
     );
 
-    const submissionData = {
-      ...newSubAdminDetails,
+    let submissionData = {
+      name: newSubAdminDetails.name,
+      email: newSubAdminDetails.email,
+      password: newSubAdminDetails.password,
       permissions: filteredPermissions,
     };
+
+    if (newSubAdminDetails.phone != "") {
+      submissionData = { ...submissionData, phone: newSubAdminDetails.phone };
+    }
 
     try {
       const res = await addSubAdmin(submissionData);

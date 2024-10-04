@@ -53,7 +53,7 @@ export default function Table({
                 <Image src={calender} alt="Calender" />
               </Dropdown.Button>
               <Dropdown.Menu origin="top-right">
-                <CustomDatePicker values={dateValue} onChange={dateOnChange}/>
+                <CustomDatePicker values={dateValue} onChange={dateOnChange} />
               </Dropdown.Menu>
             </Dropdown>
           ) : null}
@@ -125,31 +125,33 @@ export default function Table({
                   ))}
 
                   {/* For Dropdown */}
-                  {isDropdown? (
+                  {isDropdown ? (
                     <td>
-                      <Dropdown>
-                        <Dropdown.Button
-                          type="clean"
-                          className="table-cell px-1"
-                        >
-                          <span className="font-bold">&#8942;</span>
-                        </Dropdown.Button>
-                        <Dropdown.Menu origin="top-right">
-                          {dropdownItems(row).map((dropdownItem, index) => (
-                            <Dropdown.Item
-                              onClick={dropdownItem.onClick}
-                              key={index}
-                              className={dropdownItem.className}
-                            >
-                              <Image
-                                src={dropdownItem.icon}
-                                alt="View Details"
-                              />
-                              <p>{dropdownItem.text}</p>
-                            </Dropdown.Item>
-                          ))}
-                        </Dropdown.Menu>
-                      </Dropdown>
+                      {dropdownItems(row).length > 0 ? (
+                        <Dropdown>
+                          <Dropdown.Button
+                            type="clean"
+                            className="table-cell px-1"
+                          >
+                            <span className="font-bold">&#8942;</span>
+                          </Dropdown.Button>
+                          <Dropdown.Menu origin="top-right">
+                            {dropdownItems(row).map((dropdownItem, index) => (
+                              <Dropdown.Item
+                                onClick={dropdownItem.onClick}
+                                key={index}
+                                className={dropdownItem.className}
+                              >
+                                <Image
+                                  src={dropdownItem.icon}
+                                  alt={dropdownItem.text}
+                                />
+                                <p>{dropdownItem.text}</p>
+                              </Dropdown.Item>
+                            ))}
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      ) : null}
                     </td>
                   ) : null}
                 </tr>

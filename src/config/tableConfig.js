@@ -20,7 +20,7 @@ export const userColumns = (payload) => {
         <div
           className="w-10 h-10 bg-cover rounded-full block"
           style={
-            !row.passportPic.url || row.passportPic === "N/A"
+            !row.passportPic?.url || row.passportPic === "N/A"
               ? { backgroundImage: `url(${imagePlaceholder.src})` }
               : { backgroundImage: `url(${row.passportPic.url})` }
           }
