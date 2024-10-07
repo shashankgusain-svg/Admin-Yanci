@@ -17,7 +17,7 @@ const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Policies" }];
 
 export default function PoliciesPage() {
   const [selectedOption, setSelectedOption] = useState("Terms & Conditions");
-  const [savedData,setSavedData] = useState('')
+  const [mandatory, setMandatory] = useState(false);
   const [content, setContent] = useState({
     terms: "",
     privacy: "",
@@ -31,20 +31,21 @@ export default function PoliciesPage() {
     const fetchPolicyData = async () => {
       try {
         const response = await getPolicy(content?.userType, selectedOption !== 'Privacy Policy' ? selectedOption : 'Privacy');
-        
+
         setContent(prevContent => ({
-          ...prevContent,  
-          privacy: selectedOption === 'Privacy Policy' ? (response?.data?.description || prevContent.privacy) : prevContent.privacy, 
+          ...prevContent,
+          privacy: selectedOption === 'Privacy Policy' ? (response?.data?.description || prevContent.privacy) : prevContent.privacy,
           terms: selectedOption !== 'Privacy Policy' ? (response?.data?.description || prevContent.terms) : prevContent.terms
         }));
-       
+        setMandatory(response?.data?.notifyUsers || false);
+
       } catch (error) {
         console.error("Error in fetching policy:", error);
       }
     };
 
     fetchPolicyData();
-  }, [selectedOption,content.userType]);
+  }, [selectedOption, content.userType]);
 
   const userOptions = [
     {
@@ -96,7 +97,7 @@ export default function PoliciesPage() {
   const handleUpdate = async () => {
     const policyData = {
       userType: content.userType,
-      notifyUsers:true,
+      notifyUsers: mandatory,
       policyType:
         selectedOption === "Terms & Conditions"
           ? "Terms & Conditions"
@@ -106,7 +107,7 @@ export default function PoliciesPage() {
           ? content.terms
           : content.privacy,
     };
-
+    console.log(policyData)
     try {
       const result = await updatePolicy(policyData);
       if (result) {
@@ -149,7 +150,7 @@ export default function PoliciesPage() {
             onChange={handleUserTypeChange}
             value={content.userType}
           >
-            
+
             <InputAndLabel.Option value="App users">
               App users
             </InputAndLabel.Option>
@@ -168,12 +169,22 @@ export default function PoliciesPage() {
                 ? content.terms
                 : content.privacy
             }
-            
+
             onChange={handleContentChange}
             className="w-full h-[70%] bg-white"
-            config = {editorConfig}
+            config={editorConfig}
           />
           <style>{`.jodit-wysiwyg{height:300px !important}`}</style>
+          <div className="flex items-center gap-2 mt-4">
+            <input
+              type="checkbox"
+              id="mandatory"
+              checked={mandatory}
+              className="h-4 w-4"
+              onChange={(e) => setMandatory(e.target.checked)}
+            />
+            <label htmlFor="mandatory" className="text-body-2">Set as Mandatory</label>
+          </div>
         </div>
 
         <Button className="mt-4" onClick={handlePreview}>
