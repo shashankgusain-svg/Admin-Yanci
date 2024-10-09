@@ -298,8 +298,8 @@ export const withdrawalRequestsColumns = () => {
   return [
     {
       header: "SNo",
-      key: "serial number",
-
+      key: "serial",
+   
     },
     {
       header: "User ID",
@@ -346,10 +346,7 @@ export const withdrawalRequestsColumns = () => {
       header: "Amount",
       key: "amount",
     },
-    {
-      header: "Type",
-      key: "type",
-    },
+  
     {
       header: "Pay stack transaction id",
       key: "pay stack transaction id",

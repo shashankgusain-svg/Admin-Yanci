@@ -124,9 +124,9 @@ export default function Table({
                         col.render(row)
                       ) : col.isDate ? (
                         new Date(row[col.key]).toDateString()
-                      ) : !row[col.key] ? (
+                      ): col.key === 'serial' ? (rowIndex+1) : !row[col.key] ? (
                         <>--</>
-                      ) : (
+                      )  : (
                         row[col.key]
                       )}
                     </td>
