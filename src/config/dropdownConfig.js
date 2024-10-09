@@ -4,6 +4,7 @@ import viewDetails from "../../public/icons/misc/viewDetails.svg";
 import deleteRedIcon from "../../public/icons/misc/deleteRed.svg";
 import verify from "../../public/icons/misc/verify.svg";
 import history from "../../public/icons/misc/history.svg";
+import withdrawalInitiated from "../../public/icons/misc/withdrawal.svg"
 import reject from "../../public/icons/misc/reject.svg";
 import { canEdit } from "@/utils/helpers";
 import respond from "../../public/icons/misc/respond.svg";
@@ -118,6 +119,17 @@ export const getAbandonedKycDropdownItems = (payload) => {
     {
       icon: history,
       text: "Remind user",
+      onClick: () => {},
+    },
+  ];
+};
+export const getWithdrawalRequestsDropdownItems = (payload) => {
+  const {} = payload;
+
+  return [
+    {
+      icon: withdrawalInitiated,
+      text: "Initiate Withdrawal",
       onClick: () => {},
     },
   ];

@@ -18,6 +18,7 @@ import Referrals from "../../../public/icons/sidebar/Referrals";
 import { useRouter } from "next/router";
 import { getUser, removeToken, removeUser } from "@/services/api/cookies";
 import LoadingAnimation from "../../../public/icons/animated/loading";
+import Withdrawal from "../../../public/icons/sidebar/Withdrawal";
 
 const SidebarBtn = ({ children, path, isActive, className = "" }) => {
   return (
@@ -49,6 +50,12 @@ const sidebarBtns = [
     permissionName: "Transactions",
     path: "/transactions",
     Icon: Transactions,
+  },
+  {
+    name: "Withdrawal Req.",
+    permissionName: "Withdrawal",
+    path: "/withdrawal-req",
+    Icon: Withdrawal,
   },
   {
     name: "Revenue",

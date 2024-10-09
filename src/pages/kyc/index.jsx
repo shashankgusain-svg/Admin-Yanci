@@ -59,7 +59,7 @@ export default function Kyc() {
     });
     setModalType(null);
   };
-
+console.log("VAL",values);
   const fetchKYCData = async (startDate = "", endDate = "") => {
     setLoading(true);
     const result = await getKYCData({

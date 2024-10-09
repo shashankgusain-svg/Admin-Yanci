@@ -32,6 +32,14 @@ export const kycVerificationStatusMapping = {
   hold: "On Hold",
   rejected: "Rejected",
 };
+export const withdrawalRequestsStatusMapping = {
+  successful: "Successful",
+  resolved: "Resolved",
+  pending: "Pending",
+  initiated: "Initiated",
+  unsuccessful: "Unsuccessful",
+  inpipeline:'On Hold'
+};
 
 export const supportKeyMapping = {
   totalQuery: "Total Queries",

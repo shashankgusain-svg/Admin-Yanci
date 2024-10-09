@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   kycVerificationStatusMapping,
   targetCustomerValueMapping,
+  withdrawalRequestsStatusMapping,
 } from "@/utils/seed";
 import imagePlaceholder from "../../public/images/pi_placeholder.jpg";
 import StarRating from "../../public/icons/misc/StarRating";
@@ -44,7 +45,7 @@ export const userColumns = (payload) => {
       onSort: () => {
         handleSort("firstName");
       },
-      sortOrder : sortOrder
+      sortOrder: sortOrder
     },
     {
       header: "ID",
@@ -79,7 +80,7 @@ export const userColumns = (payload) => {
       },
       csvExport: (row) => new Date(row.createdAt).toDateString(),
       isDate: true,
-      sortOrder : sortOrder
+      sortOrder: sortOrder
     },
   ];
 };
@@ -124,7 +125,7 @@ export const submittedKycColumns = (payload) => {
       onSort: () => {
         handleSort("createdAt");
       },
-      sortOrder : sortOrder,
+      sortOrder: sortOrder,
       isDate: true,
       csvExport: (row) => new Date(row.createdDate).toDateString(),
     },
@@ -191,13 +192,12 @@ export const submittedKycColumns = (payload) => {
       key: "verificationStatus",
       render: (row) => (
         <span
-          className={`inline-flex capitalize items-center px-3 py-0.5 rounded-full text-sm font-medium ${
-            row.verificationStatus === "verified"
+          className={`inline-flex capitalize items-center px-3 py-0.5 rounded-full text-sm font-medium ${row.verificationStatus === "verified"
               ? "bg-green-500 text-white"
               : row.verificationStatus === "rejected"
-              ? "bg-red-500 text-white"
-              : "bg-yellow-400 text-black"
-          }`}
+                ? "bg-red-500 text-white"
+                : "bg-yellow-400 text-black"
+            }`}
         >
           {kycVerificationStatusMapping[row.verificationStatus] ||
             row.verificationStatus}
@@ -245,7 +245,7 @@ export const abandonedKycColumns = (payload) => {
         handleSort("createdAt");
       },
       isDate: true,
-      sortOrder : sortOrder,
+      sortOrder: sortOrder,
       csvExport: (row) => new Date(row.createdDate).toDateString(),
     },
     {
@@ -293,6 +293,89 @@ export const abandonedKycColumns = (payload) => {
     },
   ];
 };
+export const withdrawalRequestsColumns = () => {
+
+  return [
+    {
+      header: "SNo",
+      key: "serial number",
+
+    },
+    {
+      header: "User ID",
+      key: "user?._id",
+      csvExport: (row) => `${row.user._id || ""}`,
+
+      render: (row) => (
+        <div
+
+          className="hover:underline text-primary-7"
+        >
+          <p>{row.user ? row.user._id : "--"}</p>
+        </div>
+      ),
+    },
+    {
+      header: "Name",
+      key: "firstName",
+      csvExport: (row) => `${row.user.firstName || ""} ${row.user.lastName || ""}`,
+
+      render: (row) => (
+        <div
+          // href={`/user/${row.userId}`}
+          className="hover:underline text-primary-7"
+        >
+          <p>{row.user ? row.user.firstName + " " + row.user.lastName : "--"}</p>        </div>
+      ),
+    },
+
+    {
+      header: "Email",
+      key: "email",
+      csvExport: (row) => `${row.user.email || ""}`,
+
+      render: (row) => (
+        <div
+          // href={`/user/${row.userId}`}
+          className="hover:underline text-primary-7"
+        >
+          <p>{row.user ? row.user.email : "--"}</p>        </div>
+      ),
+    },
+    {
+      header: "Amount",
+      key: "amount",
+    },
+    {
+      header: "Type",
+      key: "type",
+    },
+    {
+      header: "Pay stack transaction id",
+      key: "pay stack transaction id",
+    },
+    {
+      header: "Status",
+      key: "status",
+      render: (row) => (
+        <span
+          className={`inline-flex capitalize items-center px-3 py-0.5 rounded-full text-sm font-medium ${row.status === "verified"
+              ? "bg-green-500 text-white"
+              : row.status === "rejected"
+                ? "bg-red-500 text-white"
+                : "bg-yellow-400 text-black"
+            }`}
+        >
+          {withdrawalRequestsStatusMapping[row.status] ||
+            row.status}
+        </span>
+      ),
+    },
+
+
+
+  ];
+};
 
 // NOTIFICATIONS
 
@@ -335,7 +418,7 @@ export const sentNotificationColumns = (payload) => {
         handleSort("sentOn");
       },
       isDate: true,
-      sortOrder : sortOrder,
+      sortOrder: sortOrder,
     },
     {
       header: "Mode",
@@ -383,7 +466,7 @@ export const scheduledNotificationColumns = (payload) => {
         handleSort("scheduledOn");
       },
       isDate: true,
-      sortOrder : sortOrder,
+      sortOrder: sortOrder,
     },
     {
       header: "Mode",
@@ -432,7 +515,7 @@ export const feedbackColumns = (payload) => {
       onSort: () => {
         handleSort("createdAt");
       },
-      sortOrder : sortOrder
+      sortOrder: sortOrder
     },
   ];
 };
@@ -470,20 +553,19 @@ export const queriesColumns = (payload) => {
       onSort: () => {
         handleSort("createdAt");
       },
-      sortOrder : sortOrder
+      sortOrder: sortOrder
     },
     {
       header: "Status",
       key: "status",
       render: (row) => (
         <span
-          className={`rounded-full px-2 py-1 capitalize ${
-            row.status === "RESOLVED"
+          className={`rounded-full px-2 py-1 capitalize ${row.status === "RESOLVED"
               ? "bg-green-600 text-white"
               : row.status === "PENDING"
-              ? "bg-red-600 text-white"
-              : "bg-yellow-400 text-black"
-          }`}
+                ? "bg-red-600 text-white"
+                : "bg-yellow-400 text-black"
+            }`}
         >
           {new String(row.status).toLowerCase()}
         </span>
@@ -526,18 +608,17 @@ export const faqColumns = (payload) => {
       onSort: () => {
         handleSort("createdAt");
       },
-      sortOrder : sortOrder
+      sortOrder: sortOrder
     },
     {
       header: "Status",
       key: "status",
       render: (row) => (
         <span
-          className={`rounded-full px-2 py-1 capitalize ${
-            row.status === "LIVE"
+          className={`rounded-full px-2 py-1 capitalize ${row.status === "LIVE"
               ? "bg-green-600 text-white"
               : "bg-yellow-400 text-black"
-          }`}
+            }`}
         >
           {new String(row.status).toLowerCase()}
         </span>
