@@ -6,8 +6,7 @@ export default function DropdownItem({ children, onClick, className }) {
 
   const handleClick = () =>{
     setIsOpen( prev => !prev);
-    onClick ? onClick() : null;
-  }
+    onClick ? onClick(children) : null;  }
 
   return (
     <button

@@ -13,6 +13,9 @@ export const getWithdrawalRequest = async (payload) => {
   if(payload.startDate && payload.endDate){
     endpoint += `&startDate=${payload.startDate}&endDate=${payload.endDate}`
   }
+  if(payload.status){
+    endpoint += `&status=${payload.status}`;
+  }
 
 
   console.log("EP",endpoint)

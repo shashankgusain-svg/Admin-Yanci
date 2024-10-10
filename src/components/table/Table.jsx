@@ -3,6 +3,7 @@ import Searchbar from "../searchbar/Searchbar";
 import down from "../../../public/icons/misc/down.svg";
 import exportIcon from "../../../public/icons/misc/export.svg";
 import calender from "../../../public/icons/misc/calender.svg";
+import filterIcon from "../../../public/icons/misc/filter.svg";
 import Image from "next/image";
 import Dropdown from "../dropdown/DropdownIndex";
 import Button from "../button/Button";
@@ -19,6 +20,8 @@ export default function Table({
   searchPlaceHolder = "Type to Search",
   onSearch,
   searchValue,
+  filter = true,
+  onFilter,
   datePicker = false,
   exportToCSV = false,
   isDropdown = false,
@@ -58,6 +61,32 @@ export default function Table({
             </Dropdown>
           ) : null}
 
+          {filter ? (
+            <Dropdown>
+              <Dropdown.Button title="Filter" >
+                <Image src={filterIcon} alt="filterIcon" />
+                <p>Filters</p>
+              </Dropdown.Button>
+              <Dropdown.Menu origin="top-right">
+                <Dropdown.Item onClick = {onFilter}>
+                  Pending
+                </Dropdown.Item>
+                <Dropdown.Item onClick = {onFilter}>
+                  Successful
+                </Dropdown.Item>
+                <Dropdown.Item onClick = {onFilter}>
+                  Unsuccessful
+                </Dropdown.Item>
+                <Dropdown.Item onClick = {onFilter}>
+                  Resolved
+                </Dropdown.Item>
+                <Dropdown.Item onClick = {onFilter}>
+                  Initiated
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          ) : null}
+          
           {exportToCSV ? (
             <Button
               design="table"

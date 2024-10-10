@@ -34,6 +34,8 @@ export default function Kyc() {
     const [error, setError] = React.useState(null);
     const { sortField, sortOrder, handleSort } = useTableSorting();
     const { searchValue, onSearch } = useSearch();
+    const [status, setStatus] = React.useState('')
+    console.log("status",status)
     const { limit, page, handleLimitChange, handlePageChange } = usePagination();
     const fetchWithdrawalRequests = async (startDate = "", endDate = "") => {
         try {
@@ -41,6 +43,7 @@ export default function Kyc() {
                 value: searchValue,
                 page: page,
                 limit: limit,
+                status:status,
                 startDate: startDate,
                 endDate: endDate,
             };
@@ -65,7 +68,7 @@ export default function Kyc() {
             return;
           }
         fetchWithdrawalRequests();
-    }, [limit, page, searchValue, values]);
+    }, [limit, page, searchValue, values, status]);
 
 
 
@@ -93,6 +96,7 @@ export default function Kyc() {
 
                     }
                     isLoading={loading}
+                    onFilter={(item)=>setStatus(item.toLowerCase())}
                     paginationProps={{
                         currentPage: page,
                         totalPages,
