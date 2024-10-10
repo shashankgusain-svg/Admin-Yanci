@@ -35,7 +35,6 @@ export default function Kyc() {
     const { sortField, sortOrder, handleSort } = useTableSorting();
     const { searchValue, onSearch } = useSearch();
     const [status, setStatus] = React.useState('')
-    console.log("status",status)
     const { limit, page, handleLimitChange, handlePageChange } = usePagination();
     const fetchWithdrawalRequests = async (startDate = "", endDate = "") => {
         try {
@@ -49,8 +48,6 @@ export default function Kyc() {
             };
 
             const result = await getWithdrawalRequest(payload);
-            console.log("result", result.data.results)
-            // Update the state with the result
             setWithdrawalRequests(result.data.results);
         } catch (error) {
             // Handle any errors that may occur during the API call
@@ -95,6 +92,7 @@ export default function Kyc() {
                         getWithdrawalRequestsDropdownItems({ row })
 
                     }
+                    filter
                     isLoading={loading}
                     onFilter={(item)=>setStatus(item.toLowerCase())}
                     paginationProps={{

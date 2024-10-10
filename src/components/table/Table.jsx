@@ -20,7 +20,7 @@ export default function Table({
   searchPlaceHolder = "Type to Search",
   onSearch,
   searchValue,
-  filter = true,
+  filter = false,
   onFilter,
   datePicker = false,
   exportToCSV = false,
