@@ -86,7 +86,7 @@ export default function Login() {
                 Welcome back!
               </h2>
               <form
-                className="w-full max-w-[500px] flex flex-col gap-10 mt-24"
+                className="w-full max-w-[500px] flex flex-col gap-6 mt-24"
                 onSubmit={handleLogin}
               >
                 <InputAndLabel>
