@@ -52,7 +52,7 @@ const sidebarBtns = [
     Icon: Transactions,
   },
   {
-    name: "Withdrawal Req.",
+    name: "Withdrawals",
     permissionName: "Withdrawal",
     path: "/withdrawal-req",
     Icon: Withdrawal,

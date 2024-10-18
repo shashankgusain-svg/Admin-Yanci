@@ -71,7 +71,7 @@ export default function Kyc() {
 
     const breadCrumbItems = [
         { name: "Home", link: "/" },
-        { name: "Withdrawal Requests" },
+        { name: "Withdrawals" },
     ];
 
 

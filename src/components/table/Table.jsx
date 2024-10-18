@@ -67,7 +67,7 @@ export default function Table({
                 <Image src={filterIcon} alt="filterIcon" />
                 <p>Filters</p>
               </Dropdown.Button>
-              <Dropdown.Menu origin="top-right">
+              <Dropdown.Menu origin="top-right-2">
                 <Dropdown.Item onClick = {onFilter}>
                   Pending
                 </Dropdown.Item>

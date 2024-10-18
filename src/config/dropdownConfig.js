@@ -126,13 +126,7 @@ export const getAbandonedKycDropdownItems = (payload) => {
 export const getWithdrawalRequestsDropdownItems = (payload) => {
   const {} = payload;
 
-  return [
-    {
-      icon: withdrawalInitiated,
-      text: "Initiate Withdrawal",
-      onClick: () => {},
-    },
-  ];
+  return [];
 };
 
 export const getSubAdminDropdownItems = (payload) => {

@@ -18,6 +18,8 @@ export default function DropdownMenu({
         return "origin-bottom-left bottom-full left-0 pb-2";
       case "bottom-right":
         return "origin-bottom-right bottom-full right-0 pb-2";
+      case "top-right-2":
+        return "origin-top-right top-[80%] right-5 pt-2"
       default:
         return "origin-top-right top-full right-0 pt-2";
     }
