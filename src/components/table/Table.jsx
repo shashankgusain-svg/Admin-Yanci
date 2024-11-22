@@ -72,7 +72,7 @@ export default function Table({
                   Pending
                 </Dropdown.Item>
                 <Dropdown.Item onClick = {onFilter}>
-                  Successful
+                  Success
                 </Dropdown.Item>
                 <Dropdown.Item onClick = {onFilter}>
                   Unsuccessful
