@@ -33,8 +33,8 @@ export default function Login() {
       if (res.status === false) {
         return;
       }
-      setToken(res.token, expiry);
-      setUser(res, expiry);
+      setToken(res?.data.token, expiry);
+      setUser(res?.data, expiry);
       router.push("/");
     } catch (error) {
       console.error("Error during login:", error);

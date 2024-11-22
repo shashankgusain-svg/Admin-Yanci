@@ -5,6 +5,7 @@ import { URL, apiError, responseValidator } from "./helper";
 
 export const getUsersData = async (payload) => {
   const token = await getAuthToken();
+  console.log("token",token)
   let endpoint = `${URL}adminuser/getusers?`;
 
   if (payload.type === "Blocked Users") {
@@ -34,7 +35,8 @@ export const getUsersData = async (payload) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    return responseValidator(res);
+    console.log("res--->",res)
+    return responseValidator(res)
   } catch (error) {
     return apiError(error);
   }

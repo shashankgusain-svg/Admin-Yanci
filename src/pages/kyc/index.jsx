@@ -59,7 +59,6 @@ export default function Kyc() {
     });
     setModalType(null);
   };
-console.log("VAL",values);
   const fetchKYCData = async (startDate = "", endDate = "") => {
     setLoading(true);
     const result = await getKYCData({
@@ -72,11 +71,10 @@ console.log("VAL",values);
       startDate: startDate,
       endDate: endDate,
     });
-
     setData((prevData) => ({
       ...prevData,
       [selectedOption === "Submitted KYCs" ? "submitted" : "abandoned"]:
-        result.users,
+        result?.data.results,
     }));
     setTotalPages(result.totalPages || 1);
     setLoading(false);
@@ -85,7 +83,8 @@ console.log("VAL",values);
   const fetchKYCMetrics = async () => {
     const res = await getKYCMetrics();
     const data = { ...res };
-    setMetrics(data);
+    console.log("data-->",data?.data)
+    setMetrics(data?.data);
   };
 
   React.useEffect(() => {

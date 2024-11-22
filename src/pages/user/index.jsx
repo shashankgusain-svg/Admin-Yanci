@@ -55,10 +55,12 @@ export default function User() {
       startDate: startDate,
       endDate: endDate,
     });
-    setData((prevData) => ({
+    console.log("R",result.data.results)
+  
+      setData((prevData) => ({
       ...prevData,
       [selectedOption === "Blocked Users" ? "blocked" : "active"]:
-        result.results,
+        result.data?.results,
     }));
     setTotalPages(result.totalPages || 1);
     setLoading(false);

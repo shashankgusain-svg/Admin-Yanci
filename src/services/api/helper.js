@@ -9,12 +9,42 @@ export const responseValidator = async (
 ) => {
   if (response.ok) {
     const res = await response.json();
-    if (isToaster) {
-      toast.success(!message || message.length == 0 ? res.message : message, {
-        toastId: `API-Response-success-${Math.random()}`,
+    console.log("Parsed JSON Response:", res);
+    if (Array.isArray(res.data)) {
+      console.log("we got inside")
+      if (isToaster) {
+        toast.success(!message || message.length == 0 ? res.message : message, {
+          toastId: `API-Response-success-${Math.random()}`,
+        });
+      }
+      
+      return { status: true, data: [...res.data] };
+    } else if (typeof res?.data === "object") {
+      if (isToaster) {
+        toast.success(!message || message.length == 0 ? res.message : message, {
+          toastId: `API-Response-success-${Math.random()}`,
+        });
+      }
+      console.log("Final ResponseValidator Result-->:", {
+        status: res.status,
+        data: res.data,
       });
+      return { status: true, data: res.data };
+    } else if (typeof res.data === "string") {
+      if (isToaster) {
+        toast.success(!message || message.length == 0 ? res.message : message, {
+          toastId: `API-Response-success-${Math.random()}`,
+        });
+      }
+      return { status: true, data: res.data };
+    } else {
+      if (isToaster) {
+        toast.success(!message || message.length == 0 ? res.message : message, {
+          toastId: `API-Response-success-${Math.random()}`,
+        });
+      }
+      return { status: res.status, message: res.message };
     }
-    return res;
   } else if (response.status == 401) {
     toast.error(
       "You are not logged in. Please login for accessing this section.",
@@ -30,7 +60,7 @@ export const responseValidator = async (
     return { status: false, code: 413, message: "file-size-too-large" };
   } else if (response.status >= 400 && response.status < 500) {
     const res = await response.json();
-    if (isToaster) {
+    if (!isToaster) {
       toast.error(res.message, {
         toastId: `API-400-error${Math.random()}`,
       });
@@ -38,7 +68,7 @@ export const responseValidator = async (
     return { status: false, code: res.code, message: res.message };
   } else if (response.status >= 500) {
     const res = await response.json();
-    toast.error(res.message, {
+    toast.error(res, {
       toastId: `API-500-error${Math.random()}`,
     });
     return {
@@ -57,7 +87,6 @@ export const responseValidator = async (
     };
   }
 };
-
 export const apiError = (e) => {
   if (e.name === "AbortError") {
   } else {

@@ -44,6 +44,7 @@ export default function Home() {
   React.useEffect(() => {
     const fetchUserData = async () => {
       const temp = await getUser();
+      console.log(temp)
       setUser({ ...temp });
     };
     fetchUserData();

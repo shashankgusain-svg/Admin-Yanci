@@ -37,10 +37,16 @@ export default function UserPage() {
 
   const fetchUserDetails = async () => {
     setLoading(true);
+
     const result = await getUserDetails(userId);
-    const temp = { ...result.data };
-    setData(temp);
-    setLoading(false);
+    if (result?.status) {
+      console.log(result)
+      const temp = { ...result.data };
+      setData(temp);
+      setLoading(false);
+    }
+    
+
   };
 
   React.useEffect(() => {
@@ -123,7 +129,7 @@ export default function UserPage() {
         </Modal.Footer>
       </Modal>
       {loading ? (
-        <LoadingAnimation/>
+        <LoadingAnimation />
       ) : (
         <>
           <Breadcrumb items={breadCrumbItems} />
