@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import Home from "../../../public/icons/sidebar/Home";
 import User from "../../../public/icons/sidebar/User";
 import Logout from "../../../public/icons/sidebar/Logout";
@@ -19,7 +19,9 @@ import { useRouter } from "next/router";
 import { getUser, removeToken, removeUser } from "@/services/api/cookies";
 import LoadingAnimation from "../../../public/icons/animated/loading";
 import Withdrawal from "../../../public/icons/sidebar/Withdrawal";
-
+import arrowLeft from "../../../public/icons/misc/arrowLeft.svg";
+import arrowRight from "../../../public/icons/misc/arrowRight.svg";
+import Image from "next/image";
 const SidebarBtn = ({ children, path, isActive, className = "" }) => {
   return (
     <Link
@@ -113,10 +115,12 @@ const sidebarBtns = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ isCollapsed, setIsCollapsed }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isReady, setIsReady] = React.useState(false);
+
+  const sidebarWidth = isCollapsed ? 120 : 264;
   const [user, setUser] = React.useState(null);
 
   React.useEffect(() => {
@@ -147,7 +151,28 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="sidebar sticky gap-10 bg-white">
+    <div
+      style={{
+        width: `${sidebarWidth}px`,
+        transition: "width 0.3s ease-in-out",
+      }}
+      className="sidebar sticky gap-10 bg-white "
+    >
+      {/* Expand/Collapse Button */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="absolute -right-5 top-4 w-10 h-10 bg-white  rounded-full  flex items-center justify-center hover:bg-gray-100 transition"
+      >
+        {isCollapsed ? (
+           <Image src={arrowRight} alt="Arrow Right" />
+        ) : (
+          <Image src={arrowLeft} alt="Arrow Right" />
+
+          
+        )}
+      </button>
+
+      {/* Sidebar Content */}
       <div className="flex flex-col gap-14 h-full justify-between">
         <div className="overflow-y-auto">
           <div className="flex flex-col gap-4 pr-4">
@@ -159,13 +184,13 @@ export default function Sidebar() {
                     pathname === null
                       ? false
                       : path === "/"
-                      ? pathname === "/"
-                      : pathname.startsWith(path);
+                        ? pathname === "/"
+                        : pathname.startsWith(path);
 
                   return (
                     <SidebarBtn key={path} path={path} isActive={isActive}>
                       <Icon active={isActive} />
-                      <p className="text-body-1">{name}</p>
+                      {!isCollapsed && <p className="text-body-1">{name}</p>}
                     </SidebarBtn>
                   );
                 })
@@ -174,15 +199,15 @@ export default function Sidebar() {
             )}
           </div>
         </div>
-
         <button
           onClick={handleLogout}
           className="sidebarBtn h-9 flex items-center gap-2 hover:bg-primary-2 cursor-pointer"
         >
           <Logout />
-          <p className="text-primary-6 text-body-1">Logout</p>
+          {!isCollapsed && <p className="text-primary-6 text-body-1">Logout</p>}
         </button>
       </div>
     </div>
+
   );
 }

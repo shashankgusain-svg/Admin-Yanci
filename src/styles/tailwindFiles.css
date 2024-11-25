@@ -112,11 +112,24 @@
   /* Sidebar */
 
   .sidebar {
-    min-width: 264px;
     height: calc(100vh - 72px);
     top: 72px;
     left: 0;
     padding: 40px 16px 32px 16px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .sidebar.w-16 {
+    min-width: 64px; /* Adjust collapsed width */
+    padding: 40px 8px 32px 8px;
+  }
+  
+  .sidebar.w-64 {
+    min-width: 264px; /* Adjust expanded width */
+  }
+  
+  .admin-content {
+    transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
   }
 
   .sidebarBtn {
