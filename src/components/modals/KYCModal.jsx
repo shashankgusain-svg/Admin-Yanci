@@ -28,6 +28,7 @@ export default function KYCModal({ userId, onClose }) {
     investmentProfile: {},
     userProof: {},
   });
+  console.log("KYC Modal", kycDetails?.data?.user)
 
   const fetchUserKYCDetails = async () => {
     setLoading(true);
@@ -52,26 +53,26 @@ export default function KYCModal({ userId, onClose }) {
               <h6 className="text-heading-6 font-semibold capitalize">User</h6>
             </div>
             <div className="grid grid-cols-3 gap-6">
-              <Field label="First Name" value={kycDetails.user.firstName} />
-              <Field label="Last Name" value={kycDetails.user.lastName} />
-              <Field label="Gender" value={kycDetails.user.gender} />
+              <Field label="First Name" value={kycDetails?.data?.user?.firstName} />
+              <Field label="Last Name" value={kycDetails?.data?.user?.lastName} />
+              <Field label="Gender" value={kycDetails?.data?.user?.gender} />
               <Field
                 label="Date of Birth"
-                value={new Date(kycDetails.user.dob).toLocaleDateString()}
+                value={new Date(kycDetails?.data?.user?.dob).toLocaleDateString()}
               />
               <Field
                 label="Marital Status"
-                value={kycDetails.user.maritalStatus}
+                value={kycDetails?.data?.user?.maritalStatus}
               />
-              <Field label="Nationality" value={kycDetails.user.nationality} />
+              <Field label="Nationality" value={kycDetails?.data?.user?.nationality} />
               <Field
                 label="Origin Country"
-                value={kycDetails.user.originCountry}
+                value={kycDetails?.data?.user?.originCountry}
               />
               <InputAndLabel>
                 <InputAndLabel.Label>Phone Number</InputAndLabel.Label>
                 <InputAndLabel.PhoneInput
-                  value={kycDetails.user.phone}
+                  value={kycDetails?.data?.user?.phone}
                   disabled
                   disableDropdown
                 />
@@ -85,11 +86,11 @@ export default function KYCModal({ userId, onClose }) {
               </h6>
             </div>
             <div className="grid grid-cols-3 gap-6">
-              <Field label="Country" value={kycDetails.address.country} />
-              <Field label="State" value={kycDetails.address.state} />
-              <Field label="City" value={kycDetails.address.city} />
-              <Field label="Latitude" value={kycDetails.address.latitude} />
-              <Field label="Longitude" value={kycDetails.address.longitude} />
+              <Field label="Country" value={kycDetails?.data?.address.country} />
+              <Field label="State" value={kycDetails?.data?.address.state} />
+              <Field label="City" value={kycDetails?.data?.address.city} />
+              <Field label="Latitude" value={kycDetails?.data?.address.latitude} />
+              <Field label="Longitude" value={kycDetails?.data?.address.longitude} />
             </div>
 
             {/* Beneficiary Information */}
@@ -101,27 +102,27 @@ export default function KYCModal({ userId, onClose }) {
             <div className="grid grid-cols-3 gap-6">
               <Field
                 label="Beneficiary Full Name"
-                value={kycDetails.beneficiaryInformation.fullName}
+                value={kycDetails?.data?.beneficiaryInformation.fullName}
               />
               <Field
                 label="Beneficiary Relationship"
-                value={kycDetails.beneficiaryInformation.relationship}
+                value={kycDetails?.data?.beneficiaryInformation.relationship}
               />
               <Field
                 label="Beneficiary Phone Number"
-                value={kycDetails.beneficiaryInformation.phone}
+                value={kycDetails?.data?.beneficiaryInformation.phone}
               />
               <Field
                 label="Beneficiary Country"
-                value={kycDetails.beneficiaryInformation.address.country}
+                value={kycDetails?.data?.beneficiaryInformation.address.country}
               />
               <Field
                 label="Beneficiary State"
-                value={kycDetails.beneficiaryInformation.address.state}
+                value={kycDetails?.data?.beneficiaryInformation.address.state}
               />
               <Field
                 label="Beneficiary City"
-                value={kycDetails.beneficiaryInformation.address.city}
+                value={kycDetails?.data?.beneficiaryInformation.address.city}
               />
             </div>
 
@@ -134,31 +135,31 @@ export default function KYCModal({ userId, onClose }) {
             <div className="grid grid-cols-3 gap-6">
               <Field
                 label="Employment Status"
-                value={kycDetails.investorProfile.employmentStatus}
+                value={kycDetails?.data?.investorProfile.employmentStatus}
               />
               <Field
                 label="Monthly Income"
-                value={kycDetails.investorProfile.monthlyIncome}
+                value={kycDetails?.data?.investorProfile.monthlyIncome}
               />
               <Field
                 label="Employer"
-                value={kycDetails.investorProfile.employer}
+                value={kycDetails?.data?.investorProfile.employer}
               />
               <Field
                 label="Occupation"
-                value={kycDetails.investorProfile.occupation}
+                value={kycDetails?.data?.investorProfile.occupation}
               />
               <Field
                 label="Ghana Security"
-                value={kycDetails.investorProfile.ghanaSecurity}
+                value={kycDetails?.data?.investorProfile.ghanaSecurity}
               />
               <Field
                 label="Information Source"
-                value={kycDetails.investorProfile.informationSource}
+                value={kycDetails?.data?.investorProfile.informationSource}
               />
               <Field
                 label="Business Nature"
-                value={kycDetails.investorProfile.businessNature}
+                value={kycDetails?.data?.investorProfile.businessNature}
               />
             </div>
 
@@ -171,47 +172,47 @@ export default function KYCModal({ userId, onClose }) {
             <div className="grid grid-cols-3 gap-6">
               <Field
                 label="Investment Objective"
-                value={kycDetails.investmentProfile.investmentObjective}
+                value={kycDetails?.data?.investmentProfile.investmentObjective}
               />
               <Field
                 label="Investment Knowledge"
-                value={kycDetails.investmentProfile.investmentKnowledge}
+                value={kycDetails?.data?.investmentProfile.investmentKnowledge}
               />
               <Field
                 label="Risk Tolerance"
-                value={kycDetails.investmentProfile.riskTolerance}
+                value={kycDetails?.data?.investmentProfile.riskTolerance}
               />
               <Field
                 label="Investment Horizon"
-                value={kycDetails.investmentProfile.investmentHorizon}
+                value={kycDetails?.data?.investmentProfile.investmentHorizon}
               />
               <Field
                 label="Fund Source"
-                value={kycDetails.investmentProfile.fundSource}
+                value={kycDetails?.data?.investmentProfile.fundSource}
               />
               <Field
                 label="Top-Up Period"
-                value={kycDetails.investmentProfile.topUpPeriod}
+                value={kycDetails?.data?.investmentProfile.topUpPeriod}
               />
               <Field
                 label="Withdrawal Period"
-                value={kycDetails.investmentProfile.withdrawalPeriod}
+                value={kycDetails?.data?.investmentProfile.withdrawalPeriod}
               />
               <Field
                 label="Initial Investment Amount"
-                value={kycDetails.investmentProfile.initialInvestmentAmount}
+                value={kycDetails?.data?.investmentProfile.initialInvestmentAmount}
               />
               <Field
                 label="Regular Top-Up Amount"
-                value={kycDetails.investmentProfile.regularTopUpAmount}
+                value={kycDetails?.data?.investmentProfile.regularTopUpAmount}
               />
               <Field
                 label="Regular Withdrawal Amount"
-                value={kycDetails.investmentProfile.regularWithdrawalAmount}
+                value={kycDetails?.data?.investmentProfile.regularWithdrawalAmount}
               />
               <Field
                 label="Client Additional Information"
-                value={kycDetails.investmentProfile.clientAdditionalInformation}
+                value={kycDetails?.data?.investmentProfile.clientAdditionalInformation}
               />
             </div>
 
@@ -224,29 +225,29 @@ export default function KYCModal({ userId, onClose }) {
             <div className="grid grid-cols-3 gap-6">
               <Field
                 label="Card Number"
-                value={kycDetails.userProof.cardNumber}
+                value={kycDetails?.data?.userProof.cardNumber}
               />
               <Field
                 label="Issue Date"
                 value={new Date(
-                  kycDetails.userProof.issueDate
+                  kycDetails?.data?.userProof.issueDate
                 ).toLocaleDateString()}
               />
               <Field
                 label="Expiry Date"
                 value={new Date(
-                  kycDetails.userProof.expiryDate
+                  kycDetails?.data?.userProof.expiryDate
                 ).toLocaleDateString()}
               />
               <Field
                 label="Place of Issue"
-                value={kycDetails.userProof.placeOfIssue}
+                value={kycDetails?.data?.userProof.placeOfIssue}
               />
             </div>
 
             <div className="flex gap-6 flex-wrap">
               <Image
-                src={kycDetails.userProof.proofPic}
+                src={kycDetails?.data?.userProof.proofPic}
                 alt="Proof Pic Front"
                 width={0}
                 height={0}
@@ -254,7 +255,7 @@ export default function KYCModal({ userId, onClose }) {
                 style={{ width: "auto", height: "372px" }}
               />
               <Image
-                src={kycDetails.userProof.proofPicBack}
+                src={kycDetails?.data?.userProof.proofPicBack}
                 alt="Proof Pic Back"
                 width={0}
                 height={0}
@@ -262,7 +263,7 @@ export default function KYCModal({ userId, onClose }) {
                 style={{ width: "auto", height: "372px" }}
               />
               <Image
-                src={kycDetails.userProof.proofWithId}
+                src={kycDetails?.data?.userProof.proofWithId}
                 alt="Proof with ID"
                 width={0}
                 height={0}
@@ -270,7 +271,7 @@ export default function KYCModal({ userId, onClose }) {
                 style={{ width: "auto", height: "372px" }}
               />
               <Image
-                src={kycDetails.signature}
+                src={kycDetails?.data?.signature}
                 alt="Signature"
                 width={0}
                 height={0}
