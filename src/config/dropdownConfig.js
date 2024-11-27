@@ -158,6 +158,7 @@ export const getSubAdminDropdownItems = (payload) => {
 
 export const getQueriesDropdownItems = (payload) => {
   const { router, row, updateQueryStatus, fetchUserSupportDetails } = payload;
+  console.log("row-->",row)
 
   const items = [
     {

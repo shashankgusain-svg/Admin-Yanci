@@ -114,6 +114,7 @@ export default function User() {
         <Table
           searchBar
           datePicker
+          searchPlaceHolder="Search By Name"
           exportToCSV
           columns={userColumns({ handleSort, sortField, sortOrder })}
           data={data.active}

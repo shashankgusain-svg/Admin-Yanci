@@ -349,7 +349,7 @@ export const withdrawalRequestsColumns = () => {
   
     {
       header: "Pay stack transaction id",
-      key: "pay stack transaction id",
+      key: "payStackTransactionId",
     },
     {
       header: "Status",

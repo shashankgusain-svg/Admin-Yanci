@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Searchbar from "../searchbar/Searchbar";
 import down from "../../../public/icons/misc/down.svg";
 import exportIcon from "../../../public/icons/misc/export.svg";
@@ -31,8 +31,15 @@ export default function Table({
   paginationProps,
   limitProps,
   dateValue,
-  dateOnChange = () => {},
+  dateOnChange = () => { },
 }) {
+
+  const [selectedStatus, setSelectedStatus] = useState("");
+
+  const handleFilter = (status) => {
+    setSelectedStatus(status); // Update the selected status
+    onFilter(status); // Call the filter function with the selected status
+  };
   return (
     <div className="w-full flex flex-col relative slideAndAppear">
       {/* Header */}
@@ -63,30 +70,24 @@ export default function Table({
 
           {filter ? (
             <Dropdown>
-              <Dropdown.Button title="Filter" >
+              <Dropdown.Button title="Filter">
                 <Image src={filterIcon} alt="filterIcon" />
                 <p>Filters</p>
               </Dropdown.Button>
               <Dropdown.Menu origin="top-right-2">
-                <Dropdown.Item onClick = {onFilter}>
-                  Pending
-                </Dropdown.Item>
-                <Dropdown.Item onClick = {onFilter}>
-                  Success
-                </Dropdown.Item>
-                <Dropdown.Item onClick = {onFilter}>
-                  Unsuccessful
-                </Dropdown.Item>
-                <Dropdown.Item onClick = {onFilter}>
-                  Resolved
-                </Dropdown.Item>
-                <Dropdown.Item onClick = {onFilter}>
-                  Initiated
-                </Dropdown.Item>
+                {["Pending", "Success", "Failed"].map((status) => (
+                  <Dropdown.Item
+                    key={status}
+                    onClick={() => handleFilter(status.toLowerCase())}
+                    className={selectedStatus === status.toLowerCase() ? "bg-gray-200 font-semibold" : ""}
+                  >
+                    {status}
+                  </Dropdown.Item>
+                ))}
               </Dropdown.Menu>
             </Dropdown>
           ) : null}
-          
+
           {exportToCSV ? (
             <Button
               design="table"
@@ -115,9 +116,8 @@ export default function Table({
                 {columns.map((col, index) => (
                   <th
                     key={index}
-                    className={`table-header ${
-                      col.sortable ? "flex items-center gap-2" : null
-                    } whitespace-nowrap text-left text-primary-8 text-body-1 font-semibold`}
+                    className={`table-header ${col.sortable ? "flex items-center gap-2" : null
+                      } whitespace-nowrap text-left text-primary-8 text-body-1 font-semibold`}
                   >
                     {col.header}
                     {col.sortable ? (
@@ -153,9 +153,9 @@ export default function Table({
                         col.render(row)
                       ) : col.isDate ? (
                         new Date(row[col.key]).toDateString()
-                      ): col.key === 'serial' ? (rowIndex+1) : !row[col.key] ? (
+                      ) : col.key === 'serial' ? (rowIndex + 1) : !row[col.key] ? (
                         <>--</>
-                      )  : (
+                      ) : (
                         row[col.key]
                       )}
                     </td>

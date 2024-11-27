@@ -56,9 +56,12 @@ export default function RoleManagement() {
   const fetchSubAdminDetails = async () => {
     setLoading(true);
     const result = await getAllSubAdmins({ limit: limit, page: page });
-    setData([...result.data]);
-    setTotalPages(result.totalPages || 1);
-    setLoading(false);
+    if(result){
+      setData([...result?.data]);
+      setTotalPages(result.totalPages || 1);
+      setLoading(false);
+    }
+ 
   };
 
   const handleDelete = async () => {

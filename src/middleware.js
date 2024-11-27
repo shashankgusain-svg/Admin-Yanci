@@ -11,6 +11,7 @@ const protectedRoutes = {
   "/role-management": { permissionName: "Role Management", requiresEdit: false },
   "/support": { permissionName: "User Support", requiresEdit: true }, // User support needs both view and edit for some paths
   "/audit-logs": { permissionName: "Audit Logs", requiresEdit: false },
+  "/withdrawal-req": { permissionName: "Audit Logs", requiresEdit: false },
   "/policies": { permissionName: "Policies", requiresEdit: false },
   "/referrals": { permissionName: "Referrals", requiresEdit: false },
 };

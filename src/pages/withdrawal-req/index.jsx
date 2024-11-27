@@ -49,6 +49,7 @@ export default function Kyc() {
 
             const result = await getWithdrawalRequest(payload);
             setWithdrawalRequests(result.data.results);
+            console.log("WR",result.data)
         } catch (error) {
             // Handle any errors that may occur during the API call
             setError(error);

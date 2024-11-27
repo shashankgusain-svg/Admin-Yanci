@@ -71,23 +71,16 @@ export default function index() {
     }));
   };
 
-  const handleCheckboxChange = (index, type) => {
+  const handleAccessLevelChange = (index) => {
     setNewSubAdminDetails((prevState) => {
       const updatedPermissions = prevState.permissions.map((permission, i) => {
         if (i === index) {
-          if (type === "edit") {
-            return {
-              ...permission,
-              view: !permission.edit || true,
-              edit: !permission.edit,
-            };
-          } else if (type === "view") {
-            return {
-              ...permission,
-              view: !permission.view,
-              edit: !permission.view ? false : permission.edit,
-            };
-          }
+          const newValue = !(permission.view && permission.edit);
+          return {
+            ...permission,
+            view: newValue, // Sync `view` and `edit` with the unified "Access Level"
+            edit: newValue,
+          };
         }
         return permission;
       });
@@ -95,6 +88,7 @@ export default function index() {
       return { ...prevState, permissions: updatedPermissions };
     });
   };
+
 
   const handleToggleViewAndEditForAll = () => {
     setNewSubAdminDetails((prevState) => {
@@ -112,16 +106,16 @@ export default function index() {
     });
   };
 
-  const handleToggleViewOnlyForAll = () => {
+  const handleToggleAccessLevelForAll = () => {
     setNewSubAdminDetails((prevState) => {
-      const allViewChecked = prevState.permissions.every(
-        (permission) => permission.view && !permission.edit
+      const allChecked = prevState.permissions.every(
+        (permission) => permission.view && permission.edit
       );
 
       const updatedPermissions = prevState.permissions.map((permission) => ({
         ...permission,
-        view: !allViewChecked,
-        edit: false,
+        view: !allChecked, // Toggle both `view` and `edit`
+        edit: !allChecked,
       }));
 
       return { ...prevState, permissions: updatedPermissions };
@@ -262,27 +256,15 @@ export default function index() {
                       <input
                         type="checkbox"
                         checked={newSubAdminDetails.permissions.every(
-                          (permission) => permission.view && !permission.edit
-                        )}
-                        onChange={handleToggleViewOnlyForAll}
-                        className="form-checkbox text-primary-7"
-                      />
-                      <p>View Only</p>
-                    </div>
-                  </th>
-                  <th className="text-center text-heading-6 font-semibold items-center gap-2 text-primary-8 p-4">
-                    <div className="flex gap-2 items-center">
-                      <input
-                        type="checkbox"
-                        checked={newSubAdminDetails.permissions.every(
                           (permission) => permission.view && permission.edit
                         )}
-                        onChange={handleToggleViewAndEditForAll}
+                        onChange={handleToggleAccessLevelForAll}
                         className="form-checkbox text-primary-7"
                       />
-                      <p>Edit</p>
+                      <p>Access Level</p>
                     </div>
                   </th>
+
                 </tr>
               </thead>
               <tbody className="bg-white">
@@ -297,22 +279,15 @@ export default function index() {
                     <td className="p-4 h-12 text-center">
                       <input
                         type="checkbox"
-                        checked={permission.view}
-                        onChange={() => handleCheckboxChange(index, "view")}
-                        className="form-checkbox text-primary-7 h-5 w-5"
-                      />
-                    </td>
-                    <td className="p-4 h-12 text-center">
-                      <input
-                        type="checkbox"
-                        checked={permission.edit}
-                        onChange={() => handleCheckboxChange(index, "edit")}
+                        checked={permission.view && permission.edit}
+                        onChange={() => handleAccessLevelChange(index)}
                         className="form-checkbox text-primary-7 h-5 w-5"
                       />
                     </td>
                   </tr>
                 ))}
               </tbody>
+
             </table>
           </div>
 
