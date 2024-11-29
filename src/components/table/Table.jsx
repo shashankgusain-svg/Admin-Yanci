@@ -33,7 +33,7 @@ export default function Table({
   dateValue,
   dateOnChange = () => { },
 }) {
-
+  console.log(paginationProps);
   const [selectedStatus, setSelectedStatus] = useState("");
 
   const handleFilter = (status) => {

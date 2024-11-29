@@ -2,3 +2,11 @@
 @import "./styles//datepicker.css";
 @import "./styles//phone-input.css";
 @import "./styles//text-editor.css";
+
+:root {
+    --font-inter: 'Inter', sans-serif;
+  }
+  
+  body {
+    font-family: var(--font-inter);
+  }

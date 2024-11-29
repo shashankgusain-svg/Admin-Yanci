@@ -60,6 +60,22 @@ export const addSubAdmin = async (payload) => {
   }
 };
 
+export const updateSubadmin = async (payload , id) => {
+  try {
+    const res = await fetch(`${URL}admin/update-sub-admin/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await getAuthToken()}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    return responseValidator(res, true);
+  } catch (error) {
+    apiError(error);
+  }
+};
+
 // PUT
 
 export const updatePolicy = async (payload) => {

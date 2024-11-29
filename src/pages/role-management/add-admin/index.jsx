@@ -5,6 +5,7 @@ import Button from "@/components/button/Button";
 import { addSubAdmin } from "@/services/api/adminService";
 import { useRouter } from "next/router";
 import { isRequired, verifyEmail, verifyPassword } from "@/utils/helpers";
+import { toast } from "react-toastify";
 
 export default function index() {
   const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Sub Admin" }];
@@ -137,7 +138,8 @@ export default function index() {
     );
 
     if (!atLeastOnePermissionSelected) {
-      isRequired("", "Feature", true);
+      // isRequired("", "Feature", true);
+      toast.error("Atleast One Feature Should Be Selected")
       return;
     }
 
@@ -190,7 +192,7 @@ export default function index() {
                 id="fullName"
                 value={newSubAdminDetails.name}
                 onChange={handleInputChange}
-                maxLength={100}
+                maxLength={50}
                 showLimit
               />
             </InputAndLabel>

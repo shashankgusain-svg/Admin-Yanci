@@ -60,7 +60,7 @@ export const responseValidator = async (
     return { status: false, code: 413, message: "file-size-too-large" };
   } else if (response.status >= 400 && response.status < 500) {
     const res = await response.json();
-    if (!isToaster) {
+    if (isToaster) {
       toast.error(res.message, {
         toastId: `API-400-error${Math.random()}`,
       });
@@ -68,7 +68,7 @@ export const responseValidator = async (
     return { status: false, code: res.code, message: res.message };
   } else if (response.status >= 500) {
     const res = await response.json();
-    toast.error(res, {
+    toast.error(res?.message, {
       toastId: `API-500-error${Math.random()}`,
     });
     return {

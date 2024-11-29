@@ -1,6 +1,7 @@
 import unblockUser from "../../public/icons/misc/unblock.svg";
 import blockUserIcon from "../../public/icons/misc/block.svg";
 import viewDetails from "../../public/icons/misc/viewDetails.svg";
+import edit from "../../public/icons/misc/edit.svg"
 import deleteRedIcon from "../../public/icons/misc/deleteRed.svg";
 import verify from "../../public/icons/misc/verify.svg";
 import history from "../../public/icons/misc/history.svg";
@@ -140,6 +141,13 @@ export const getSubAdminDropdownItems = (payload) => {
         router.push(`./role-management/${row._id}`);
       },
     },
+    {
+      icon: edit,
+      text: "Edit Details",
+      onClick: () => {
+        router.push(`./role-management/edit-admin?id=${row._id}`);
+      },
+    },
   ];
 
   if (canEdit("Role Management")) {
@@ -165,7 +173,7 @@ export const getQueriesDropdownItems = (payload) => {
       icon: respond,
       text: "Respond",
       onClick: () => {
-        router.push(`/user/${row._id}`);
+        // router.push(`/user/${row._id}`);
       },
     },
   ];

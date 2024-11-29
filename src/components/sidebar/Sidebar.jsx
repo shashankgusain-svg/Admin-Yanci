@@ -21,20 +21,57 @@ import LoadingAnimation from "../../../public/icons/animated/loading";
 import Withdrawal from "../../../public/icons/sidebar/Withdrawal";
 import arrowLeft from "../../../public/icons/misc/arrowLeft.svg";
 import arrowRight from "../../../public/icons/misc/arrowRight.svg";
+import { createPortal } from "react-dom";
+
 import Image from "next/image";
-const SidebarBtn = ({ children, path, isActive, className = "" }) => {
+const SidebarBtn = ({ children, path, isActive, className = "", name, isCollapsed }) => {
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltipPosition({
+      top: rect.top + window.scrollY + rect.height / 2, // Center vertically
+      left: rect.right + 10, // Position slightly to the right
+    });
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
   return (
-    <Link
-      href={path}
-      replace
-      className={`
-        sidebarBtn h-9 flex items-center gap-2 hover:bg-primary-2 transition-all ease-in-out hover:scale-[95%] hover:ease-in-out hover:duration-150
-        ${isActive ? "bg-primary-6 text-white" : "text-primary-6 bg-white"}
-        ${className}
-      `}
+    <div
+      className="relative group z-10"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      {children}
-    </Link>
+      <Link
+        href={path}
+        replace
+        className={`sidebarBtn h-9 flex items-center gap-2 hover:bg-primary-2 transition-all ease-in-out hover:scale-[95%] hover:ease-in-out hover:duration-150
+        ${isActive ? "bg-primary-6 text-white" : "text-primary-6 bg-white"}
+        ${className}`}
+      >
+        {children}
+      </Link>
+
+      {isHovered && isCollapsed &&
+        createPortal(
+          <div
+            style={{
+              position: "absolute",
+              top: `${tooltipPosition.top - 10}px `,
+              left: `${tooltipPosition.left}px`,
+            }}
+            className="bg-primary-5 text-white text-xs p-2 rounded-md shadow-lg"
+          >
+            {name}
+          </div>,
+          document.body // Mount the tooltip to the body
+        )}
+    </div>
   );
 };
 
@@ -156,7 +193,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
         width: `${sidebarWidth}px`,
         transition: "width 0.3s ease-in-out",
       }}
-      className="sidebar sticky gap-10 bg-white "
+      className="sidebar sticky gap-10 "
     >
       {/* Expand/Collapse Button */}
       <button
@@ -164,18 +201,18 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
         className="absolute -right-5 top-4 w-10 h-10 bg-white  rounded-full  flex items-center justify-center hover:bg-gray-100 transition"
       >
         {isCollapsed ? (
-           <Image src={arrowRight} alt="Arrow Right" />
+          <Image src={arrowRight} alt="Arrow Right" />
         ) : (
           <Image src={arrowLeft} alt="Arrow Right" />
 
-          
+
         )}
       </button>
 
       {/* Sidebar Content */}
-      <div className="flex flex-col gap-14 h-full justify-between">
-        <div className="overflow-y-auto">
-          <div className="flex flex-col gap-4 pr-4">
+      <div className="flex flex-col gap-14 relative z-10 h-full justify-between">
+        <div className="overflow-y-auto overflow-x-hidden">
+          <div className="flex flex-col gap-4 pr-4 ">
             {isReady ? (
               sidebarBtns
                 .filter(({ path }) => canViewPage(path))
@@ -188,7 +225,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
                         : pathname.startsWith(path);
 
                   return (
-                    <SidebarBtn key={path} path={path} isActive={isActive}>
+                    <SidebarBtn isCollapsed={isCollapsed} key={path} name={name} path={path} isActive={isActive}>
                       <Icon active={isActive} />
                       {!isCollapsed && <p className="text-body-1">{name}</p>}
                     </SidebarBtn>

@@ -1,7 +1,7 @@
 import React from "react";
 import LoadingAnimation from "../../../public/icons/animated/loading";
 
-export default function Button({ children, isLoading=false, onClick, title="Button", design, type="button", style, className }) {
+export default function Button({ children, disabled=false, isLoading=false, onClick, title="Button", design, type="button", style, className }) {
   const commonBtnStyle =
     "h-12 p-5 flex gap-2 rounded-full text-body-2 justify-center items-center font-semibold";
 
@@ -33,7 +33,7 @@ export default function Button({ children, isLoading=false, onClick, title="Butt
   };
 
   return (
-    <button type={type} title={title} className={`${className} ${getButtonClasses()}`} onClick={onClick}>
+    <button  disabled={disabled} type={type} title={title} className={`${className} ${getButtonClasses()}`} onClick={onClick}>
       {isLoading ? <LoadingAnimation theme="light"/> : children}
     </button>
   );
