@@ -83,7 +83,7 @@ export default function Kyc() {
   const fetchKYCMetrics = async () => {
     const res = await getKYCMetrics();
     const data = { ...res };
-    console.log("data-->",data?.data)
+    console.log("data-->", data?.data)
     setMetrics(data?.data);
   };
 
@@ -154,10 +154,10 @@ export default function Kyc() {
           searchBar
           datePicker
           exportToCSV
-          columns={abandonedKycColumns({handleSort, setModalType, setUserId, sortOrder})}
+          columns={abandonedKycColumns({ handleSort, setModalType, setUserId, sortOrder })}
           data={data.abandoned}
           isDropdown={canEdit("KYC")}
-          dropdownItems={(row) => getAbandonedKycDropdownItems({row})}
+          dropdownItems={(row) => getAbandonedKycDropdownItems({ row })}
           isLoading={loading}
           paginationProps={{
             currentPage: page,
@@ -224,6 +224,7 @@ export default function Kyc() {
                 Put CSD Number
               </InputAndLabel.Label>
               <InputAndLabel.Input
+                type='number'
                 id="csdNumber"
                 name="csdNumber"
                 value={verificationData.csdNo}
@@ -244,7 +245,7 @@ export default function Kyc() {
               design="primary"
               className="h-9"
               onClick={async () => {
-                if(!isRequired(verificationData.csdNo,"CSD No",true)){
+                if (!isRequired(verificationData.csdNo, "CSD No", true)) {
                   return;
                 }
                 await manageKYC(verificationData);
