@@ -9,7 +9,6 @@ export const responseValidator = async (
 ) => {
   if (response.ok) {
     const res = await response.json();
-    console.log("Parsed JSON Response:", res);
     if (Array.isArray(res.data)) {
       console.log("we got inside")
       if (isToaster) {
@@ -25,10 +24,7 @@ export const responseValidator = async (
           toastId: `API-Response-success-${Math.random()}`,
         });
       }
-      console.log("Final ResponseValidator Result-->:", {
-        status: res.status,
-        data: res.data,
-      });
+      
       return { status: true, data: res.data };
     } else if (typeof res.data === "string") {
       if (isToaster) {

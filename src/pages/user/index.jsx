@@ -62,7 +62,7 @@ export default function User() {
       [selectedOption === "Blocked Users" ? "blocked" : "active"]:
         result.data?.results,
     }));
-    setTotalPages(result.totalPages || 1);
+    setTotalPages(result?.data?.totalPages || 1);
     setLoading(false);
   };
 

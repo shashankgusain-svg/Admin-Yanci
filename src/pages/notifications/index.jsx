@@ -54,7 +54,8 @@ export default function Notifications() {
       [selectedOption === "Sent Notifications" ? "sent" : "scheduled"]:
         result.data,
     }));
-    setTotalPages(result.totalPages || 1);
+    console.log("data",data)
+    setTotalPages(result?.totalPages || 1);
     setLoading(false);
   };
 

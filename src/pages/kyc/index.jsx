@@ -76,7 +76,7 @@ export default function Kyc() {
       [selectedOption === "Submitted KYCs" ? "submitted" : "abandoned"]:
         result?.data.results,
     }));
-    setTotalPages(result.totalPages || 1);
+    setTotalPages(result?.data?.totalPages || 1);
     setLoading(false);
   };
 
