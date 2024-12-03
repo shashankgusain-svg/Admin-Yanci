@@ -52,10 +52,10 @@ export default function Notifications() {
     setData((prevData) => ({
       ...prevData,
       [selectedOption === "Sent Notifications" ? "sent" : "scheduled"]:
-        result.data,
+        result.data.results,
     }));
     console.log("data",data)
-    setTotalPages(result?.totalPages || 1);
+    setTotalPages(result?.data?.totalPages || 1);
     setLoading(false);
   };
 
