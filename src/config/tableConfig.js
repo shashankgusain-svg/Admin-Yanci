@@ -351,23 +351,23 @@ export const withdrawalRequestsColumns = () => {
       header: "Pay stack transaction id",
       key: "payStackTransactionId",
     },
-    {
-      header: "Status",
-      key: "status",
-      render: (row) => (
-        <span
-          className={`inline-flex capitalize items-center px-3 py-0.5 rounded-full text-sm font-medium ${row.status === "verified"
-              ? "bg-green-500 text-white"
-              : row.status === "rejected"
-                ? "bg-red-500 text-white"
-                : "bg-yellow-400 text-black"
-            }`}
-        >
-          {withdrawalRequestsStatusMapping[row.status] ||
-            row.status}
-        </span>
-      ),
-    },
+    // {
+    //   header: "Status",
+    //   key: "status",
+    //   render: (row) => (
+    //     <span
+    //       className={`inline-flex capitalize items-center px-3 py-0.5 rounded-full text-sm font-medium ${row.status === "verified"
+    //           ? "bg-green-500 text-white"
+    //           : row.status === "rejected"
+    //             ? "bg-red-500 text-white"
+    //             : "bg-yellow-400 text-black"
+    //         }`}
+    //     >
+    //       {withdrawalRequestsStatusMapping[row.status] ||
+    //         row.status}
+    //     </span>
+    //   ),
+    // },
 
 
 

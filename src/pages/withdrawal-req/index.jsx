@@ -94,7 +94,7 @@ export default function Kyc() {
                         getWithdrawalRequestsDropdownItems({ row })
 
                     }
-                    filter
+                    // filter
                     isLoading={loading}
                     onFilter={(item)=>setStatus(item.toLowerCase())}
                     paginationProps={{

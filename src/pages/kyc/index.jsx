@@ -22,6 +22,7 @@ import {
   getSubmittedKycDropdownItems,
   getAbandonedKycDropdownItems,
 } from "@/config/dropdownConfig";
+import { useRouter } from "next/navigation";
 
 export default function Kyc() {
   const [data, setData] = React.useState({ submitted: [], abandoned: [] });
@@ -38,7 +39,7 @@ export default function Kyc() {
     userId: null,
     csdNo: "",
   });
-
+  const router = useRouter()
   const { sortField, sortOrder, handleSort } = useTableSorting();
   const { searchValue, onSearch } = useSearch();
   const { limit, page, handleLimitChange, handlePageChange } = usePagination();
@@ -250,6 +251,7 @@ export default function Kyc() {
                 }
                 await manageKYC(verificationData);
                 setModalType(null);
+                router.push('/user')
                 fetchKYCData();
               }}
             >
