@@ -6,9 +6,10 @@ import { addSubAdmin } from "@/services/api/adminService";
 import { useRouter } from "next/router";
 import { isRequired, verifyEmail, verifyPassword } from "@/utils/helpers";
 import { toast } from "react-toastify";
+import generator from "generate-password";
 
 export default function index() {
-  const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Sub Admin" }];
+  const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Sub Admin", link: "/role-management" }, { name: "Add Subdmin" }];
 
   const defaultSubAdminDetails = {
     name: "",
@@ -125,6 +126,7 @@ export default function index() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    
     const isEmailValid = verifyEmail(newSubAdminDetails.email);
     const isPasswordValid = verifyPassword(newSubAdminDetails.password);
     const isNameValid = isRequired(newSubAdminDetails.name, "Name");
@@ -169,7 +171,22 @@ export default function index() {
       console.error("Error creating admin.", error);
     }
   };
+  const generatePassword = () => {
+    const password = generator.generate({
+      length: 12, // Customize the password length
+      numbers: true,
+      symbols: true,
+      uppercase: true,
+      lowercase: true,
+      excludeSimilarCharacters: true, // Avoid similar-looking characters
+    });
 
+    // Directly set the generated password in the state without triggering handleInputChange
+    setNewSubAdminDetails((prevState) => ({
+      ...prevState,
+      password: password, // Update only the password field
+    }));
+  };
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
@@ -229,20 +246,27 @@ export default function index() {
                 </InputAndLabel>
 
                 <InputAndLabel>
-                  <InputAndLabel.Label
-                    htmlFor="password"
-                    className="text-primary-6"
-                  >
+                  <InputAndLabel.Label htmlFor="password" className="text-primary-6">
                     Password
                   </InputAndLabel.Label>
-                  <InputAndLabel.Input
-                    type="password"
-                    name="password"
-                    id="password"
-                    value={newSubAdminDetails.password}
-                    onChange={handleInputChange}
-                  />
+                  <div className="flex items-center space-x-2">
+                    <InputAndLabel.Input
+                      type="password"
+                      name="password"
+                      id="password"
+                      value={newSubAdminDetails.password}
+                      onChange={handleInputChange}
+                    />
+                    <button
+                      type="button"
+                      onClick={generatePassword}
+                      className="bg-primary-6 text-white px-3 py-2 rounded"
+                    >
+                      Generate
+                    </button>
+                  </div>
                 </InputAndLabel>
+
               </div>
             </div>
           </div>

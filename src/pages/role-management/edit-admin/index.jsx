@@ -8,7 +8,7 @@ import { isRequired, verifyEmail, verifyPassword } from "@/utils/helpers";
 import { toast } from "react-toastify";
 
 export default function index() {
-    const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Sub Admin" }];
+    const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Sub Admin", link: "/role-management" },{name:"Edit Sub Admin"}];
     const [loading, setLoading] = useState(false);
     const [defaultSubAdminDetails, setDefaultSubAdminDetails] = useState({
         name: "",
@@ -242,6 +242,7 @@ export default function index() {
                                 Phone No. (Optional)
                             </InputAndLabel.Label>
                             <InputAndLabel.PhoneInput
+                                disabled
                                 onChange={handleInputChange}
                                 value={newSubAdminDetails.phone}
                             />
@@ -261,6 +262,7 @@ export default function index() {
                                         type="email"
                                         name="email"
                                         id="email"
+                                        disabled
                                         value={newSubAdminDetails.email}
                                         onChange={handleInputChange}
                                         maxLength={254}

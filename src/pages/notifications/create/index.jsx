@@ -5,6 +5,7 @@ import Button from "@/components/button/Button";
 import { createNotification } from "@/services/api/notificationsService";
 import { useRouter } from "next/router";
 import { isRequired } from "@/utils/helpers";
+import { toast } from "react-toastify";
 
 export default function CreateNotification() {
   const router = useRouter();
@@ -65,12 +66,25 @@ export default function CreateNotification() {
 
     return month + "/" + day + "/" + year;
   };
+  const formatDateForInput = (date) => {
+    if (!date) return ""; // Handle null or undefined dates
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if(notification?.isScheduled){
+      console.log("notification.scheduleDate",notification?.scheduleDate)
+      !isRequired(notification?.scheduleDate,"Notification's Date & Time", true)
+    }
     if (
       !isRequired(notification.title, "Notification's Title", true) ||
+      
       !isRequired(
         notification.description,
         "Notification's Description",
@@ -105,7 +119,7 @@ export default function CreateNotification() {
           mode: notification.mode,
         };
 
-    await createNotification(formattedNotification);
+    // await createNotification(formattedNotification);
     setLoading(false);
     router.push("/notifications");
   };
@@ -156,6 +170,9 @@ export default function CreateNotification() {
               </InputAndLabel.Option>
               <InputAndLabel.Option value="ALL_UNFUNDED_ACCOUNTS">
                 All funded accounts
+              </InputAndLabel.Option>
+              <InputAndLabel.Option value="ALL_USERS">
+              All Users
               </InputAndLabel.Option>
               <InputAndLabel.Option value="NO_TRANSACTION_MADE">
                 No transactions made
@@ -238,8 +255,10 @@ export default function CreateNotification() {
                 <InputAndLabel.Input
                   id="scheduleDate"
                   name="scheduleDate"
+                  isRequired
                   type="date"
-                  value={notification.scheduleDate}
+                  min={new Date().toISOString().split('T')[0]}
+                  value={formatDateForInput(notification?.scheduleDate)}
                   onChange={handleChange}
                 />
               </InputAndLabel>
@@ -252,6 +271,7 @@ export default function CreateNotification() {
                     type="number"
                     min="1"
                     max="12"
+                    isRequired
                     value={notification.scheduleTime.hours}
                     onChange={(e) => handleTimeChange(e, "hours")}
                   />

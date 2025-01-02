@@ -29,7 +29,7 @@ export default function Notifications() {
     React.useState("Sent Notifications");
 
   const { searchValue, onSearch } = useSearch();
-  const { limit, handleLimitChange, handlePageChange, page } = usePagination();
+  const { limit, setLimit, handleLimitChange, handlePageChange, setPage, page } = usePagination(); // Add `setLimit` and `setPage` hooks
   const { handleSort, sortField, sortOrder } = useTableSorting();
   const [totalPages, setTotalPages] = React.useState(0);
 
@@ -72,7 +72,11 @@ export default function Notifications() {
   React.useEffect(() => {
     fetchNotificationsMetrics();
   }, [data]);
-
+  const handleTabSelect = (label) => {
+    setSelectedOption(label);
+    setPage(1); // Reset page number to 1
+    setLimit(10); // Reset limit to 10
+  };
   const userOptions = [
     {
       label: "Sent Notifications",
@@ -136,7 +140,7 @@ export default function Notifications() {
         </div>
         <Toggle
           options={userOptions}
-          onSelect={(label) => setSelectedOption(label)}
+          onSelect={(label) => handleTabSelect(label)}
         />
       </div>
     </div>

@@ -62,4 +62,5 @@ export const targetCustomerValueMapping = {
   NON_ACTIVE_USERS: "Non Active Users",
   ABANDONED_KYC: "Abandoned KYC",
   NEW_USERS: "New Users",
+  ALL_USERS:"All Users"
 };

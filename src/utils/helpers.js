@@ -44,7 +44,10 @@ export const verifyPassword = (password, message = true) => {
 };
 
 export const isRequired = (val, field = "", message = true) => {
-  if (val && val.trim() != "") {
+  if (typeof val === "string" && val.trim() !== "") {
+    return true;
+  }
+  if (typeof val !== "string" && val) {
     return true;
   }
   if (message) {
@@ -54,6 +57,7 @@ export const isRequired = (val, field = "", message = true) => {
   }
   return false;
 };
+
 
 export const isLoggedIn = () => {
   const user = getUser();

@@ -24,7 +24,7 @@ export default function App({ Component, pageProps }) {
   return (
     <>
       <Head>
-        {/* <link rel="icon" type="image/svg+xml" href="/mfa-favicon.svg" /> */}
+      <link rel="icon" href="/favicon.ico" />
         <title>Yanci</title>
       </Head>
       <main className={`${inter.variable} relative`}>
