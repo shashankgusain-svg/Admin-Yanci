@@ -85,15 +85,15 @@ const sidebarBtns = [
   },
   { name: "KYC", permissionName: "KYC", path: "/kyc", Icon: Kyc },
   {
-    name: "Transactions",
-    permissionName: "Transactions",
-    path: "/transactions",
+    name: "Trades",
+    permissionName: "Trades",
+    path: "/trades",
     Icon: Transactions,
   },
   {
-    name: "Withdrawals",
-    permissionName: "Withdrawal",
-    path: "/withdrawal-req",
+    name: "Transactions",
+    permissionName: "Transactions",
+    path: "/transactions",
     Icon: Withdrawal,
   },
   {

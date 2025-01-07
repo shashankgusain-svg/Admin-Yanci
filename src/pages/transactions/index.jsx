@@ -1,82 +1,179 @@
-import React from "react";
+import React, { useState } from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
-import MetricsCard from "@/components/metricsCard/MetricsCard";
+
+import Table from "@/components/table/Table";
+import {
+    getKYCData,
+    getKYCMetrics,
+    manageKYC,
+} from "@/services/api/kycService";
+
+import { canEdit, downloadFile, isRequired } from "@/utils/helpers";
+import usePagination from "@/hooks/usePagination";
+import { abandonedKycColumns, submittedKycColumns, withdrawalRequestsColumns } from "@/config/tableConfig";
+import useTableSorting from "@/hooks/useTableSort";
+import useSearch from "@/hooks/useSearch";
+import {
+    getSubmittedKycDropdownItems,
+    getAbandonedKycDropdownItems,
+    getWithdrawalRequestsDropdownItems,
+} from "@/config/dropdownConfig";
+import { getAllDeposits, getWithdrawalRequest } from "@/services/api/withdrawalRequestService";
 import Toggle from "@/components/typeToggle/TypeToggle";
-import TradeDetails from "../../components/tables/TradeDetailsTable";
-import FundDetails from "../../components/tables/FundDetailsTable";
 
-const dummyMetrics = [
-  {
-    label: "Total Activity",
-    percentageChange: 0,
-    value: 0,
-    isPositiveChange: true,
-  },
-  {
-    label: "Total Trading Activity",
-    percentageChange: 0,
-    value: 0,
-    isPositiveChange: true,
-  },
-  {
-    label: "Daily Average Trade",
-    percentageChange: 0,
-    isPercentage: true,
-    value: 0,
-    isPositiveChange: false,
-  },
-  {
-    label: "Trading Days",
-    percentageChange: 0,
-    isPercentage: true,
-    value: 0,
-    isPositiveChange: true,
-  },
-  {
-    label: "Buying Activity (VOL.)",
-    percentageChange: 0,
-    isPercentage: true,
-    value: 0,
-    isPositiveChange: true,
-  },
-  {
-    label: "Selling Activity (VOL.)",
-    percentageChange: 0,
-    isPercentage: true,
-    value: 0,
-    isPositiveChange: true,
-  },
-];
+export default function Kyc() {
+    const [withdrawalRequests, setWithdrawalRequests] = React.useState([]);
+    const [deposits, setDeposits] = React.useState([])
+    const [totalPages, setTotalPages] = React.useState(0);
+    const [values, setValues] = React.useState(null);
+    const [verificationData, setVerificationData] = React.useState({
+        type: null,
+        userId: null,
+        csdNo: "",
+    });
 
-const userOptions = [
-  { label: "Trade Details", content: <></> },
-  {
-    label: "Fund Details",
-    content: <></>,
-  },
-];
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState(null);
+    const { sortField, sortOrder, handleSort } = useTableSorting();
+    const { searchValue, onSearch } = useSearch();
+    const [status, setStatus] = React.useState('')
+    const { limit, page, handleLimitChange, handlePageChange } = usePagination();
+    const fetchWithdrawalRequests = async (startDate = "", endDate = "") => {
+        try {
+            const payload = {
+                value: searchValue,
+                page: page,
+                limit: limit,
+                status: status,
+                startDate: startDate,
+                endDate: endDate,
+            };
 
-const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Transactions" }];
+            const result = await getWithdrawalRequest(payload);
+            setWithdrawalRequests(result.data.results);
+            setTotalPages(result.data.totalPages || 1);
+            console.log("WR", result.data)
+        } catch (error) {
+            // Handle any errors that may occur during the API call
+            setError(error);
+            console.error("Error fetching withdrawal requests:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const fetchAllDeposits = async (startDate = "", endDate = "") => {
+        try {
+            const payload = {
+                value: searchValue,
+                page: page,
+                limit: limit,
+                status: status,
+                startDate: startDate,
+                endDate: endDate,
+            };
 
-export default function Transactions() {
-  return (
-    <div className="flex flex-col gap-6">
-      <Breadcrumb items={breadCrumbItems} />
-      <div className="flex flex-col gap-6">
-        <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
-          {dummyMetrics.map((stat, index) => (
-            <MetricsCard
-              key={index}
-              label={stat.label}
-              isPercentage={stat.isPercentage ? stat.isPercentage : false}
-              percentageChange={stat.percentageChange}
-              value={stat.value}
-              isPositiveChange={stat.isPositiveChange}
-            />
-          ))}
+            const result = await getAllDeposits(payload);
+            setDeposits(result.data.results);
+            setTotalPages(result.data.totalPages || 1);
+            
+        } catch (error) {
+            // Handle any errors that may occur during the API call
+            setError(error);
+            console.error("Error fetching withdrawal requests:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    React.useEffect(() => {
+        setLoading(true);
+        if (values) {
+            fetchWithdrawalRequests(values[0], values[1]);
+            return;
+        }
+        fetchWithdrawalRequests();
+        fetchAllDeposits()
+    }, [limit, page, searchValue, values, status]);
+
+
+
+    const breadCrumbItems = [
+        { name: "Home", link: "/" },
+        { name: "Transactions" },
+    ];
+    const userOptions = [
+        {
+            label: "Withdrawals", content:
+                <Table
+                    searchBar
+                    datePicker
+                    exportToCSV
+                    columns={withdrawalRequestsColumns()}
+                    data={withdrawalRequests}
+                    isDropdown={canEdit("Withdrawal")}
+                    dropdownItems={(row) =>
+                        getWithdrawalRequestsDropdownItems({ row })
+
+                    }
+                    // filter
+                    isLoading={loading}
+                    onFilter={(item) => setStatus(item.toLowerCase())}
+                    paginationProps={{
+                        currentPage: page,
+                        totalPages,
+                        onPageChange: handlePageChange,
+                    }}
+                    limitProps={{
+                        selectedLimit: limit,
+                        onLimitChange: handleLimitChange,
+                    }}
+                    searchValue={searchValue}
+                    onSearch={onSearch}
+                    dateValue={values}
+                    dateOnChange={setValues}
+                />
+        },
+        {
+            label: "Deposit",
+            content: <Table
+            searchBar
+            datePicker
+            exportToCSV
+            columns={withdrawalRequestsColumns()}
+            data={deposits}
+            isDropdown={canEdit("Transactions")}
+            dropdownItems={(row) =>
+                getWithdrawalRequestsDropdownItems({ row })
+
+            }
+            // filter
+            isLoading={loading}
+            onFilter={(item) => setStatus(item.toLowerCase())}
+            paginationProps={{
+                currentPage: page,
+                totalPages,
+                onPageChange: handlePageChange,
+            }}
+            limitProps={{
+                selectedLimit: limit,
+                onLimitChange: handleLimitChange,
+            }}
+            searchValue={searchValue}
+            onSearch={onSearch}
+            dateValue={values}
+            dateOnChange={setValues}
+        />,
+        },
+    ];
+
+    return (
+        <div className="flex flex-col gap-6">
+
+            <Breadcrumb items={breadCrumbItems} />
+            <div className="flex flex-col gap-6">
+                <Toggle options={userOptions} />
+
+            </div>
         </div>
-        <Toggle options={userOptions} />
-      </div>
-    </div>
-  );
+    );
 }

@@ -3,7 +3,7 @@ const { NextResponse } = require("next/server");
 const protectedRoutes = {
   "/user": { permissionName: "User Management", requiresEdit: false },
   "/kyc": { permissionName: "KYC", requiresEdit: false },
-  "/transactions": { permissionName: "Transactions", requiresEdit: false },
+  "/trades": { permissionName: "Trades", requiresEdit: false },
   "/revenue": { permissionName: "Revenue", requiresEdit: false },
   "/reports": { permissionName: "Reports", requiresEdit: false },
   "/stock": { permissionName: "Stock Management", requiresEdit: false },
@@ -11,7 +11,7 @@ const protectedRoutes = {
   "/role-management": { permissionName: "Role Management", requiresEdit: false },
   "/support": { permissionName: "User Support", requiresEdit: true }, // User support needs both view and edit for some paths
   "/audit-logs": { permissionName: "Audit Logs", requiresEdit: false },
-  "/withdrawal-req": { permissionName: "Audit Logs", requiresEdit: false },
+  "/transactions": { permissionName: "Transactions", requiresEdit: false },
   "/policies": { permissionName: "Policies", requiresEdit: false },
   "/referrals": { permissionName: "Referrals", requiresEdit: false },
 };

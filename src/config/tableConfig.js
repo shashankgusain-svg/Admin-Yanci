@@ -345,11 +345,28 @@ export const withdrawalRequestsColumns = () => {
     {
       header: "Amount",
       key: "amount",
+      render: (row) => (
+        <div className="hover:underline text-primary-7">
+          <p>
+            {row.amount
+              ? Number(row.amount).toFixed(2) // Ensure two decimal points
+              : "--"}
+          </p>
+        </div>
+      ),
     },
   
     {
       header: "Pay stack transaction id",
-      key: "payStackTransactionId",
+      key: "transactionId",
+      render: (row) => (
+        <div
+
+          className="hover:underline text-primary-7"
+        >
+          <p>{row.transactionId ? row.transactionId?._id : "--"}</p>
+        </div>
+      ),
     },
     // {
     //   header: "Status",
