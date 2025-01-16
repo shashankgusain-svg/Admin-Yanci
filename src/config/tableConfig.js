@@ -296,11 +296,13 @@ export const abandonedKycColumns = (payload) => {
 export const withdrawalRequestsColumns = () => {
 
   return [
-    {
-      header: "SNo",
-      key: "serial",
+    // {
+    //   header: "SNo",
+    //   key: "serial",
+    //   csvExport: (row,index) => `${index+1 || ""}`,
+
    
-    },
+    // },
     {
       header: "User ID",
       key: "user?._id",
@@ -359,6 +361,7 @@ export const withdrawalRequestsColumns = () => {
     {
       header: "Pay stack transaction id",
       key: "transactionId",
+      csvExport: (row) => `${row.transactionId._id || ""}`,
       render: (row) => (
         <div
 

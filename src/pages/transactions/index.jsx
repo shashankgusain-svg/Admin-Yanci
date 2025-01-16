@@ -75,7 +75,7 @@ export default function Kyc() {
             const result = await getAllDeposits(payload);
             setDeposits(result.data.results);
             setTotalPages(result.data.totalPages || 1);
-            
+
         } catch (error) {
             // Handle any errors that may occur during the API call
             setError(error);
@@ -136,33 +136,33 @@ export default function Kyc() {
         {
             label: "Deposit",
             content: <Table
-            searchBar
-            datePicker
-            exportToCSV
-            columns={withdrawalRequestsColumns()}
-            data={deposits}
-            isDropdown={canEdit("Transactions")}
-            dropdownItems={(row) =>
-                getWithdrawalRequestsDropdownItems({ row })
+                searchBar
+                datePicker
+                exportToCSV
+                columns={withdrawalRequestsColumns()}
+                data={deposits}
+                isDropdown={canEdit("Transactions")}
+                dropdownItems={(row) =>
+                    getWithdrawalRequestsDropdownItems({ row })
 
-            }
-            // filter
-            isLoading={loading}
-            onFilter={(item) => setStatus(item.toLowerCase())}
-            paginationProps={{
-                currentPage: page,
-                totalPages,
-                onPageChange: handlePageChange,
-            }}
-            limitProps={{
-                selectedLimit: limit,
-                onLimitChange: handleLimitChange,
-            }}
-            searchValue={searchValue}
-            onSearch={onSearch}
-            dateValue={values}
-            dateOnChange={setValues}
-        />,
+                }
+                // filter
+                isLoading={loading}
+                onFilter={(item) => setStatus(item.toLowerCase())}
+                paginationProps={{
+                    currentPage: page,
+                    totalPages,
+                    onPageChange: handlePageChange,
+                }}
+                limitProps={{
+                    selectedLimit: limit,
+                    onLimitChange: handleLimitChange,
+                }}
+                searchValue={searchValue}
+                onSearch={onSearch}
+                dateValue={values}
+                dateOnChange={setValues}
+            />,
         },
     ];
 
