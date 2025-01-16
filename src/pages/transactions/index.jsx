@@ -86,15 +86,20 @@ export default function Kyc() {
     };
 
     React.useEffect(() => {
-        setLoading(true);
-        if (values) {
-            fetchWithdrawalRequests(values[0], values[1]);
-            return;
-        }
-        fetchWithdrawalRequests();
-        fetchAllDeposits()
+        const fetchData = async () => {
+            setLoading(true);
+    
+            const [start, end] = values || [];
+            await Promise.all([
+                fetchWithdrawalRequests(start, end),
+                fetchAllDeposits(start, end),
+            ]);
+    
+            setLoading(false);
+        };
+    
+        fetchData();
     }, [limit, page, searchValue, values, status]);
-
 
 
     const breadCrumbItems = [
