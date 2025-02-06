@@ -643,3 +643,73 @@ export const faqColumns = (payload) => {
     },
   ];
 };
+//AUDIT LOG
+export const auditLog = (payload) => {
+  const { handleSort, sortOrder } = payload;
+
+  return [
+    {
+      header: "Admin Name",
+      key: "admin.name",
+      render: (row) => (
+        <p className="text-primary-7 font-medium">{row.admin.name || "--"}</p>
+      ),
+      sortable: true,
+      onSort: () => handleSort("admin.name"),
+      sortOrder: sortOrder,
+      csvExport: (row) => row.admin.name || "--",
+    },
+    {
+      header: "Admin Email",
+      key: "admin.email",
+      render: (row) => <p>{row.admin.email || "--"}</p>,
+      csvExport: (row) => row.admin.email || "--",
+    },
+    {
+      header: "Admin Role",
+      key: "admin.roleType",
+      render: (row) => <p>{row.admin.roleType || "--"}</p>,
+      csvExport: (row) => row.admin.roleType || "--",
+    },
+    {
+      header: "Role",
+      key: "role",
+      render: (row) => <p>{row.role || "--"}</p>,
+      csvExport: (row) => row.role || "--",
+    },
+    {
+      header: "Action",
+      key: "action",
+      render: (row) => <p>{row.action || "--"}</p>,
+      csvExport: (row) => row.action || "--",
+    },
+    {
+      header: "Where",
+      key: "where",
+      render: (row) => <p>{row.where || "--"}</p>,
+      csvExport: (row) => row.where || "--",
+    },
+    {
+      header: "Description",
+      key: "description",
+      render: (row) => <p>{row.description || "--"}</p>,
+      csvExport: (row) => row.description || "--",
+    },
+    {
+      header: "Created Date",
+      key: "createdAt",
+      sortable: true,
+      onSort: () => handleSort("createdAt"),
+      csvExport: (row) => new Date(row.createdAt).toLocaleString(),
+      render: (row) => <p>{new Date(row.createdAt).toLocaleString()}</p>,
+      sortOrder: sortOrder,
+    },
+    {
+      header: "Updated Date",
+      key: "updatedAt",
+      render: (row) => <p>{new Date(row.updatedAt).toLocaleString()}</p>,
+      csvExport: (row) => new Date(row.updatedAt).toLocaleString(),
+    },
+  ];
+};
+
