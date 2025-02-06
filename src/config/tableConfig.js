@@ -69,7 +69,12 @@ export const userColumns = (payload) => {
     },
     { header: "Gender", key: "gender" },
     { header: "Nationality", key: "nationality" },
-    { header: "Phone", key: "phone" },
+    {
+      header: "Phone",
+      key: "phone",
+      render: (row) =>
+        row.phone ? `${row.countryCode || ""} ${row.phone}` : "--",
+    },
     { header: "Email", key: "email" },
     {
       header: "Created Date",

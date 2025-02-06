@@ -64,9 +64,15 @@ export default function index() {
   const [newSubAdminDetails, setNewSubAdminDetails] = React.useState(
     defaultSubAdminDetails
   );
-
+  const validateGhanaPhone = (phone) => {
+    const ghanaPhoneRegex = /^(?:\+233|0)(2|3|5|9)\d{8}$/;
+    return ghanaPhoneRegex.test(phone);
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+
+
     setNewSubAdminDetails((prevState) => ({
       ...prevState,
       [name]: value,
@@ -126,7 +132,9 @@ export default function index() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    
+    if (!validateGhanaPhone(newSubAdminDetails.phone)) {
+      toast.error("Invalid Ghanaian phone number. Must start with 2, 3, 5, or 9 and be 9 digits long.");
+    }
     const isEmailValid = verifyEmail(newSubAdminDetails.email);
     const isPasswordValid = verifyPassword(newSubAdminDetails.password);
     const isNameValid = isRequired(newSubAdminDetails.name, "Name");
