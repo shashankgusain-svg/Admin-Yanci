@@ -22,8 +22,11 @@ export default function Table({
   searchValue,
   filter = false,
   onFilter,
+  filterMenu = null,
+  sortMenu = null,
   datePicker = false,
   exportToCSV = false,
+  onExport,
   isDropdown = false,
   dropdownItems = [],
   data = [],
@@ -68,7 +71,7 @@ export default function Table({
             </Dropdown>
           ) : null}
 
-          {filter ? (
+          {filterMenu ? filterMenu : filter ? (
             <Dropdown>
               <Dropdown.Button title="Filter">
                 <Image src={filterIcon} alt="filterIcon" />
@@ -88,12 +91,12 @@ export default function Table({
             </Dropdown>
           ) : null}
 
+          {sortMenu ? sortMenu : null}
+
           {exportToCSV ? (
             <Button
               design="table"
-              onClick={() => {
-                downloadCSV(columns, data);
-              }}
+              onClick={onExport ?? (() => downloadCSV(columns, data))}
               title="Export to CSV"
             >
               <Image src={exportIcon} alt="Export" />

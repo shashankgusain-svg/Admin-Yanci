@@ -19,7 +19,8 @@
     "react-dom": "^18",
     "react-multi-date-picker": "^4.5.2",
     "react-phone-input-2": "^2.15.1",
-    "react-toastify": "^10.0.5"
+    "react-toastify": "^10.0.5",
+    "recharts": "^3.9.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",

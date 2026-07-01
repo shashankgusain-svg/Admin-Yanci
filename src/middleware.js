@@ -65,15 +65,8 @@ export default function middleware(req) {
         (perm) => perm.permissionName === permissionName
       );
 
-      if (!userPermissions) {
-        url.pathname = "/";
-        return NextResponse.redirect(url);
-      }
-
-      const hasViewPermission = userPermissions.view === true;
-
-      if (!hasViewPermission) {
-        url.pathname = "/";
+      if (!userPermissions || !userPermissions.view) {
+        url.pathname = "/no-access";
         return NextResponse.redirect(url);
       }
 

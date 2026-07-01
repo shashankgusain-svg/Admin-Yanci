@@ -17,18 +17,14 @@ export const getBlockedDropdownItems = (payload) => {
     {
       icon: viewDetails,
       text: "View Details",
-      onClick: () => {
-        router.push(`/user/${row._id}`);
-      },
+      onClick: () => router.push(`/user/${row.id}`),
     },
   ];
   if (canEdit("User Management")) {
     items.push({
       icon: unblockUser,
       text: "Unblock User",
-      onClick: () => {
-        handleUnblock(row._id);
-      },
+      onClick: () => handleUnblock(row.id),
       className: "text-green-500",
     });
   }
@@ -42,9 +38,7 @@ export const getActiveDropdownItems = (payload) => {
     {
       icon: viewDetails,
       text: "View Details",
-      onClick: () => {
-        router.push(`/user/${row._id}`);
-      },
+      onClick: () => router.push(`/user/${row.id}`),
     },
   ];
 
@@ -53,7 +47,7 @@ export const getActiveDropdownItems = (payload) => {
       icon: blockUserIcon,
       text: "Block User",
       onClick: () => {
-        setUserId(row._id);
+        setUserId(row.id);
         setModalOpen(true);
       },
       className: "text-red-500",
@@ -64,20 +58,25 @@ export const getActiveDropdownItems = (payload) => {
 };
 
 export const getSubmittedKycDropdownItems = (payload) => {
-  const { row, setModalType, setVerificationData, fetchKYCData, manageKYC } =
+  const { row, setModalType, setVerificationData, setCsdFormLink, fetchKYCData, manageKYC } =
     payload;
 
   const items = [];
 
-  if (row.verificationStatus === "verified") {
-    return items;
-  }
-
-  if (row.verificationStatus === "rejected") {
+  if (row.verificationStatus === "verified" || row.verificationStatus === "rejected") {
     return items;
   }
 
   items.push(
+    {
+      icon: viewDetails,
+      text: "View KYC Details",
+      onClick: () => {
+        setVerificationData((prevData) => ({ ...prevData, userId: row.userId }));
+        setCsdFormLink(row.csdFormLink || null);
+        setModalType("details");
+      },
+    },
     {
       icon: verify,
       text: "Verify",

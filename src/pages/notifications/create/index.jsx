@@ -119,7 +119,7 @@ export default function CreateNotification() {
           mode: notification.mode,
         };
 
-    // await createNotification(formattedNotification);
+    await createNotification(formattedNotification);
     setLoading(false);
     router.push("/notifications");
   };

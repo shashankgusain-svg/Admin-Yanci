@@ -193,7 +193,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
         width: `${sidebarWidth}px`,
         transition: "width 0.3s ease-in-out",
       }}
-      className="sidebar sticky gap-10 "
+      className="sidebar sticky gap-10 z-10"
     >
       {/* Expand/Collapse Button */}
       <button

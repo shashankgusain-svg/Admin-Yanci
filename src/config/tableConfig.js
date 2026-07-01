@@ -1,4 +1,3 @@
-import { getBirthYear } from "@/utils/helpers";
 import Link from "next/link";
 import {
   kycVerificationStatusMapping,
@@ -15,77 +14,50 @@ export const userColumns = (payload) => {
 
   return [
     {
-      header: "P.I",
-      key: "passportPic.url",
-      render: (row) => (
-        <div
-          className="w-10 h-10 bg-cover rounded-full block"
-          style={
-            !row.passportPic?.url || row.passportPic === "N/A"
-              ? { backgroundImage: `url(${imagePlaceholder.src})` }
-              : { backgroundImage: `url(${row.passportPic.url})` }
-          }
-        />
-      ),
-      csvExport: false,
-    },
-    {
       header: "Name",
       key: "name",
       render: (row) => (
-        <Link
-          href={`/user/${row._id}`}
-          className="hover:underline text-primary-7"
-        >
-          <p>{row.firstName ? `${row.firstName} ${row.lastName}` : "--"}</p>
+        <Link href={`/user/${row.id}`} className="hover:underline text-primary-7">
+          <p>{row.name || "--"}</p>
         </Link>
       ),
-      csvExport: (row) => `${row.firstName || ""} ${row.lastName || ""}`,
-      sortable: true,
-      onSort: () => {
-        handleSort("firstName");
-      },
-      sortOrder: sortOrder
+      csvExport: (row) => row.name || "",
     },
     {
-      header: "ID",
-      key: "_id",
-      render: (row) =>
-        !row._id ? (
-          "..."
-        ) : (
-          <Link
-            href={`/user/${row._id}`}
-            className="hover:underline text-primary-7"
-          >
-            <p>{row._id}</p>
-          </Link>
-        ),
+      header: "Yanci ID",
+      key: "displayId",
+      render: (row) => (
+        <Link href={`/user/${row.id}`} className="hover:underline text-primary-7">
+          <p>{row.displayId || "--"}</p>
+        </Link>
+      ),
+      csvExport: (row) => row.displayId || "",
+    },
+    { header: "Age",         key: "age"         },
+    { header: "Gender",      key: "gender"      },
+    { header: "Nationality", key: "nationality"  },
+    { header: "Phone",       key: "phone"        },
+    { header: "Email",       key: "email"        },
+    {
+      header: "KYC Status",
+      key: "status",
+      render: (row) => (
+        <span className={`rounded-full px-2 py-1 text-xs capitalize ${
+          row.isKycDone
+            ? "bg-green-100 text-green-700"
+            : row.status === "documents_submitted"
+            ? "bg-yellow-100 text-yellow-700"
+            : "bg-gray-100 text-gray-500"
+        }`}>
+          {row.isKycDone ? "Verified" : (row.status?.replace(/_/g, " ") || "--")}
+        </span>
+      ),
+      csvExport: (row) => row.status || "",
     },
     {
-      header: "Age",
-      key: "age",
-      render: (row) => <>{getBirthYear(row.dob)}</>,
-    },
-    { header: "Gender", key: "gender" },
-    { header: "Nationality", key: "nationality" },
-    {
-      header: "Phone",
-      key: "phone",
-      render: (row) =>
-        row.phone ? `${row.countryCode || ""} ${row.phone}` : "--",
-    },
-    { header: "Email", key: "email" },
-    {
-      header: "Created Date",
-      key: "createdAt",
-      sortable: true,
-      onSort: () => {
-        handleSort("createdAt");
-      },
-      csvExport: (row) => new Date(row.createdAt).toDateString(),
-      isDate: true,
-      sortOrder: sortOrder
+      header: "Joined",
+      key: "createdDate",
+      csvExport: (row) => row.createdDate || "",
     },
   ];
 };
@@ -648,6 +620,36 @@ export const faqColumns = (payload) => {
     },
   ];
 };
+// REVENUE
+
+export const revenuePaymentsColumns = () => [
+  { header: "Reference", key: "reference" },
+  { header: "User", key: "user", render: (row) => row.user?.email || row.user?.name || "--" },
+  { header: "Amount (GHS)", key: "amount", render: (row) => row.amount ? `GHS ${Number(row.amount).toFixed(2)}` : "--" },
+  { header: "Channel", key: "channel" },
+  { header: "Status", key: "status", render: (row) => (
+    <span className={`rounded-full px-2 py-1 capitalize text-xs ${
+      row.status === "success" ? "bg-green-500 text-white" :
+      row.status === "failed" ? "bg-red-500 text-white" : "bg-yellow-400 text-black"
+    }`}>{row.status || "--"}</span>
+  )},
+  { header: "Date", key: "createdAt", isDate: true },
+];
+
+export const revenueWalletColumns = () => [
+  { header: "User", key: "user", render: (row) => row.user?.email || row.user?.name || "--" },
+  { header: "Type", key: "type", render: (row) => (
+    <span className={`rounded-full px-2 py-1 capitalize text-xs ${
+      row.type === "credit" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+    }`}>{row.type || "--"}</span>
+  )},
+  { header: "Amount (GHS)", key: "amount", render: (row) => row.amount ? `GHS ${Number(row.amount).toFixed(2)}` : "--" },
+  { header: "Description", key: "description", render: (row) => (
+    <div className="whitespace-nowrap text-ellipsis overflow-hidden max-w-60">{row.description || "--"}</div>
+  )},
+  { header: "Date", key: "createdAt", isDate: true },
+];
+
 //AUDIT LOG
 export const auditLog = (payload) => {
   const { handleSort, sortOrder } = payload;

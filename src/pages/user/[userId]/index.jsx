@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import Modal from "@/components/modal/ModalIndex";
 import imagePlaceholder from "../../../../public/images/pi_placeholder.jpg";
-import { deleteUser, getUserDetails } from "@/services/api/userService";
+import { deleteUser, getUserKYCDetails } from "@/services/api/userService";
 import KYCModal from "@/components/modals/KYCModal";
 import { canEdit, downloadFile } from "@/utils/helpers";
 import deleteIcon from "../../../../public/icons/misc/deleteWhite.svg";
@@ -36,17 +36,31 @@ export default function UserPage() {
   ];
 
   const fetchUserDetails = async () => {
+    if (!userId || userId === "undefined") return;
     setLoading(true);
-
-    const result = await getUserDetails(userId);
-    if (result?.status) {
-      console.log(result)
-      const temp = { ...result.data };
-      setData(temp);
-      setLoading(false);
+    const result = await getUserKYCDetails(userId);
+    if (result?.status && result.data) {
+      // kyc-details returns { user, address, ... } — merge user fields to top level for display
+      const u = result.data?.user ?? result.data;
+      setData({
+        ...result.data,
+        name: u.name || `${u.firstName || ""} ${u.lastName || ""}`.trim(),
+        id: u._id || u.id || userId,
+        displayId: u.displayId,
+        age: u.age,
+        gender: u.gender,
+        nationality: u.nationality,
+        phone: u.phone,
+        email: u.email,
+        createdDate: u.createdDate || u.createdAt,
+        status: u.status,
+        isKycDone: u.isKycDone,
+        profilePic: u.passportPic?.url || u.profilePic || null,
+        csdFormLink: u.csdFormLink || result.data?.csdFormLink,
+        csdAccountNumber: u.csdAccountNumber,
+      });
     }
-    
-
+    setLoading(false);
   };
 
   React.useEffect(() => {
@@ -144,160 +158,82 @@ export default function UserPage() {
             />
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
               <InputAndLabel>
-                <InputAndLabel.Label htmlFor="firstName">
-                  First Name
-                </InputAndLabel.Label>
+                <InputAndLabel.Label htmlFor="firstName">First Name</InputAndLabel.Label>
                 <InputAndLabel.Input
-                  disabled
-                  name="firstName"
-                  id="firstName"
+                  disabled name="firstName" id="firstName"
                   value={data.name ? data.name.split(" ")[0] : ""}
-                  required
                 />
               </InputAndLabel>
 
               <InputAndLabel>
-                <InputAndLabel.Label htmlFor="lastName">
-                  Last Name
-                </InputAndLabel.Label>
+                <InputAndLabel.Label htmlFor="lastName">Last Name</InputAndLabel.Label>
                 <InputAndLabel.Input
-                  disabled
-                  name="lastName"
-                  id="lastName"
-                  value={data.name ? data.name.split(" ")[1] : ""}
-                  required
+                  disabled name="lastName" id="lastName"
+                  value={data.name ? data.name.split(" ").slice(1).join(" ") : ""}
                 />
               </InputAndLabel>
 
               <InputAndLabel>
-                <InputAndLabel.Label htmlFor="gender">
-                  Gender
-                </InputAndLabel.Label>
-                <InputAndLabel.Input
-                  disabled
-                  name="gender"
-                  id="gender"
-                  value={data.gender}
-                  required
-                />
+                <InputAndLabel.Label htmlFor="gender">Gender</InputAndLabel.Label>
+                <InputAndLabel.Input disabled name="gender" id="gender" value={data.gender ?? ""} />
               </InputAndLabel>
 
-              <div className="grid grid-cols-2 gap-8">
-                <InputAndLabel>
-                  <InputAndLabel.Label htmlFor="yanciId">
-                    Yanci ID
-                  </InputAndLabel.Label>
-                  <InputAndLabel.Input
-                    disabled
-                    name="yanciId"
-                    id="yanciId"
-                    value={data.id}
-                    required
-                  />
-                </InputAndLabel>
+              <InputAndLabel>
+                <InputAndLabel.Label htmlFor="yanciId">Yanci ID</InputAndLabel.Label>
+                <InputAndLabel.Input disabled name="yanciId" id="yanciId" value={data.displayId ?? data.id ?? ""} />
+              </InputAndLabel>
 
-                <InputAndLabel>
-                  <InputAndLabel.Label htmlFor="csdId">
-                    CSD ID
-                  </InputAndLabel.Label>
-                  <InputAndLabel.Input
-                    disabled
-                    name="csdId"
-                    id="csdId"
-                    value={data.id}
-                    required
-                  />
-                </InputAndLabel>
-              </div>
+              <InputAndLabel>
+                <InputAndLabel.Label htmlFor="csdAccountNumber">CSD Account No.</InputAndLabel.Label>
+                <InputAndLabel.Input disabled name="csdAccountNumber" id="csdAccountNumber" value={data.csdAccountNumber ?? ""} />
+              </InputAndLabel>
 
               <InputAndLabel>
                 <InputAndLabel.Label htmlFor="age">Age</InputAndLabel.Label>
-                <InputAndLabel.Input
-                  disabled
-                  name="age"
-                  id="age"
-                  value={data.age}
-                  required
-                />
+                <InputAndLabel.Input disabled name="age" id="age" value={data.age ?? ""} />
               </InputAndLabel>
 
               <InputAndLabel>
-                <InputAndLabel.Label htmlFor="nationality">
-                  Nationality
-                </InputAndLabel.Label>
-                <InputAndLabel.Input
-                  disabled
-                  name="nationality"
-                  id="nationality"
-                  value={data.nationality}
-                  required
-                />
+                <InputAndLabel.Label htmlFor="nationality">Nationality</InputAndLabel.Label>
+                <InputAndLabel.Input disabled name="nationality" id="nationality" value={data.nationality ?? ""} />
               </InputAndLabel>
 
               <InputAndLabel>
                 <InputAndLabel.Label htmlFor="phone">Phone</InputAndLabel.Label>
-                <InputAndLabel.PhoneInput
-                  disabled
-                  disableDropdown
-                  name="phone"
-                  id="phone"
-                  value={data.phone}
-                />
+                <InputAndLabel.PhoneInput disabled disableDropdown name="phone" id="phone" value={data.phone ?? ""} />
               </InputAndLabel>
 
               <InputAndLabel>
                 <InputAndLabel.Label htmlFor="email">Email</InputAndLabel.Label>
+                <InputAndLabel.Input disabled name="email" id="email" value={data.email ?? ""} />
+              </InputAndLabel>
+
+              <InputAndLabel>
+                <InputAndLabel.Label htmlFor="registeredOn">Registered On</InputAndLabel.Label>
+                <InputAndLabel.Input disabled name="registeredOn" id="registeredOn" value={data.createdDate ?? ""} />
+              </InputAndLabel>
+
+              <InputAndLabel>
+                <InputAndLabel.Label htmlFor="kycStatus">KYC Status</InputAndLabel.Label>
                 <InputAndLabel.Input
-                  disabled
-                  name="email"
-                  id="email"
-                  value={data.email}
-                  required
+                  disabled name="kycStatus" id="kycStatus"
+                  value={data.isKycDone ? "Verified" : (data.status?.replace(/_/g, " ") ?? "--")}
                 />
               </InputAndLabel>
 
               <InputAndLabel>
-                <InputAndLabel.Label htmlFor="registeredOn">
-                  Registered On
-                </InputAndLabel.Label>
+                <InputAndLabel.Label htmlFor="kycDetails">KYC Details</InputAndLabel.Label>
                 <InputAndLabel.Input
-                  disabled
-                  name="registeredOn"
-                  id="registeredOn"
-                  value={data.createdDate}
-                  required
+                  name="kycDetails" id="kycDetails" type="button" value="View Details"
+                  onClick={() => setShowDetails((prev) => !prev)}
                 />
               </InputAndLabel>
 
               <InputAndLabel>
-                <InputAndLabel.Label htmlFor="kycdDetails">
-                  KYC Details
-                </InputAndLabel.Label>
+                <InputAndLabel.Label htmlFor="csdForm">CSD Form</InputAndLabel.Label>
                 <InputAndLabel.Input
-                  name="kycdDetails"
-                  id="kycdDetails"
-                  type="button"
-                  value="View Details"
-                  onClick={() => {
-                    setShowDetails((prev) => !prev);
-                  }}
-                  required
-                />
-              </InputAndLabel>
-
-              <InputAndLabel>
-                <InputAndLabel.Label htmlFor="csdForm">
-                  CSD Form
-                </InputAndLabel.Label>
-                <InputAndLabel.Input
-                  name="csdForm"
-                  id="csdForm"
-                  type="button"
-                  value="View Details"
-                  onClick={() => {
-                    setShowForm((prev) => !prev);
-                  }}
-                  required
+                  name="csdForm" id="csdForm" type="button" value="View CSD Form"
+                  onClick={() => setShowForm((prev) => !prev)}
                 />
               </InputAndLabel>
             </div>

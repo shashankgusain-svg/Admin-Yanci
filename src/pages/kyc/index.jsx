@@ -127,6 +127,7 @@ export default function Kyc() {
               row,
               setModalType,
               setVerificationData,
+              setCsdFormLink,
               fetchKYCData,
               manageKYC,
             })
@@ -182,7 +183,12 @@ export default function Kyc() {
     <div className="flex flex-col gap-6">
       {/* For KYC Form */}
       {modalType === "details" ? (
-        <KYCModal userId={userId} onClose={closeModal} />
+        <KYCModal
+          userId={userId}
+          onClose={closeModal}
+          onActionComplete={fetchKYCData}
+          csdFormLinkProp={csdFormLink}
+        />
       ) : null}
 
       {/* For CSD Form */}

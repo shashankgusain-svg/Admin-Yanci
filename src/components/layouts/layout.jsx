@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
             style={{
               width: `calc(100% - ${isCollapsed ? 124 : 264}px)`,
             }}
-            className="admin-content bg-black-3 transition-all duration-300"
+            className="admin-content bg-black-3 transition-all duration-300 relative z-0"
           >
             {children}
           </div>

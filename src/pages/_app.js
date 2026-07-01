@@ -19,7 +19,6 @@ export default function App({ Component, pageProps }) {
   const router = useRouter();
 
   const shouldUseLayout = router.pathname !== "/login";
-  console.log("shouldUseLayout",shouldUseLayout,router.pathname)
 
   return (
     <>
