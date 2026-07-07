@@ -27,7 +27,6 @@ export const getRevenuePayments = async (params = {}) => {
   if (params.limit) endpoint += `limit=${params.limit}&`;
   if (params.from) endpoint += `from=${params.from}&`;
   if (params.to) endpoint += `to=${params.to}&`;
-  if (params.granularity) endpoint += `granularity=${params.granularity}`;
   try {
     const res = await fetch(endpoint, { method: "GET", headers: await authHeaders() });
     return responseValidator(res);
@@ -187,6 +186,110 @@ export const getReportsAuditSummary = async () => {
     });
     return responseValidator(res);
   } catch (error) {
+    return apiError(error);
+  }
+};
+
+export const getReportOptions = async () => {
+  try {
+    const res = await fetch(`${URL}admin/analytics/reports/options`, {
+      method: "GET",
+      headers: await authHeaders(),
+    });
+    return responseValidator(res);
+  } catch (error) {
+    return apiError(error);
+  }
+};
+
+export const downloadAdminReport = async (params = {}) => {
+  const query = new URLSearchParams();
+  query.set("period", params.period || "this_month");
+  query.set("reportType", params.reportType);
+  if (params.from) query.set("from", params.from);
+  if (params.to) query.set("to", params.to);
+  if (params.startDate) query.set("startDate", params.startDate);
+  if (params.endDate) query.set("endDate", params.endDate);
+
+  const endpoint = `${URL}admin/analytics/reports/download?${query.toString()}`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 180000);
+
+  try {
+    const token = await getAuthToken();
+    if (!token) {
+      clearTimeout(timeoutId);
+      return apiError(new Error("You are not logged in. Please login and try again."));
+    }
+
+    const res = await fetch(endpoint, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/pdf",
+      },
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    const contentType = res.headers.get("Content-Type") || "";
+    const blob = await res.blob();
+
+    if (!res.ok || contentType.includes("application/json") || blob.type.includes("json")) {
+      let message = "Report download failed";
+      try {
+        const json = JSON.parse(await blob.text());
+        message = json.message || message;
+      } catch {
+        // keep default message
+      }
+      return apiError(new Error(message));
+    }
+
+    const header = await blob.slice(0, 4).arrayBuffer();
+    const bytes = new Uint8Array(header);
+    const isPdf =
+      bytes.length === 4 &&
+      bytes[0] === 0x25 &&
+      bytes[1] === 0x50 &&
+      bytes[2] === 0x44 &&
+      bytes[3] === 0x46;
+
+    if (!isPdf) {
+      return apiError(
+        new Error(
+          "Server did not return a valid PDF. PDF generation may have failed on the server."
+        )
+      );
+    }
+
+    const disposition = res.headers.get("Content-Disposition");
+    let fileName = "report.pdf";
+    if (disposition) {
+      const match = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
+      if (match) fileName = decodeURIComponent(match[1].replace(/"/g, ""));
+    }
+
+    const pdfBlob =
+      blob.type === "application/pdf" ? blob : new Blob([blob], { type: "application/pdf" });
+    const url = window.URL.createObjectURL(pdfBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName.endsWith(".pdf") ? fileName : `${fileName}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => window.URL.revokeObjectURL(url), 2000);
+    return { status: true };
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error?.name === "AbortError") {
+      return apiError(
+        new Error(
+          "Report generation timed out. Try a shorter timeline or retry in a moment."
+        )
+      );
+    }
     return apiError(error);
   }
 };

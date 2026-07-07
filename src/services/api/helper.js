@@ -84,11 +84,21 @@ export const responseValidator = async (
   }
 };
 export const apiError = (e) => {
-  if (e.name === "AbortError") {
-  } else {
-    toast.error("Takes more than the usual time. Please refresh the page.", {
-      toastId: `API-Timeout-error`,
-    });
+  if (e?.name === "AbortError") {
+    return { status: false, message: e };
   }
+
+  let message = "Takes more than the usual time. Please refresh the page.";
+  if (typeof e === "string" && e.trim()) {
+    message = e;
+  } else if (e?.message && typeof e.message === "string" && e.message.trim()) {
+    message = e.message;
+  } else if (e?.name === "TypeError") {
+    message = "Network error. Please check your connection and try again.";
+  }
+
+  toast.error(message, {
+    toastId: `API-error-${Math.random()}`,
+  });
   return { status: false, message: e };
 };

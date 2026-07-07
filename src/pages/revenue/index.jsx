@@ -2,258 +2,170 @@ import React from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import MetricsCard from "@/components/metricsCard/MetricsCard";
 import Table from "@/components/table/Table";
-import { revenuePaymentsColumns, revenueWalletColumns } from "@/config/tableConfig";
-import Toggle from "@/components/typeToggle/TypeToggle";
+import { revenuePaymentsColumns } from "@/config/tableConfig";
 import {
   getRevenueFeesSeries,
   getRevenuePayments,
-  getRevenueWalletTransactions,
-  getAnalyticsOverview,
 } from "@/services/api/analyticsService";
-import { updateTradingFees } from "@/services/api/tradingService";
 import usePagination from "@/hooks/usePagination";
-import { canEdit } from "@/utils/helpers";
-import { toast } from "react-toastify";
+import useSearch from "@/hooks/useSearch";
+import Dropdown from "@/components/dropdown/DropdownIndex";
+import viewDetails from "../../../public/icons/misc/viewDetails.svg";
+import { useRouter } from "next/router";
 
 const breadCrumbItems = [
   { name: "Home", link: "/" },
   { name: "Revenue Management" },
 ];
 
-const FEE_KEYS = ["yanciFee", "ttbFee", "gseFee", "secFee", "csdFee"];
-const FEE_LABELS = {
-  yanciFee: "Yanci Fee",
-  ttbFee: "TTB Fee",
-  gseFee: "GSE Fee",
-  secFee: "SEC Fee",
-  csdFee: "CSD Fee",
-};
+const FEE_CONFIG = [
+  { id: "yanciFee", label: "Yanci Fee", seriesKeys: ["yanciFees", "yanciFee"] },
+  { id: "ttbFee", label: "TTB Fee", seriesKeys: ["ttbFees", "ttbFee"] },
+  { id: "gseFee", label: "GSE Fee", seriesKeys: ["gseFees", "gseFee"] },
+  { id: "secFee", label: "SEC Fee", seriesKeys: ["secFees", "secFee"] },
+  { id: "csdFee", label: "CSD Fee", seriesKeys: ["csdFees", "csdFee"] },
+];
 
 function aggregateFees(seriesData) {
   const totals = { yanciFee: 0, ttbFee: 0, gseFee: 0, secFee: 0, csdFee: 0 };
   if (!Array.isArray(seriesData)) return totals;
   seriesData.forEach((point) => {
-    FEE_KEYS.forEach((key) => {
-      totals[key] += Number(point[key] || 0);
+    FEE_CONFIG.forEach(({ id, seriesKeys }) => {
+      const value = seriesKeys.reduce((found, key) => {
+        if (found !== null) return found;
+        return point[key] !== undefined ? Number(point[key] || 0) : null;
+      }, null);
+      totals[id] += value ?? 0;
     });
   });
   return totals;
 }
 
 export default function Revenue() {
-  const [filters, setFilters] = React.useState({ from: "", to: "", granularity: "day" });
-  const [feeSeries, setFeeSeries] = React.useState([]);
   const [feeTotals, setFeeTotals] = React.useState({ yanciFee: 0, ttbFee: 0, gseFee: 0, secFee: 0, csdFee: 0 });
-  const [overview, setOverview] = React.useState(null);
   const [payments, setPayments] = React.useState([]);
-  const [walletTxns, setWalletTxns] = React.useState([]);
   const [paymentsTotalPages, setPaymentsTotalPages] = React.useState(1);
-  const [walletTotalPages, setWalletTotalPages] = React.useState(1);
   const [loadingSeries, setLoadingSeries] = React.useState(true);
   const [loadingPayments, setLoadingPayments] = React.useState(true);
-  const [loadingWallet, setLoadingWallet] = React.useState(true);
-  const [feeForm, setFeeForm] = React.useState({ yanciFee: "", ttbFee: "", csdFee: "", gseFee: "", secFee: "", depositFeePaystack: "" });
-  const [savingFees, setSavingFees] = React.useState(false);
+  const [status, setStatus] = React.useState("");
+  const [sort, setSort] = React.useState("newest");
 
   const paymentsPagination = usePagination();
-  const walletPagination = usePagination();
-
-  const filterParams = {
-    from: filters.from || undefined,
-    to: filters.to || undefined,
-    granularity: filters.granularity,
-  };
+  const { searchValue, onSearch } = useSearch();
+  const router = useRouter();
 
   // Fetch fees series + overview
   React.useEffect(() => {
     const fetch = async () => {
       setLoadingSeries(true);
-      const [seriesRes, overviewRes] = await Promise.all([
-        getRevenueFeesSeries(filterParams),
-        getAnalyticsOverview(),
-      ]);
+      const seriesRes = await getRevenueFeesSeries({ granularity: "day" });
       if (seriesRes?.status) {
-        const data = Array.isArray(seriesRes.data) ? seriesRes.data : seriesRes.data?.results || [];
-        setFeeSeries(data);
+        const data = Array.isArray(seriesRes.data)
+          ? seriesRes.data
+          : seriesRes.data?.series || seriesRes.data?.results || [];
         setFeeTotals(aggregateFees(data));
       }
-      if (overviewRes?.status) setOverview(overviewRes.data);
       setLoadingSeries(false);
     };
     fetch();
-  }, [filters]);
+  }, []);
 
   // Fetch payments
   React.useEffect(() => {
     const fetch = async () => {
       setLoadingPayments(true);
       const res = await getRevenuePayments({
-        ...filterParams,
+        sort,
         page: paymentsPagination.page,
         limit: paymentsPagination.limit,
       });
       if (res?.status) {
-        setPayments(Array.isArray(res.data) ? res.data : res.data?.results || []);
-        setPaymentsTotalPages(res.data?.totalPages || 1);
+        const payload = res.data || {};
+        const rawRows = Array.isArray(payload.results) ? payload.results : [];
+        const rows = rawRows.map((row, index) => ({
+          ...row,
+          sno:
+            row?.sno ??
+            (paymentsPagination.page - 1) * paymentsPagination.limit + index + 1,
+        }));
+        setPayments(rows);
+        setPaymentsTotalPages(payload.totalPages || 1);
       }
       setLoadingPayments(false);
     };
     fetch();
-  }, [filters, paymentsPagination.page, paymentsPagination.limit]);
+  }, [paymentsPagination.page, paymentsPagination.limit, sort]);
 
-  // Fetch wallet transactions
-  React.useEffect(() => {
-    const fetch = async () => {
-      setLoadingWallet(true);
-      const res = await getRevenueWalletTransactions({
-        ...filterParams,
-        page: walletPagination.page,
-        limit: walletPagination.limit,
-      });
-      if (res?.status) {
-        setWalletTxns(Array.isArray(res.data) ? res.data : res.data?.results || []);
-        setWalletTotalPages(res.data?.totalPages || 1);
-      }
-      setLoadingWallet(false);
-    };
-    fetch();
-  }, [filters, walletPagination.page, walletPagination.limit]);
-
-  const totalRevenue = FEE_KEYS.reduce((sum, k) => sum + feeTotals[k], 0);
+  const totalRevenue = FEE_CONFIG.reduce((sum, fee) => sum + feeTotals[fee.id], 0);
 
   const metricCards = [
-    { label: "Total Revenue", value: totalRevenue.toFixed(2) },
-    ...FEE_KEYS.map((k) => ({ label: FEE_LABELS[k], value: feeTotals[k].toFixed(2) })),
+    { label: "Total Revenue", value: totalRevenue },
+    ...FEE_CONFIG.map((fee) => ({ label: fee.label, value: feeTotals[fee.id] })),
   ];
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleFeeChange = (e) => {
-    const { name, value } = e.target;
-    setFeeForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSaveFees = async (e) => {
-    e.preventDefault();
-    const payload = Object.fromEntries(
-      Object.entries(feeForm)
-        .filter(([, v]) => v !== "")
-        .map(([k, v]) => [k, parseFloat(v)])
+  const displayedPayments = payments.filter((row) => {
+    const matchesStatus = !status || !row.status || row.status === status;
+    if (!searchValue) return matchesStatus;
+    const q = searchValue.toLowerCase();
+    const yanciId = String(row.yanciId || "").toLowerCase();
+    const csdId = String(row.csdId || "").toLowerCase();
+    const userName = String(row.userName || "").toLowerCase();
+    const email = String(row.email || "").toLowerCase();
+    const phone = String(row.phone || "").toLowerCase();
+    return (
+      matchesStatus &&
+      (yanciId.includes(q) ||
+        csdId.includes(q) ||
+        userName.includes(q) ||
+        email.includes(q) ||
+        phone.includes(q))
     );
-    if (Object.keys(payload).length === 0) {
-      toast.error("Please enter at least one fee value.");
-      return;
-    }
-    setSavingFees(true);
-    await updateTradingFees(payload);
-    setSavingFees(false);
-  };
+  });
 
-  const tableOptions = [
-    {
-      label: "Payments",
-      content: (
-        <Table
-          title="Payments"
-          columns={revenuePaymentsColumns()}
-          data={payments}
-          isLoading={loadingPayments}
-          paginationProps={{
-            currentPage: paymentsPagination.page,
-            totalPages: paymentsTotalPages,
-            onPageChange: paymentsPagination.handlePageChange,
-          }}
-          limitProps={{
-            selectedLimit: paymentsPagination.limit,
-            onLimitChange: paymentsPagination.handleLimitChange,
-          }}
-          exportToCSV
-        />
-      ),
-    },
-    {
-      label: "Wallet Transactions",
-      content: (
-        <Table
-          title="Wallet Transactions"
-          columns={revenueWalletColumns()}
-          data={walletTxns}
-          isLoading={loadingWallet}
-          paginationProps={{
-            currentPage: walletPagination.page,
-            totalPages: walletTotalPages,
-            onPageChange: walletPagination.handlePageChange,
-          }}
-          limitProps={{
-            selectedLimit: walletPagination.limit,
-            onLimitChange: walletPagination.handleLimitChange,
-          }}
-          exportToCSV
-        />
-      ),
-    },
-  ];
+  const sortMenu = (
+    <Dropdown>
+      <Dropdown.Button title="Sort">
+        <p>Sort</p>
+      </Dropdown.Button>
+      <Dropdown.Menu origin="top-right">
+        <Dropdown.Item
+          onClick={() => setSort("newest")}
+          className={sort === "newest" ? "bg-primary-2 font-semibold" : ""}
+        >
+          Newest first
+        </Dropdown.Item>
+        <Dropdown.Item
+          onClick={() => setSort("oldest")}
+          className={sort === "oldest" ? "bg-primary-2 font-semibold" : ""}
+        >
+          Oldest first
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  );
 
-  const feeFields = [
-    { label: "Yanci Fee (%)", name: "yanciFee" },
-    { label: "TTB Fee (%)", name: "ttbFee" },
-    { label: "CSD Fee (%)", name: "csdFee" },
-    { label: "GSE Fee (%)", name: "gseFee" },
-    { label: "SEC Fee (%)", name: "secFee" },
-    { label: "Deposit Fee - Paystack (%)", name: "depositFeePaystack" },
+  const detailsDropdownItems = (row) => [
+    {
+      icon: viewDetails,
+      text: "View Details",
+      onClick: () => {
+        router.push({
+          pathname: `/revenue/${row.yanciId}`,
+          query: {
+            name: row.userName || "",
+            email: row.email || "",
+            csdId: row.csdId || "",
+            totalRevenueGiven: row.totalRevenueGiven ?? "",
+            currentAccountBalance: row.currentAccountBalance ?? "",
+          },
+        });
+      },
+    },
   ];
 
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
-
-      {/* Filters */}
-      <div className="bg-white border border-black-5 rounded-lg p-4 flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold text-gray-500 uppercase">From</label>
-          <input
-            type="date"
-            name="from"
-            value={filters.from}
-            onChange={handleFilterChange}
-            className="border border-primary-3 rounded-md px-3 py-2 text-sm"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold text-gray-500 uppercase">To</label>
-          <input
-            type="date"
-            name="to"
-            value={filters.to}
-            onChange={handleFilterChange}
-            className="border border-primary-3 rounded-md px-3 py-2 text-sm"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-semibold text-gray-500 uppercase">Granularity</label>
-          <select
-            name="granularity"
-            value={filters.granularity}
-            onChange={handleFilterChange}
-            className="border border-primary-3 rounded-md px-3 py-2 text-sm"
-          >
-            <option value="day">Day</option>
-            <option value="week">Week</option>
-            <option value="month">Month</option>
-          </select>
-        </div>
-        {(filters.from || filters.to) && (
-          <button
-            onClick={() => setFilters({ from: "", to: "", granularity: "day" })}
-            className="text-sm text-primary-6 underline self-end pb-2"
-          >
-            Clear filters
-          </button>
-        )}
-      </div>
 
       {/* Summary Cards */}
       <div className="grid gap-x-6 gap-y-4 grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
@@ -261,64 +173,38 @@ export default function Revenue() {
           <MetricsCard
             key={i}
             label={card.label}
-            value={loadingSeries ? "..." : card.value}
-            isDollar={false}
+            value={loadingSeries ? "..." : Number(card.value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            isDollar={true}
             isPositiveChange={true}
             percentageChange={0}
           />
         ))}
       </div>
 
-      {/* Analytics Overview */}
-      {overview && (
-        <div className="bg-white border border-black-5 rounded-lg p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {Object.entries(overview)
-            .filter(([, val]) => val !== null && typeof val !== "object")
-            .map(([key, val]) => (
-              <div key={key} className="flex flex-col gap-1">
-                <p className="text-xs font-bold uppercase text-gray-500">{key.replace(/([A-Z])/g, " $1")}</p>
-                <p className="text-xl font-bold text-gray-900">{typeof val === "number" ? val.toLocaleString() : String(val)}</p>
-              </div>
-            ))}
-        </div>
-      )}
-
-      {/* Tables */}
-      <Toggle options={tableOptions} />
-
-      {/* Edit Trading Fees */}
-      {canEdit("Revenue") && (
-        <div className="bg-white border border-black-5 rounded-lg p-6 flex flex-col gap-4">
-          <p className="text-heading-6 font-semibold text-primary-8">Edit Trading Fees</p>
-          <p className="text-sm text-gray-500">All values are per-transaction percentages. Leave a field empty to keep it unchanged.</p>
-          <form onSubmit={handleSaveFees} className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {feeFields.map(({ label, name }) => (
-              <div key={name} className="flex flex-col gap-1">
-                <label className="text-xs font-semibold text-gray-500 uppercase">{label}</label>
-                <input
-                  type="number"
-                  name={name}
-                  value={feeForm[name]}
-                  onChange={handleFeeChange}
-                  step="0.01"
-                  min="0"
-                  placeholder="e.g. 0.5"
-                  className="border border-primary-3 rounded-md px-3 py-2 text-sm"
-                />
-              </div>
-            ))}
-            <div className="col-span-full">
-              <button
-                type="submit"
-                disabled={savingFees}
-                className="bg-primary-6 text-white px-6 py-2 rounded-md text-sm font-semibold hover:bg-primary-7 transition disabled:opacity-50"
-              >
-                {savingFees ? "Saving..." : "Save Fees"}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+      <Table
+        title="Revenue Details"
+        columns={revenuePaymentsColumns()}
+        data={displayedPayments}
+        isLoading={loadingPayments}
+        searchBar
+        searchValue={searchValue}
+        onSearch={onSearch}
+        filter
+        onFilter={(value) => setStatus(value)}
+        sortMenu={sortMenu}
+        exportToCSV
+        isDropdown
+        dropdownItems={detailsDropdownItems}
+        paginationProps={{
+          currentPage: paymentsPagination.page,
+          totalPages: paymentsTotalPages,
+          onPageChange: paymentsPagination.handlePageChange,
+        }}
+        limitProps={{
+          selectedLimit: paymentsPagination.limit,
+          onLimitChange: paymentsPagination.handleLimitChange,
+        }}
+      />
     </div>
   );
 }

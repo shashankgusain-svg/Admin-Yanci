@@ -623,17 +623,63 @@ export const faqColumns = (payload) => {
 // REVENUE
 
 export const revenuePaymentsColumns = () => [
-  { header: "Reference", key: "reference" },
-  { header: "User", key: "user", render: (row) => row.user?.email || row.user?.name || "--" },
-  { header: "Amount (GHS)", key: "amount", render: (row) => row.amount ? `GHS ${Number(row.amount).toFixed(2)}` : "--" },
-  { header: "Channel", key: "channel" },
-  { header: "Status", key: "status", render: (row) => (
-    <span className={`rounded-full px-2 py-1 capitalize text-xs ${
-      row.status === "success" ? "bg-green-500 text-white" :
-      row.status === "failed" ? "bg-red-500 text-white" : "bg-yellow-400 text-black"
-    }`}>{row.status || "--"}</span>
-  )},
-  { header: "Date", key: "createdAt", isDate: true },
+  { header: "SNo", key: "sno", render: (row) => row.sno || "--", csvExport: (row) => row.sno || "" },
+  { header: "Yanci ID", key: "yanciId", render: (row) => row.yanciId || "--", csvExport: (row) => row.yanciId || "" },
+  { header: "CSD ID", key: "csdId", render: (row) => row.csdId || "--", csvExport: (row) => row.csdId || "" },
+  {
+    header: "Total revenue given",
+    key: "totalRevenueGiven",
+    render: (row) =>
+      row.totalRevenueGiven !== undefined && row.totalRevenueGiven !== null
+        ? `GHC ${Number(row.totalRevenueGiven).toFixed(2)}`
+        : "--",
+    csvExport: (row) => row.totalRevenueGiven ?? "",
+  },
+  {
+    header: "Net Income",
+    key: "netIncome",
+    render: (row) =>
+      row.netIncome !== undefined && row.netIncome !== null
+        ? `GHC ${Number(row.netIncome).toFixed(2)}`
+        : "--",
+    csvExport: (row) => row.netIncome ?? "",
+  },
+  {
+    header: "Yanci fee",
+    key: "yanciFee",
+    render: (row) =>
+      row.yanciFee !== undefined && row.yanciFee !== null
+        ? `GHC ${Number(row.yanciFee).toFixed(2)}`
+        : "--",
+    csvExport: (row) => row.yanciFee ?? "",
+  },
+  {
+    header: "TTB fee",
+    key: "ttbFee",
+    render: (row) =>
+      row.ttbFee !== undefined && row.ttbFee !== null
+        ? `GHC ${Number(row.ttbFee).toFixed(2)}`
+        : "--",
+    csvExport: (row) => row.ttbFee ?? "",
+  },
+  {
+    header: "Other platform fee",
+    key: "otherPlatformFee",
+    render: (row) =>
+      row.otherPlatformFee !== undefined && row.otherPlatformFee !== null
+        ? `GHC ${Number(row.otherPlatformFee).toFixed(2)}`
+        : "--",
+    csvExport: (row) => row.otherPlatformFee ?? "",
+  },
+  {
+    header: "Current account balance",
+    key: "currentAccountBalance",
+    render: (row) =>
+      row.currentAccountBalance !== undefined && row.currentAccountBalance !== null
+        ? `GHC ${Number(row.currentAccountBalance).toFixed(2)}`
+        : "--",
+    csvExport: (row) => row.currentAccountBalance ?? "",
+  },
 ];
 
 export const revenueWalletColumns = () => [
@@ -651,72 +697,51 @@ export const revenueWalletColumns = () => [
 ];
 
 //AUDIT LOG
-export const auditLog = (payload) => {
-  const { handleSort, sortOrder } = payload;
-
-  return [
-    {
-      header: "Admin Name",
-      key: "admin.name",
-      render: (row) => (
-        <p className="text-primary-7 font-medium">{row.admin.name || "--"}</p>
-      ),
-      sortable: true,
-      onSort: () => handleSort("admin.name"),
-      sortOrder: sortOrder,
-      csvExport: (row) => row.admin.name || "--",
-    },
-    {
-      header: "Admin Email",
-      key: "admin.email",
-      render: (row) => <p>{row.admin.email || "--"}</p>,
-      csvExport: (row) => row.admin.email || "--",
-    },
-    {
-      header: "Admin Role",
-      key: "admin.roleType",
-      render: (row) => <p>{row.admin.roleType || "--"}</p>,
-      csvExport: (row) => row.admin.roleType || "--",
-    },
-    {
-      header: "Role",
-      key: "role",
-      render: (row) => <p>{row.role || "--"}</p>,
-      csvExport: (row) => row.role || "--",
-    },
-    {
-      header: "Action",
-      key: "action",
-      render: (row) => <p>{row.action || "--"}</p>,
-      csvExport: (row) => row.action || "--",
-    },
-    {
-      header: "Where",
-      key: "where",
-      render: (row) => <p>{row.where || "--"}</p>,
-      csvExport: (row) => row.where || "--",
-    },
-    {
-      header: "Description",
-      key: "description",
-      render: (row) => <p>{row.description || "--"}</p>,
-      csvExport: (row) => row.description || "--",
-    },
-    {
-      header: "Created Date",
-      key: "createdAt",
-      sortable: true,
-      onSort: () => handleSort("createdAt"),
-      csvExport: (row) => new Date(row.createdAt).toLocaleString(),
-      render: (row) => <p>{new Date(row.createdAt).toLocaleString()}</p>,
-      sortOrder: sortOrder,
-    },
-    {
-      header: "Updated Date",
-      key: "updatedAt",
-      render: (row) => <p>{new Date(row.updatedAt).toLocaleString()}</p>,
-      csvExport: (row) => new Date(row.updatedAt).toLocaleString(),
-    },
-  ];
-};
+export const auditLogColumns = () => [
+  {
+    header: "SNo",
+    key: "sno",
+    render: (row) => <p>{row.sno ?? "--"}</p>,
+    csvExport: (row) => row.sno ?? "",
+  },
+  {
+    header: "User",
+    key: "user",
+    render: (row) => <p className="text-primary-7 font-medium">{row.user || "--"}</p>,
+    csvExport: (row) => row.user || "",
+  },
+  {
+    header: "Where",
+    key: "where",
+    render: (row) => <p>{row.where || "--"}</p>,
+    csvExport: (row) => row.where || "",
+  },
+  {
+    header: "Description",
+    key: "description",
+    render: (row) => <p>{row.description || "--"}</p>,
+    csvExport: (row) => row.description || "",
+  },
+  {
+    header: "Action performed",
+    key: "actionLabel",
+    render: (row) => (
+      <p className={row.actionLabel === "Delete" ? "text-red-500 font-medium" : ""}>
+        {row.actionLabel || "--"}
+      </p>
+    ),
+    csvExport: (row) => row.actionLabel || "",
+  },
+  {
+    header: "Timestamp",
+    key: "timestampFormatted",
+    render: (row) => (
+      <p>
+        {row.timestampFormatted ||
+          (row.timestamp ? new Date(row.timestamp).toLocaleString() : "--")}
+      </p>
+    ),
+    csvExport: (row) => row.timestampFormatted || "",
+  },
+];
 

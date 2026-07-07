@@ -137,3 +137,20 @@ export const deleteUser = async (userId) => {
     return apiError(error);
   }
 };
+
+export const getUserTransactionsForAdmin = async (userId, payload = {}) => {
+  if (!userId) return { status: false, message: "userId is required" };
+  let endpoint = `${URL}adminuser/users/${userId}/transactions?page=${payload.page || 1}&limit=${payload.limit || 10}`;
+  if (payload.sort) endpoint += `&sort=${payload.sort}`;
+  if (payload.from) endpoint += `&from=${payload.from}`;
+  if (payload.to) endpoint += `&to=${payload.to}`;
+  try {
+    const res = await fetch(endpoint, {
+      method: "GET",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
+    });
+    return responseValidator(res);
+  } catch (error) {
+    return apiError(error);
+  }
+};
