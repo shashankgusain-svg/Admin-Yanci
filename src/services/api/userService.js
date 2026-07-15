@@ -103,6 +103,8 @@ export const getUserKYCDetails = async (userId) => {
 export const getReferrals = async (payload) => {
   let endpoint = `${URL}adminuser/referrals?page=${payload.page}&limit=${payload.limit}`;
   if (payload.value) endpoint += `&search=${encodeURIComponent(payload.value)}`;
+  if (payload.sort) endpoint += `&sort=${payload.sort}`;
+  if (payload.status) endpoint += `&status=${payload.status}`;
   try {
     const res = await fetch(endpoint, {
       method: "GET",

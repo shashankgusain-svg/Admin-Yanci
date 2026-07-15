@@ -16,12 +16,9 @@ export default function CreateNotification() {
     mode: "",
     description: "",
     isScheduled: false,
+    stockSymbol: "",
     scheduleDate: new Date(),
-    scheduleTime: {
-      hours: 12,
-      minutes: 30,
-      ampm: "AM",
-    },
+    scheduleTime: { hours: 12, minutes: 30, ampm: "AM" },
   });
 
   const handleChange = (e) => {
@@ -78,38 +75,24 @@ export default function CreateNotification() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(notification?.isScheduled){
-      console.log("notification.scheduleDate",notification?.scheduleDate)
-      !isRequired(notification?.scheduleDate,"Notification's Date & Time", true)
-    }
+
     if (
       !isRequired(notification.title, "Notification's Title", true) ||
-      
-      !isRequired(
-        notification.description,
-        "Notification's Description",
-        true
-      ) ||
+      !isRequired(notification.description, "Notification's Description", true) ||
       !isRequired(notification.mode, "Notification's Mode", true) ||
-      !isRequired(
-        notification.targetCustomer,
-        "Notification's Target Customer",
-        true
-      )
-    ) {
-      return;
-    }
+      !isRequired(notification.targetCustomer, "Notification's Target Customer", true)
+    ) return;
+
+    if (notification.isScheduled && !isRequired(notification.scheduleDate, "Notification's Schedule Date", true)) return;
 
     setLoading(true);
-
     const formattedNotification = notification.isScheduled
       ? {
           title: notification.title,
           description: notification.description,
           targetCustomer: notification.targetCustomer,
           mode: notification.mode,
-          isScheduled: notification.isScheduled,
-          scheduleDate: formatDate(notification.scheduleDate),
+          scheduleDate: `${formatDate(notification.scheduleDate)}`,
           scheduleTime: formatScheduledTime(),
         }
       : {
@@ -119,9 +102,11 @@ export default function CreateNotification() {
           mode: notification.mode,
         };
 
-    await createNotification(formattedNotification);
+    if (notification.stockSymbol) formattedNotification.stockSymbol = notification.stockSymbol;
+
+    const res = await createNotification(formattedNotification);
     setLoading(false);
-    router.push("/notifications");
+    if (res?.status) router.push("/notifications");
   };
 
   const breadCrumbItems = [
@@ -168,29 +153,34 @@ export default function CreateNotification() {
               <InputAndLabel.Option value="" disabled>
                 Select Customer
               </InputAndLabel.Option>
-              <InputAndLabel.Option value="ALL_UNFUNDED_ACCOUNTS">
-                All funded accounts
-              </InputAndLabel.Option>
-              <InputAndLabel.Option value="ALL_USERS">
-              All Users
-              </InputAndLabel.Option>
-              <InputAndLabel.Option value="NO_TRANSACTION_MADE">
-                No transactions made
-              </InputAndLabel.Option>
-              <InputAndLabel.Option value="MONTHLY_ACTIVE_USERS">
-                Monthly active users
-              </InputAndLabel.Option>
-              <InputAndLabel.Option value="NON_ACTIVE_USERS">
-                Non active users
-              </InputAndLabel.Option>
-              <InputAndLabel.Option value="ABANDONED_KYC">
-                Abandoned KYC
-              </InputAndLabel.Option>
-              <InputAndLabel.Option value="NEW_USERS">
-                New users
-              </InputAndLabel.Option>
+              <InputAndLabel.Option value="ALL_UNFUNDED_ACCOUNTS">All unfunded accounts</InputAndLabel.Option>
+              <InputAndLabel.Option value="FUNDED_USERS">Funded users</InputAndLabel.Option>
+              <InputAndLabel.Option value="ALL_USERS">All Users</InputAndLabel.Option>
+              <InputAndLabel.Option value="NO_TRANSACTION_MADE">No transactions made</InputAndLabel.Option>
+              <InputAndLabel.Option value="MONTHLY_ACTIVE_USERS">Monthly active users</InputAndLabel.Option>
+              <InputAndLabel.Option value="NON_ACTIVE_USERS">Non active users</InputAndLabel.Option>
+              <InputAndLabel.Option value="ABANDONED_KYC">Abandoned KYC</InputAndLabel.Option>
+              <InputAndLabel.Option value="NEW_USERS">New users</InputAndLabel.Option>
+              <InputAndLabel.Option value="STOCK_HOLDERS">Stock holders</InputAndLabel.Option>
+              <InputAndLabel.Option value="OWNERS_OF_STOCK">Owners of stock</InputAndLabel.Option>
             </InputAndLabel.Select>
           </InputAndLabel>
+
+          {(notification.targetCustomer === "STOCK_HOLDERS" || notification.targetCustomer === "OWNERS_OF_STOCK") && (
+            <InputAndLabel>
+              <InputAndLabel.Label htmlFor="stockSymbol" className="text-primary-6">
+                Stock Symbol
+              </InputAndLabel.Label>
+              <InputAndLabel.Input
+                id="stockSymbol"
+                name="stockSymbol"
+                value={notification.stockSymbol}
+                onChange={handleChange}
+                placeholder="e.g. MTNGH"
+              />
+            </InputAndLabel>
+          )}
+
           <InputAndLabel>
             <InputAndLabel.Label className="text-primary-6" htmlFor="mode">
               Mode
@@ -201,11 +191,13 @@ export default function CreateNotification() {
               value={notification.mode}
               onChange={handleChange}
             >
-              <InputAndLabel.Option value="" disabled>
-                Type
-              </InputAndLabel.Option>
+              <InputAndLabel.Option value="" disabled>Type</InputAndLabel.Option>
               <InputAndLabel.Option value="EMAIL">Email</InputAndLabel.Option>
               <InputAndLabel.Option value="SMS">SMS</InputAndLabel.Option>
+              <InputAndLabel.Option value="BOTH">Both (Email + SMS)</InputAndLabel.Option>
+              <InputAndLabel.Option value="APP">In-App</InputAndLabel.Option>
+              <InputAndLabel.Option value="PUSH">Push</InputAndLabel.Option>
+              <InputAndLabel.Option value="PUSH_AND_INAPP">Push + In-App</InputAndLabel.Option>
             </InputAndLabel.Select>
           </InputAndLabel>
 

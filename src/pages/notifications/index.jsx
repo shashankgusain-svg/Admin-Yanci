@@ -42,27 +42,26 @@ export default function Notifications() {
     setLoading(true);
     const result = await getNotificationDetails({
       type: selectedOption,
-      page: page,
-      limit: limit,
-      value: searchValue,
+      page,
+      limit,
+      value: searchValue || "",
       sortBy: sortField,
-      sortOrder: sortOrder,
+      sortOrder,
     });
-
-    setData((prevData) => ({
-      ...prevData,
-      [selectedOption === "Sent Notifications" ? "sent" : "scheduled"]:
-        result.data.results,
-    }));
-    console.log("data",data)
-    setTotalPages(result?.data?.totalPages || 1);
+    if (result?.status) {
+      const rows = Array.isArray(result.data) ? result.data : result.data?.results ?? [];
+      setData((prev) => ({
+        ...prev,
+        [selectedOption === "Sent Notifications" ? "sent" : "scheduled"]: rows,
+      }));
+      setTotalPages(result?.data?.totalPages || 1);
+    }
     setLoading(false);
   };
 
   const fetchNotificationsMetrics = async () => {
     const res = await getNotificationsMetrics();
-    const data = { ...res.data };
-    setMetrics(data);
+    if (res?.status) setMetrics(res.data ?? {});
   };
 
   React.useEffect(() => {
@@ -71,7 +70,7 @@ export default function Notifications() {
 
   React.useEffect(() => {
     fetchNotificationsMetrics();
-  }, [data]);
+  }, []);
   const handleTabSelect = (label) => {
     setSelectedOption(label);
     setPage(1); // Reset page number to 1
@@ -134,7 +133,9 @@ export default function Notifications() {
               key={index}
               label={notificationsKeyTitleMapping[key] || key}
               isPercentage={false}
-              value={value}
+              value={typeof value === "object" ? (value?.count ?? value?.value ?? 0) : (value ?? 0)}
+              percentageChange={typeof value === "object" ? (value?.percentChange ?? 0) : 0}
+              isPositiveChange={(typeof value === "object" ? (value?.percentChange ?? 0) : 0) >= 0}
             />
           ))}
         </div>

@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { getToken } from "@/services/api/authService";
 import { setToken, setUser } from "@/services/api/cookies";
 import { verifyPassword, verifyEmail } from "@/utils/helpers";
+import { setLoggingOut } from "@/services/api/helper";
 import LoadingAnimation from "../../../public/icons/animated/loading";
 
 export default function Login() {
@@ -15,6 +16,9 @@ export default function Login() {
   const [loading, setLoading] = React.useState(false);
 
   const router = useRouter();
+
+  // reset logout flag when login page mounts
+  React.useEffect(() => { setLoggingOut(false); }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();

@@ -1,6 +1,35 @@
 import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 
+export const uploadCompanyCSV = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  try {
+    const res = await fetch(`${URL}admin/companies/csv-upload`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${await getAuthToken()}` },
+      body: formData,
+    });
+    return responseValidator(res, false);
+  } catch (error) {
+    return apiError(error);
+  }
+};
+
+export const getCompaniesPaginated = async (page = 1, limit = 20, search = "") => {
+  const params = new URLSearchParams({ page, limit });
+  if (search) params.set("search", search);
+  try {
+    const res = await fetch(`${URL}admin/companies?${params}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
+    });
+    return responseValidator(res);
+  } catch (error) {
+    return apiError(error);
+  }
+};
+
 const authHeaders = async () => ({
   "Content-Type": "application/json",
   Authorization: `Bearer ${await getAuthToken()}`,

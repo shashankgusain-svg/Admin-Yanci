@@ -17,6 +17,8 @@ import Policies from "../../../public/icons/sidebar/Policies";
 import Referrals from "../../../public/icons/sidebar/Referrals";
 import { useRouter } from "next/router";
 import { getUser, removeToken, removeUser } from "@/services/api/cookies";
+import { setLoggingOut } from "@/services/api/helper";
+import { toast } from "react-toastify";
 import LoadingAnimation from "../../../public/icons/animated/loading";
 import Withdrawal from "../../../public/icons/sidebar/Withdrawal";
 import arrowLeft from "../../../public/icons/misc/arrowLeft.svg";
@@ -115,6 +117,12 @@ const sidebarBtns = [
     Icon: StockManagement,
   },
   {
+    name: "Company Data",
+    permissionName: "Stock Management",
+    path: "/stock/company-data",
+    Icon: StockManagement,
+  },
+  {
     name: "Notifications",
     permissionName: "Notifications",
     path: "/notifications",
@@ -167,9 +175,11 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
   }, []);
 
   const handleLogout = () => {
+    setLoggingOut(true);   // stop all in-flight toasts
+    toast.dismiss();       // clear any toasts already on screen
     removeToken();
     removeUser();
-    router.push("/login");
+    router.replace("/login");
   };
 
   const canViewPage = (path) => {
