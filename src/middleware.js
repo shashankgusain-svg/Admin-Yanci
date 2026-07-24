@@ -3,7 +3,6 @@ const { NextResponse } = require("next/server");
 const protectedRoutes = {
   "/user": { permissionName: "User Management", requiresEdit: false },
   "/kyc": { permissionName: "KYC", requiresEdit: false },
-  "/trades": { permissionName: "Trades", requiresEdit: false },
   "/revenue": { permissionName: "Revenue", requiresEdit: false },
   "/reports": { permissionName: "Reports", requiresEdit: false },
   "/stock": { permissionName: "Stock Management", requiresEdit: false },

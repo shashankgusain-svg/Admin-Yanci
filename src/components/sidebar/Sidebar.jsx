@@ -4,11 +4,11 @@ import Home from "../../../public/icons/sidebar/Home";
 import User from "../../../public/icons/sidebar/User";
 import Logout from "../../../public/icons/sidebar/Logout";
 import Kyc from "../../../public/icons/sidebar/Kyc";
-import Transactions from "../../../public/icons/sidebar/Transactions";
 import Revenue from "../../../public/icons/sidebar/Revenue";
 import Reports from "../../../public/icons/sidebar/Reports";
 import Notifications from "../../../public/icons/sidebar/Notifications";
 import StockManagement from "../../../public/icons/sidebar/StockManagement";
+import CompanyData from "../../../public/icons/sidebar/CompanyData";
 import { usePathname } from "next/navigation";
 import RoleManagement from "../../../public/icons/sidebar/RoleManagement";
 import UserSupport from "../../../public/icons/sidebar/UserSupport";
@@ -87,12 +87,6 @@ const sidebarBtns = [
   },
   { name: "KYC", permissionName: "KYC", path: "/kyc", Icon: Kyc },
   {
-    name: "Trades",
-    permissionName: "Trades",
-    path: "/trades",
-    Icon: Transactions,
-  },
-  {
     name: "Transactions",
     permissionName: "Transactions",
     path: "/transactions",
@@ -120,7 +114,7 @@ const sidebarBtns = [
     name: "Company Data",
     permissionName: "Stock Management",
     path: "/stock/company-data",
-    Icon: StockManagement,
+    Icon: CompanyData,
   },
   {
     name: "Notifications",
@@ -232,7 +226,9 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
                       ? false
                       : path === "/"
                         ? pathname === "/"
-                        : pathname.startsWith(path);
+                        : path === "/stock"
+                          ? pathname === "/stock"
+                          : pathname === path || pathname.startsWith(`${path}/`);
 
                   return (
                     <SidebarBtn isCollapsed={isCollapsed} key={path} name={name} path={path} isActive={isActive}>
