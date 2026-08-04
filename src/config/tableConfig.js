@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
-  kycVerificationStatusMapping,
+  getKycStatusLabel,
+  getKycStatusBadgeClass,
   targetCustomerValueMapping,
   withdrawalRequestsStatusMapping,
 } from "@/utils/seed";
@@ -120,7 +121,9 @@ export const submittedKycColumns = (payload) => {
     },
     {
       header: "CSD No",
-      key: "csdNo",
+      key: "csdAccountNumber",
+      render: (row) => row.csdAccountNumber || row.csdNo || "—",
+      csvExport: (row) => row.csdAccountNumber || row.csdNo || "",
     },
     {
       header: "Nationality",
@@ -169,15 +172,11 @@ export const submittedKycColumns = (payload) => {
       key: "verificationStatus",
       render: (row) => (
         <span
-          className={`inline-flex capitalize items-center px-3 py-0.5 rounded-full text-sm font-medium ${row.verificationStatus === "verified"
-              ? "bg-green-500 text-white"
-              : row.verificationStatus === "rejected"
-                ? "bg-red-500 text-white"
-                : "bg-yellow-400 text-black"
-            }`}
+          className={`inline-flex capitalize items-center px-3 py-0.5 rounded-full text-sm font-medium ${getKycStatusBadgeClass(
+            row.verificationStatus
+          )}`}
         >
-          {kycVerificationStatusMapping[row.verificationStatus] ||
-            row.verificationStatus}
+          {getKycStatusLabel(row.verificationStatus)}
         </span>
       ),
     },

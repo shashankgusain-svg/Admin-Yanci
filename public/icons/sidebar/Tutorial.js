@@ -1,0 +1,26 @@
+export default function Tutorial({ active }) {
+  const stroke = active ? "#ffffff" : "#35BAB2";
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        x="3"
+        y="5"
+        width="18"
+        height="14"
+        rx="2"
+        stroke={stroke}
+        strokeWidth="1.75"
+      />
+      <path
+        d="M10 9.5L15 12L10 14.5V9.5Z"
+        fill={stroke}
+      />
+    </svg>
+  );
+}

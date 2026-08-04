@@ -5,11 +5,17 @@ import edit from "../../public/icons/misc/edit.svg"
 import deleteRedIcon from "../../public/icons/misc/deleteRed.svg";
 import verify from "../../public/icons/misc/verify.svg";
 import history from "../../public/icons/misc/history.svg";
-import withdrawalInitiated from "../../public/icons/misc/withdrawal.svg"
 import reject from "../../public/icons/misc/reject.svg";
 import { canEdit } from "@/utils/helpers";
 import respond from "../../public/icons/misc/respond.svg";
 import editIcon from "../../public/icons/misc/edit.svg";
+import { normalizeKycStatus } from "@/utils/seed";
+import {
+  manageKYC,
+  markKYCReadyForReview,
+  markKYCSubmittedToCSD,
+  regenerateCsdForm,
+} from "@/services/api/kycService";
 
 export const getBlockedDropdownItems = (payload) => {
   const { handleUnblock, router, row } = payload;
@@ -58,68 +64,138 @@ export const getActiveDropdownItems = (payload) => {
 };
 
 export const getSubmittedKycDropdownItems = (payload) => {
-  const { row, setModalType, setVerificationData, setCsdFormLink, fetchKYCData, manageKYC } =
-    payload;
+  const {
+    row,
+    setModalType,
+    setVerificationData,
+    setCsdFormLink,
+    setUserId,
+    fetchKYCData,
+  } = payload;
 
-  const items = [];
-
-  if (row.verificationStatus === "verified" || row.verificationStatus === "rejected") {
-    return items;
-  }
-
-  items.push(
+  const status = normalizeKycStatus(row.verificationStatus);
+  const items = [
     {
       icon: viewDetails,
       text: "View KYC Details",
       onClick: () => {
+        setUserId?.(row.userId);
         setVerificationData((prevData) => ({ ...prevData, userId: row.userId }));
         setCsdFormLink(row.csdFormLink || null);
         setModalType("details");
       },
     },
-    {
+  ];
+
+  if (!canEdit("KYC")) return items;
+
+  // Terminal / auto statuses — view only
+  if (status === "trading_active" || status === "rejected") {
+    return items;
+  }
+
+  if (status === "documents_submitted") {
+    items.push({
       icon: verify,
-      text: "Verify",
+      text: "Ready for Review",
+      onClick: async () => {
+        await markKYCReadyForReview(row.userId);
+        fetchKYCData();
+      },
+    });
+  }
+
+  if (status === "ready_for_review") {
+    items.push({
+      icon: verify,
+      text: "Submitted to CSD",
+      onClick: async () => {
+        await markKYCSubmittedToCSD(row.userId);
+        fetchKYCData();
+      },
+    });
+  }
+
+  if (
+    status === "submitted_to_csd" ||
+    status === "documents_submitted" ||
+    status === "ready_for_review" ||
+    status === "hold"
+  ) {
+    items.push({
+      icon: verify,
+      text: "Approve",
       onClick: () => {
         setVerificationData((prevData) => ({
           ...prevData,
           type: "verify",
           userId: row.userId,
+          csdAccountNumber: "",
         }));
         setModalType("csdModal");
       },
-    },
-    {
-      icon: history,
-      text: "Put On Hold",
-      onClick: async () => {
-        await manageKYC({ type: "hold", userId: row.userId });
-        setModalType(null);
-        fetchKYCData();
+    });
+  }
+
+  if (status === "awaiting_csd_number" || status === "csd_number_received") {
+    items.push({
+      icon: edit,
+      text: "Enter CSD Number",
+      onClick: () => {
+        setUserId?.(row.userId);
+        setVerificationData((prevData) => ({ ...prevData, userId: row.userId }));
+        setCsdFormLink(row.csdFormLink || null);
+        setModalType("details");
       },
-    },
-    {
-      icon: reject,
-      text: "Reject",
-      onClick: async () => {
-        await manageKYC({ type: "reject", userId: row.userId });
-        setModalType(null);
-        fetchKYCData();
+    });
+  }
+
+  if (status !== "csd_number_received" && status !== "trading_active") {
+    items.push(
+      {
+        icon: history,
+        text: "Put On Hold",
+        onClick: async () => {
+          await manageKYC({ type: "hold", userId: row.userId });
+          fetchKYCData();
+        },
       },
-    }
-  );
+      {
+        icon: reject,
+        text: "Reject",
+        onClick: async () => {
+          await manageKYC({ type: "reject", userId: row.userId });
+          fetchKYCData();
+        },
+        className: "text-red-500",
+      }
+    );
+  }
+
+  items.push({
+    icon: history,
+    text: "Regenerate CSD PDF",
+    onClick: async () => {
+      await regenerateCsdForm(row.userId);
+      fetchKYCData();
+    },
+  });
 
   return items;
 };
 
 export const getAbandonedKycDropdownItems = (payload) => {
-  const {} = payload;
+  const { row, setModalType, setUserId, setCsdFormLink } = payload;
 
   return [
     {
-      icon: history,
-      text: "Remind user",
-      onClick: () => {},
+      icon: viewDetails,
+      text: "View KYC Details",
+      onClick: () => {
+        setUserId?.(row.userId);
+        setCsdFormLink?.(row.csdFormLink || null);
+        setModalType?.("details");
+      },
     },
   ];
 };

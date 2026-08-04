@@ -15,6 +15,7 @@ import UserSupport from "../../../public/icons/sidebar/UserSupport";
 import AuditLogs from "../../../public/icons/sidebar/AuditLogs";
 import Policies from "../../../public/icons/sidebar/Policies";
 import Referrals from "../../../public/icons/sidebar/Referrals";
+import Tutorial from "../../../public/icons/sidebar/Tutorial";
 import { useRouter } from "next/router";
 import { getUser, removeToken, removeUser } from "@/services/api/cookies";
 import { setLoggingOut } from "@/services/api/helper";
@@ -133,6 +134,12 @@ const sidebarBtns = [
     permissionName: "User Support",
     path: "/support",
     Icon: UserSupport,
+  },
+  {
+    name: "Tutorial",
+    permissionName: "User Support",
+    path: "/tutorial",
+    Icon: Tutorial,
   },
   {
     name: "Audit Logs",

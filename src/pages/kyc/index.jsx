@@ -22,7 +22,6 @@ import {
   getSubmittedKycDropdownItems,
   getAbandonedKycDropdownItems,
 } from "@/config/dropdownConfig";
-import { useRouter } from "next/navigation";
 
 export default function Kyc() {
   const [data, setData] = React.useState({ submitted: [], abandoned: [] });
@@ -37,9 +36,8 @@ export default function Kyc() {
   const [verificationData, setVerificationData] = React.useState({
     type: null,
     userId: null,
-    csdNo: "",
+    csdAccountNumber: "",
   });
-  const router = useRouter()
   const { sortField, sortOrder, handleSort } = useTableSorting();
   const { searchValue, onSearch } = useSearch();
   const { limit, page, handleLimitChange, handlePageChange } = usePagination();
@@ -47,19 +45,21 @@ export default function Kyc() {
   const handleCSDNumberChange = (e) => {
     setVerificationData((prevData) => ({
       ...prevData,
-      csdNo: e.target.value,
+      csdAccountNumber: e.target.value,
     }));
   };
 
   const closeModal = () => {
     setUserId(null);
+    setCsdFormLink(null);
     setVerificationData({
       type: null,
       userId: null,
-      csdNo: "",
+      csdAccountNumber: "",
     });
     setModalType(null);
   };
+
   const fetchKYCData = async (startDate = "", endDate = "") => {
     setLoading(true);
     const result = await getKYCData({
@@ -75,7 +75,7 @@ export default function Kyc() {
     setData((prevData) => ({
       ...prevData,
       [selectedOption === "Submitted KYCs" ? "submitted" : "abandoned"]:
-        result?.data.results,
+        result?.data?.results ?? [],
     }));
     setTotalPages(result?.data?.totalPages || 1);
     setLoading(false);
@@ -83,9 +83,7 @@ export default function Kyc() {
 
   const fetchKYCMetrics = async () => {
     const res = await getKYCMetrics();
-    const data = { ...res };
-    console.log("data-->", data?.data)
-    setMetrics(data?.data);
+    setMetrics(res?.data || {});
   };
 
   React.useEffect(() => {
@@ -94,6 +92,7 @@ export default function Kyc() {
       return;
     }
     fetchKYCData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedOption, sortField, sortOrder, limit, page, searchValue, values]);
 
   React.useEffect(() => {
@@ -118,7 +117,7 @@ export default function Kyc() {
             setModalType,
             setCsdFormLink,
             setUserId,
-            sortOrder
+            sortOrder,
           })}
           data={data.submitted}
           isDropdown={canEdit("KYC")}
@@ -128,8 +127,8 @@ export default function Kyc() {
               setModalType,
               setVerificationData,
               setCsdFormLink,
+              setUserId,
               fetchKYCData,
-              manageKYC,
             })
           }
           isLoading={loading}
@@ -158,8 +157,15 @@ export default function Kyc() {
           exportToCSV
           columns={abandonedKycColumns({ handleSort, setModalType, setUserId, sortOrder })}
           data={data.abandoned}
-          isDropdown={canEdit("KYC")}
-          dropdownItems={(row) => getAbandonedKycDropdownItems({ row })}
+          isDropdown
+          dropdownItems={(row) =>
+            getAbandonedKycDropdownItems({
+              row,
+              setModalType,
+              setUserId,
+              setCsdFormLink,
+            })
+          }
           isLoading={loading}
           paginationProps={{
             currentPage: page,
@@ -181,17 +187,19 @@ export default function Kyc() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* For KYC Form */}
       {modalType === "details" ? (
         <KYCModal
-          userId={userId}
+          userId={userId || verificationData.userId}
           onClose={closeModal}
-          onActionComplete={fetchKYCData}
+          onActionComplete={() => {
+            if (values) fetchKYCData(values[0], values[1]);
+            else fetchKYCData();
+            fetchKYCMetrics();
+          }}
           csdFormLinkProp={csdFormLink}
         />
       ) : null}
 
-      {/* For CSD Form */}
       {modalType === "csdForm" ? (
         <Modal
           title="CSD Form"
@@ -206,38 +214,38 @@ export default function Kyc() {
                 src={`${csdFormLink}#toolbar=0`}
                 className="w-full h-full"
                 title="CSD Form PDF"
-              ></iframe>
+              />
             ) : (
-              <p className="text-black-5 text-heading-1">
-                CSD Form Not Available
-              </p>
+              <p className="text-black-5 text-heading-1">CSD Form Not Available</p>
             )}
           </Modal.Content>
         </Modal>
       ) : null}
 
-      {/* For CSD Verification */}
-
       {modalType === "csdModal" ? (
         <Modal
           isOpen={true}
           type="confirmation"
-          title="Are you sure you want to verify this user?"
+          title="Approve this KYC?"
           onClose={closeModal}
         >
           <Modal.Content>
             <InputAndLabel>
               <InputAndLabel.Label htmlFor="csdNumber">
-                Put CSD Number
+                CSD Account Number
               </InputAndLabel.Label>
               <InputAndLabel.Input
-                type='number'
+                type="text"
                 id="csdNumber"
                 name="csdNumber"
-                value={verificationData.csdNo}
+                value={verificationData.csdAccountNumber}
                 onChange={handleCSDNumberChange}
+                placeholder="e.g. CSD123456"
               />
             </InputAndLabel>
+            <p className="text-xs text-gray-400 mt-2">
+              Moves status to Awaiting CSD Number. Trading Active is applied automatically by the backend.
+            </p>
           </Modal.Content>
           <Modal.Footer>
             <Button
@@ -252,13 +260,17 @@ export default function Kyc() {
               design="primary"
               className="h-9"
               onClick={async () => {
-                if (!isRequired(verificationData.csdNo, "CSD No", true)) {
+                if (!isRequired(verificationData.csdAccountNumber, "CSD Account Number", true)) {
                   return;
                 }
-                await manageKYC(verificationData);
-                setModalType(null);
-                router.push('/user')
+                await manageKYC({
+                  type: "verify",
+                  userId: verificationData.userId,
+                  csdAccountNumber: verificationData.csdAccountNumber.trim(),
+                });
+                closeModal();
                 fetchKYCData();
+                fetchKYCMetrics();
               }}
             >
               Approve
@@ -274,9 +286,9 @@ export default function Kyc() {
             <MetricsCard
               key={index}
               label={kycKeyTitleMapping[key] || key}
-              value={value.percent ? value.percent : value.count}
-              percentageChange={value.percentChange}
-              isPositiveChange={value.percentChange < 0 ? false : true}
+              value={value?.percent ? value.percent : value?.count}
+              percentageChange={value?.percentChange}
+              isPositiveChange={value?.percentChange < 0 ? false : true}
             />
           ))}
         </div>

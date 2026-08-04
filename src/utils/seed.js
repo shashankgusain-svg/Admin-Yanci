@@ -26,11 +26,59 @@ export const userKeyTitleMapping = {
 };
 
 export const kycVerificationStatusMapping = {
-  inpipeline: "On Hold",
-  verified: "Verified",
-  pending: "On Hold",
+  // Current workflow
+  registered: "Registered",
+  kyc_in_progress: "KYC In Progress",
+  documents_submitted: "Documents Submitted",
+  ready_for_review: "Ready for TeakTree Review",
+  submitted_to_csd: "Submitted to CSD",
+  awaiting_csd_number: "Awaiting CSD Number",
+  csd_number_received: "CSD Number Received",
+  trading_active: "Trading Active",
   hold: "On Hold",
   rejected: "Rejected",
+  // Legacy → new labels
+  inpipeline: "KYC In Progress",
+  pending: "Documents Submitted",
+  verified: "Awaiting CSD Number",
+};
+
+export const KYC_STATUS_FLOW = [
+  "documents_submitted",
+  "ready_for_review",
+  "submitted_to_csd",
+  "awaiting_csd_number",
+  "csd_number_received",
+  "trading_active",
+];
+
+/** Normalize legacy status values to the current workflow status. */
+export const normalizeKycStatus = (status) => {
+  if (!status) return "";
+  const legacy = {
+    inpipeline: "kyc_in_progress",
+    pending: "documents_submitted",
+    verified: "awaiting_csd_number",
+  };
+  return legacy[status] || status;
+};
+
+export const getKycStatusLabel = (status) =>
+  kycVerificationStatusMapping[status] ||
+  kycVerificationStatusMapping[normalizeKycStatus(status)] ||
+  (status ? String(status).replace(/_/g, " ") : "—");
+
+export const getKycStatusBadgeClass = (status) => {
+  const s = normalizeKycStatus(status);
+  if (s === "trading_active" || s === "csd_number_received") {
+    return "bg-green-500 text-white";
+  }
+  if (s === "rejected") return "bg-red-500 text-white";
+  if (s === "hold") return "bg-orange-400 text-black";
+  if (s === "awaiting_csd_number" || s === "submitted_to_csd" || s === "ready_for_review") {
+    return "bg-blue-100 text-blue-800";
+  }
+  return "bg-yellow-400 text-black";
 };
 export const withdrawalRequestsStatusMapping = {
   successful: "Successful",

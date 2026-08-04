@@ -13,6 +13,7 @@ const protectedRoutes = {
   "/transactions": { permissionName: "Transactions", requiresEdit: false },
   "/policies": { permissionName: "Policies", requiresEdit: false },
   "/referrals": { permissionName: "Referrals", requiresEdit: false },
+  "/tutorial": { permissionName: "User Support", requiresEdit: false },
 };
 
 export default function middleware(req) {

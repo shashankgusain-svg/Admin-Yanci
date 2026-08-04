@@ -6,10 +6,19 @@ import Button from "../button/Button";
 import { canEdit, downloadFile } from "@/utils/helpers";
 import {
   getKYCDetails,
-  getKYCOnboardingPackage,
+  downloadKYCOnboardingPackage,
   manageKYC,
   updateKYCCSDNumber,
+  markKYCReadyForReview,
+  markKYCSubmittedToCSD,
+  regenerateCsdForm,
 } from "@/services/api/kycService";
+import {
+  getKycStatusLabel,
+  getKycStatusBadgeClass,
+  normalizeKycStatus,
+  KYC_STATUS_FLOW,
+} from "@/utils/seed";
 import imagePlaceholder from "../../../public/images/pi_placeholder.jpg";
 
 // ── helpers ───────────────────────────────────────────────────────────────────
@@ -22,7 +31,6 @@ const fmt = (v) => {
   return isNaN(d) ? val(v) : d.toLocaleDateString();
 };
 
-// pick first value that is a non-empty string (handles .url objects or plain strings)
 const pickUrl = (...candidates) => {
   for (const c of candidates) {
     if (c && typeof c === "string" && c.trim() !== "") return c;
@@ -48,8 +56,12 @@ const SectionTitle = ({ children }) => (
   </h6>
 );
 
-function SafeImage({ src, alt, height = 200 }) {
+function SafeImage({ src, alt, height = 200, onExpired }) {
   const [errored, setErrored] = React.useState(false);
+  React.useEffect(() => {
+    setErrored(false);
+  }, [src]);
+
   if (!src || errored) {
     return (
       <div
@@ -66,10 +78,40 @@ function SafeImage({ src, alt, height = 200 }) {
       src={src}
       alt={alt}
       style={{ height, width: "auto", borderRadius: 8, border: "1px solid #e5e7eb" }}
-      onError={() => setErrored(true)}
+      onError={() => {
+        setErrored(true);
+        onExpired?.();
+      }}
     />
   );
 }
+
+const StatusStepper = ({ status }) => {
+  const normalized = normalizeKycStatus(status);
+  const idx = KYC_STATUS_FLOW.indexOf(normalized);
+  return (
+    <div className="flex flex-wrap gap-2">
+      {KYC_STATUS_FLOW.map((step, i) => {
+        const done = idx >= 0 && i <= idx;
+        const current = step === normalized;
+        return (
+          <span
+            key={step}
+            className={`text-xs px-2 py-1 rounded-full border ${
+              current
+                ? "bg-primary-6 text-white border-primary-6"
+                : done
+                  ? "bg-primary-1 text-primary-8 border-primary-3"
+                  : "bg-white text-gray-400 border-black-5"
+            }`}
+          >
+            {getKycStatusLabel(step)}
+          </span>
+        );
+      })}
+    </div>
+  );
+};
 
 // ── main ──────────────────────────────────────────────────────────────────────
 
@@ -84,67 +126,87 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
   });
   const [showVerifyModal, setShowVerifyModal] = React.useState(false);
   const [verifyCsdNo, setVerifyCsdNo] = React.useState("");
+  const refetchAttempted = React.useRef(false);
 
-  React.useEffect(() => {
+  const fetchDetails = React.useCallback(async () => {
     if (!userId) return;
     setLoading(true);
-    getKYCDetails(userId).then((res) => {
-      if (res?.status) {
-        console.log("[KYCModal] kyc-details:", res.data);
-        setKyc(res.data);
-      }
-      setLoading(false);
-    });
+    const res = await getKYCDetails(userId);
+    if (res?.status) {
+      setKyc(res.data);
+      setCsdForm({
+        csdAccountNumber: res.data?.user?.csdAccountNumber || "",
+        csdDateReceived: res.data?.user?.csdDateReceived
+          ? String(res.data.user.csdDateReceived).slice(0, 10)
+          : "",
+        csdVerificationStatus: res.data?.user?.csdVerificationStatus || "entered",
+      });
+    }
+    setLoading(false);
   }, [userId]);
 
-  const handleAction = async (fn, ...args) => {
+  React.useEffect(() => {
+    refetchAttempted.current = false;
+    fetchDetails();
+  }, [fetchDetails]);
+
+  const handleExpiredMedia = () => {
+    if (refetchAttempted.current) return;
+    refetchAttempted.current = true;
+    fetchDetails();
+  };
+
+  const runAction = async (fn, { closeAfter = false } = {}) => {
     setActionLoading(true);
-    await fn(...args);
+    const res = await fn();
     setActionLoading(false);
+    if (res?.status === false) return res;
+    await fetchDetails();
     onActionComplete?.();
-    onClose();
+    if (closeAfter) onClose();
+    return res;
   };
 
-  const handleDownloadPackage = async () => {
-    const res = await getKYCOnboardingPackage(userId);
-    if (res?.status && res.data?.url) downloadFile(res.data.url, "onboarding_package.pdf");
-  };
+  const workflowStatus = normalizeKycStatus(
+    kyc?.user?.status || kyc?.verificationStatus
+  );
+  const canManage = canEdit("KYC");
 
-  // ── URL resolution — tries every known field name + .url wrapping ──────────
   const profilePic = pickUrl(
     kyc?.user?.passportPic,
     kyc?.user?.profilePic,
     kyc?.passportPic,
     kyc?.profilePic,
+    kyc?.media?.passportPic
   );
 
-  // csdFormLinkProp comes from the table row (kyc-users returns it); kyc-details may also have it
   const csdFormLink = pickUrl(
     csdFormLinkProp,
     kyc?.csdFormLink,
     kyc?.user?.csdFormLink,
+    kyc?.media?.csdForm
   );
 
   const proofPicFront = pickUrl(
     kyc?.userProof?.proofPic,
-    kyc?.userProof?.frontImage,
-    kyc?.userProof?.front,
+    kyc?.media?.proofPic,
+    kyc?.userProof?.frontImage
   );
   const proofPicBack = pickUrl(
     kyc?.userProof?.proofPicBack,
-    kyc?.userProof?.backImage,
-    kyc?.userProof?.back,
+    kyc?.media?.proofPicBack,
+    kyc?.userProof?.backImage
   );
   const proofWithId = pickUrl(
     kyc?.userProof?.proofWithId,
-    kyc?.userProof?.selfieImage,
-    kyc?.userProof?.selfie,
-    kyc?.userProof?.selfieWithId,
+    kyc?.media?.proofWithId,
+    kyc?.userProof?.selfieImage
   );
   const signature = pickUrl(
     kyc?.signature,
     kyc?.user?.signature,
-    kyc?.userProof?.signature,
+    kyc?.media?.signature,
+    kyc?.userProof?.signature
   );
 
   return (
@@ -160,10 +222,100 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
           ) : (
             <div className="flex flex-col gap-6 pb-20">
 
-              {/* Update CSD Number */}
-              {canEdit("KYC") && (
+              {/* Workflow actions */}
+              {canManage && (
                 <div className="border border-black-5 rounded-lg p-4 flex flex-col gap-3">
-                  <p className="text-sm font-semibold text-primary-8">Update CSD Number</p>
+                  <p className="text-sm font-semibold text-primary-8">KYC Workflow</p>
+                  <StatusStepper status={workflowStatus} />
+                  <div className="flex flex-wrap gap-2">
+                    {workflowStatus === "documents_submitted" && (
+                      <Button
+                        className="h-9 text-sm"
+                        isLoading={actionLoading}
+                        onClick={() => runAction(() => markKYCReadyForReview(userId))}
+                      >
+                        Ready for Review
+                      </Button>
+                    )}
+                    {workflowStatus === "ready_for_review" && (
+                      <Button
+                        className="h-9 text-sm"
+                        isLoading={actionLoading}
+                        onClick={() => runAction(() => markKYCSubmittedToCSD(userId))}
+                      >
+                        Submitted to CSD
+                      </Button>
+                    )}
+                    {(workflowStatus === "submitted_to_csd" ||
+                      workflowStatus === "documents_submitted" ||
+                      workflowStatus === "ready_for_review" ||
+                      workflowStatus === "hold") && (
+                      <Button
+                        className="h-9 text-sm"
+                        isLoading={actionLoading}
+                        onClick={() => setShowVerifyModal(true)}
+                      >
+                        Approve
+                      </Button>
+                    )}
+                    {workflowStatus !== "trading_active" &&
+                      workflowStatus !== "rejected" &&
+                      workflowStatus !== "csd_number_received" && (
+                        <>
+                          <Button
+                            design="secondary"
+                            className="h-9 text-sm"
+                            isLoading={actionLoading}
+                            onClick={() =>
+                              runAction(() => manageKYC({ type: "hold", userId }))
+                            }
+                          >
+                            Hold
+                          </Button>
+                          <Button
+                            design="secondary"
+                            style="negative"
+                            className="h-9 text-sm"
+                            isLoading={actionLoading}
+                            onClick={() =>
+                              runAction(() => manageKYC({ type: "reject", userId }), {
+                                closeAfter: true,
+                              })
+                            }
+                          >
+                            Reject
+                          </Button>
+                        </>
+                      )}
+                    <Button
+                      design="secondary"
+                      className="h-9 text-sm"
+                      isLoading={actionLoading}
+                      onClick={() => runAction(() => downloadKYCOnboardingPackage(userId))}
+                    >
+                      Download Onboarding Package
+                    </Button>
+                    <Button
+                      design="secondary"
+                      className="h-9 text-sm"
+                      isLoading={actionLoading}
+                      onClick={() => runAction(() => regenerateCsdForm(userId))}
+                    >
+                      Regenerate CSD PDF
+                    </Button>
+                  </div>
+                  <p className="text-xs text-gray-400">
+                    Trading Active is set automatically by the backend when all eligibility checks pass.
+                  </p>
+                </div>
+              )}
+
+              {/* Enter / Update CSD Number */}
+              {canManage &&
+                workflowStatus !== "rejected" &&
+                workflowStatus !== "trading_active" && (
+                <div className="border border-black-5 rounded-lg p-4 flex flex-col gap-3">
+                  <p className="text-sm font-semibold text-primary-8">Enter CSD Number</p>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="flex flex-col gap-1">
                       <label className="text-xs font-semibold uppercase text-gray-500">CSD Account Number</label>
@@ -184,20 +336,33 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
                       />
                     </div>
                     <div className="flex flex-col gap-1">
-                      <label className="text-xs font-semibold uppercase text-gray-500">Verification Status</label>
+                      <label className="text-xs font-semibold uppercase text-gray-500">CSD Verification Status</label>
                       <select
                         className="border border-primary-3 rounded-md px-3 py-2 text-sm"
                         value={csdForm.csdVerificationStatus}
                         onChange={(e) => setCsdForm((p) => ({ ...p, csdVerificationStatus: e.target.value }))}
                       >
                         <option value="entered">Entered</option>
-                        <option value="verified">Verified</option>
-                        <option value="rejected">Rejected</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
                       </select>
                     </div>
                   </div>
-                  <Button className="h-9 text-sm w-fit" isLoading={actionLoading}
-                    onClick={() => handleAction(updateKYCCSDNumber, userId, csdForm)}>
+                  <Button
+                    className="h-9 text-sm w-fit"
+                    isLoading={actionLoading}
+                    onClick={() => {
+                      if (!csdForm.csdAccountNumber?.trim()) return;
+                      const payload = {
+                        csdAccountNumber: csdForm.csdAccountNumber.trim(),
+                        ...(csdForm.csdDateReceived && { csdDateReceived: csdForm.csdDateReceived }),
+                        ...(csdForm.csdVerificationStatus && {
+                          csdVerificationStatus: csdForm.csdVerificationStatus,
+                        }),
+                      };
+                      runAction(() => updateKYCCSDNumber(userId, payload));
+                    }}
+                  >
                     Save CSD Number
                   </Button>
                 </div>
@@ -212,12 +377,12 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
                 <div>
                   <p className="font-semibold text-black-13">{val(kyc?.user?.firstName)} {val(kyc?.user?.lastName)}</p>
                   <p className="text-sm text-gray-500">{val(kyc?.user?.email)}</p>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${
-                    kyc?.verificationStatus === "verified" ? "bg-green-100 text-green-700" :
-                    kyc?.verificationStatus === "rejected" ? "bg-red-100 text-red-700" :
-                    "bg-yellow-100 text-yellow-700"
-                  }`}>
-                    {kyc?.verificationStatus || "pending"}
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${getKycStatusBadgeClass(
+                      workflowStatus
+                    )}`}
+                  >
+                    {getKycStatusLabel(workflowStatus)}
                   </span>
                 </div>
               </div>
@@ -234,7 +399,7 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
                 <Field label="Origin Country" value={kyc?.user?.originCountry} />
                 <Field label="Phone" value={kyc?.user?.phone ? `${kyc?.user?.countryCode || ""} ${kyc?.user?.phone}` : null} />
                 <Field label="Email" value={kyc?.user?.email} />
-                <Field label="CSD Account Number" value={kyc?.csdAccountNumber} />
+                <Field label="CSD Account Number" value={kyc?.user?.csdAccountNumber || kyc?.csdAccountNumber} />
               </div>
 
               {/* Address */}
@@ -245,6 +410,19 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
                 <Field label="City" value={kyc?.address?.city} />
                 <Field label="Latitude" value={kyc?.address?.latitude} />
                 <Field label="Longitude" value={kyc?.address?.longitude} />
+              </div>
+
+              {/* Bank Details */}
+              <SectionTitle>Bank Details</SectionTitle>
+              <div className="grid grid-cols-3 gap-4">
+                <Field label="Bank Name" value={kyc?.bankDetails?.bankName} />
+                <Field label="Branch Name" value={kyc?.bankDetails?.branchName} />
+                <Field label="Account Name" value={kyc?.bankDetails?.accountName} />
+                <Field label="Account Number" value={kyc?.bankDetails?.accountNumber} />
+                <Field label="Account Type" value={kyc?.bankDetails?.accountType} />
+                <Field label="Bank Code" value={kyc?.bankDetails?.bankCode} />
+                <Field label="Swift Code" value={kyc?.bankDetails?.swiftCode} />
+                <Field label="Routing Number" value={kyc?.bankDetails?.routingNumber} />
               </div>
 
               {/* Beneficiary */}
@@ -297,14 +475,14 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
               <div className="flex flex-wrap gap-6 mt-2">
                 {[
                   { label: "Ghana Card (Front)", src: proofPicFront, h: 200 },
-                  { label: "Ghana Card (Back)",  src: proofPicBack,  h: 200 },
-                  { label: "Selfie with ID",     src: proofWithId,   h: 200 },
-                  { label: "Signature",          src: signature,     h: 120 },
-                  { label: "Profile Photo",      src: profilePic,    h: 200 },
+                  { label: "Ghana Card (Back)", src: proofPicBack, h: 200 },
+                  { label: "Selfie with ID", src: proofWithId, h: 200 },
+                  { label: "Signature", src: signature, h: 120 },
+                  { label: "Profile Photo", src: profilePic, h: 200 },
                 ].map(({ label, src, h }) => (
                   <div key={label} className="flex flex-col gap-1 items-start">
                     <p className="text-xs font-semibold uppercase text-gray-500">{label}</p>
-                    <SafeImage src={src} alt={label} height={h} />
+                    <SafeImage src={src} alt={label} height={h} onExpired={handleExpiredMedia} />
                     {src && (
                       <a
                         href={src}
@@ -328,6 +506,7 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
                     className="w-full rounded-lg border border-black-5"
                     style={{ height: 450 }}
                     title="CSD Form PDF"
+                    onError={handleExpiredMedia}
                   />
                   <button
                     className="text-sm text-primary-6 underline self-start"
@@ -338,10 +517,17 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
                 </div>
               ) : (
                 <div className="flex flex-col gap-2">
-                  <p className="text-sm text-gray-400">CSD Form not available from this view.</p>
-                  <p className="text-xs text-gray-300">
-                    The CSD form link is attached to the KYC list row. Open via &quot;View Form&quot; in the table to preview it.
-                  </p>
+                  <p className="text-sm text-gray-400">CSD Form not available.</p>
+                  {canManage && (
+                    <Button
+                      design="secondary"
+                      className="h-9 text-sm w-fit"
+                      isLoading={actionLoading}
+                      onClick={() => runAction(() => regenerateCsdForm(userId))}
+                    >
+                      Regenerate CSD PDF
+                    </Button>
+                  )}
                 </div>
               )}
 
@@ -350,32 +536,45 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
         </Modal.Content>
       </Modal>
 
-      {/* Verify KYC sub-modal */}
+      {/* Approve / Verify sub-modal */}
       {showVerifyModal && (
-        <Modal isOpen={true} type="confirmation" title="Verify KYC" onClose={() => setShowVerifyModal(false)}>
+        <Modal isOpen={true} type="confirmation" title="Approve KYC" onClose={() => setShowVerifyModal(false)}>
           <Modal.Content>
             <InputAndLabel>
               <InputAndLabel.Label htmlFor="csdNumber">CSD Account Number</InputAndLabel.Label>
               <InputAndLabel.Input
-                id="csdNumber" type="text" value={verifyCsdNo}
+                id="csdNumber"
+                type="text"
+                value={verifyCsdNo}
                 onChange={(e) => setVerifyCsdNo(e.target.value)}
                 placeholder="e.g. CSD123456"
               />
             </InputAndLabel>
+            <p className="text-xs text-gray-400 mt-2">
+              Approval moves the user to Awaiting CSD Number. Trading Active is applied automatically later.
+            </p>
           </Modal.Content>
           <Modal.Footer>
             <Button design="secondary" style="negative" className="h-9" onClick={() => setShowVerifyModal(false)}>
               Cancel
             </Button>
             <Button
-              className="h-9" isLoading={actionLoading}
+              className="h-9"
+              isLoading={actionLoading}
               onClick={async () => {
                 if (!verifyCsdNo.trim()) return;
                 setShowVerifyModal(false);
-                await handleAction(manageKYC, { type: "verify", userId, csdAccountNumber: verifyCsdNo });
+                await runAction(() =>
+                  manageKYC({
+                    type: "verify",
+                    userId,
+                    csdAccountNumber: verifyCsdNo.trim(),
+                  })
+                );
+                setVerifyCsdNo("");
               }}
             >
-              Confirm Verify
+              Confirm Approve
             </Button>
           </Modal.Footer>
         </Modal>
