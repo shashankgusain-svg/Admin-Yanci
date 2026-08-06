@@ -16,6 +16,7 @@ import AuditLogs from "../../../public/icons/sidebar/AuditLogs";
 import Policies from "../../../public/icons/sidebar/Policies";
 import Referrals from "../../../public/icons/sidebar/Referrals";
 import Tutorial from "../../../public/icons/sidebar/Tutorial";
+import Blog from "../../../public/icons/sidebar/Blog";
 import { useRouter } from "next/router";
 import { getUser, removeToken, removeUser } from "@/services/api/cookies";
 import { setLoggingOut } from "@/services/api/helper";
@@ -142,6 +143,12 @@ const sidebarBtns = [
     Icon: Tutorial,
   },
   {
+    name: "Blogs",
+    permissionName: "User Support",
+    path: "/support/blogs",
+    Icon: Blog,
+  },
+  {
     name: "Audit Logs",
     permissionName: "Audit Logs",
     path: "/audit-logs",
@@ -235,7 +242,9 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
                         ? pathname === "/"
                         : path === "/stock"
                           ? pathname === "/stock"
-                          : pathname === path || pathname.startsWith(`${path}/`);
+                          : path === "/support"
+                            ? pathname === "/support"
+                            : pathname === path || pathname.startsWith(`${path}/`);
 
                   return (
                     <SidebarBtn isCollapsed={isCollapsed} key={path} name={name} path={path} isActive={isActive}>
