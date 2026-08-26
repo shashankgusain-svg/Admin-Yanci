@@ -16,8 +16,12 @@ export const uploadCompanyCSV = async (file) => {
   }
 };
 
-export const getCompaniesPaginated = async (page = 1, limit = 20, search = "") => {
-  const params = new URLSearchParams({ page, limit });
+export const getCompaniesPaginated = async (page = 1, limit = 20, search = "", visibility = "all") => {
+  const params = new URLSearchParams({
+    page,
+    limit,
+    visibility: visibility || "all",
+  });
   if (search) params.set("search", search);
   try {
     const res = await fetch(`${URL}admin/companies?${params}`, {
@@ -49,11 +53,37 @@ export const getCompanies = async () => {
 
 export const getCompany = async (symbol) => {
   try {
-    const res = await fetch(`${URL}admin/companies/${symbol}`, {
+    const res = await fetch(`${URL}admin/companies/${encodeURIComponent(symbol)}`, {
       method: "GET",
       headers: await authHeaders(),
     });
     return responseValidator(res);
+  } catch (error) {
+    return apiError(error);
+  }
+};
+
+export const updateCompanyVisibility = async (symbol, payload) => {
+  try {
+    const res = await fetch(`${URL}admin/companies/${encodeURIComponent(symbol)}/visibility`, {
+      method: "PATCH",
+      headers: await authHeaders(),
+      body: JSON.stringify(payload),
+    });
+    return responseValidator(res, true);
+  } catch (error) {
+    return apiError(error);
+  }
+};
+
+export const cleanupCompanies = async (payload = {}) => {
+  try {
+    const res = await fetch(`${URL}admin/companies/cleanup`, {
+      method: "POST",
+      headers: await authHeaders(),
+      body: JSON.stringify(payload),
+    });
+    return responseValidator(res, false);
   } catch (error) {
     return apiError(error);
   }
@@ -141,18 +171,6 @@ export const syncGSEListings = async () => {
 export const syncGSEMarketReport = async () => {
   try {
     const res = await fetch(`${URL}admin/gse/sync/market-report`, {
-      method: "POST",
-      headers: await authHeaders(),
-    });
-    return responseValidator(res, true);
-  } catch (error) {
-    return apiError(error);
-  }
-};
-
-export const cleanupGSEListings = async () => {
-  try {
-    const res = await fetch(`${URL}admin/gse/cleanup/listings`, {
       method: "POST",
       headers: await authHeaders(),
     });

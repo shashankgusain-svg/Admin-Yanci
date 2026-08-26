@@ -34,39 +34,37 @@ const TradingFeeModal = ({ isModalOpen, setIsModalOpen }) => {
   ];
 
   return (
-    <div className="fixed bottom-10 left-1/2 z-50">
-      <Modal
-        title="Trading Fee"
-        type="confirmation"
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        className="w-[448px]"
-      >
-        <Modal.Content>
-          <div>
-            {fields.map(({ label, name }) => (
-              <div key={name} className="flex items-center justify-between mb-6">
-                <div className="text-sm text-primary-10">{label}</div>
-                <input
-                  type="number"
-                  name={name}
-                  value={fees[name]}
-                  onChange={handleChange}
-                  className="border-primary-3 border-2 rounded-md w-[68px] py-[7px] px-[10px]"
-                />
-              </div>
-            ))}
-            <p className="text-xs mb-3 text-primary-10">All values are per transaction and in percentage % unit.</p>
-          </div>
-        </Modal.Content>
-        <Modal.Footer>
-          <Button onClick={() => setIsModalOpen(false)} className="w-[144px] h-[40px] bg-white text-[#35BAB2]">
-            Cancel
-          </Button>
-          <Button onClick={handleApply} isLoading={loading} className="w-[144px] h-[40px]">Apply</Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+    <Modal
+      title="Trading Fee"
+      type="confirmation"
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      className="w-[448px]"
+    >
+      <Modal.Content>
+        <div>
+          {fields.map(({ label, name }) => (
+            <div key={name} className="flex items-center justify-between mb-6">
+              <div className="text-sm text-primary-10">{label}</div>
+              <input
+                type="number"
+                name={name}
+                value={fees[name]}
+                onChange={handleChange}
+                className="border-primary-3 border-2 rounded-md w-[68px] py-[7px] px-[10px]"
+              />
+            </div>
+          ))}
+          <p className="text-xs mb-3 text-primary-10">All values are per transaction and in percentage % unit.</p>
+        </div>
+      </Modal.Content>
+      <Modal.Footer>
+        <Button onClick={() => setIsModalOpen(false)} className="w-[144px] h-[40px] bg-white text-[#35BAB2]">
+          Cancel
+        </Button>
+        <Button onClick={handleApply} isLoading={loading} className="w-[144px] h-[40px]">Apply</Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

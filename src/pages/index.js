@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import { getUser } from "@/services/api/cookies";
 import MetricsCard from "@/components/metricsCard/MetricsCard";
 import { manageKYC } from "@/services/api/kycService";
@@ -171,8 +172,8 @@ function KYCRow({ row, onViewDetails, onApprove, onReject, actioningId }) {
 
 function ApproveModal({ row, onConfirm, onCancel, loading }) {
   const [csd, setCsd] = React.useState("");
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black-13 bg-opacity-50">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black-13 bg-opacity-50">
       <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm flex flex-col gap-4">
         <p className="font-semibold text-black-13">Approve KYC</p>
         <p className="text-sm text-gray-500">
@@ -200,7 +201,8 @@ function ApproveModal({ row, onConfirm, onCancel, loading }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

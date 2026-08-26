@@ -7,7 +7,6 @@ import Kyc from "../../../public/icons/sidebar/Kyc";
 import Revenue from "../../../public/icons/sidebar/Revenue";
 import Reports from "../../../public/icons/sidebar/Reports";
 import Notifications from "../../../public/icons/sidebar/Notifications";
-import StockManagement from "../../../public/icons/sidebar/StockManagement";
 import CompanyData from "../../../public/icons/sidebar/CompanyData";
 import { usePathname } from "next/navigation";
 import RoleManagement from "../../../public/icons/sidebar/RoleManagement";
@@ -107,13 +106,7 @@ const sidebarBtns = [
     Icon: Reports,
   },
   {
-    name: "Stock",
-    permissionName: "Stock Management",
-    path: "/stock",
-    Icon: StockManagement,
-  },
-  {
-    name: "Company Data",
+    name: "Companies",
     permissionName: "Stock Management",
     path: "/stock/company-data",
     Icon: CompanyData,
@@ -240,11 +233,9 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
                       ? false
                       : path === "/"
                         ? pathname === "/"
-                        : path === "/stock"
-                          ? pathname === "/stock"
-                          : path === "/support"
-                            ? pathname === "/support"
-                            : pathname === path || pathname.startsWith(`${path}/`);
+                        : path === "/support"
+                          ? pathname === "/support"
+                          : pathname === path || pathname.startsWith(`${path}/`);
 
                   return (
                     <SidebarBtn isCollapsed={isCollapsed} key={path} name={name} path={path} isActive={isActive}>
