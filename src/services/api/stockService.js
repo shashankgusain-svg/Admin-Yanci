@@ -76,6 +76,18 @@ export const updateCompanyVisibility = async (symbol, payload) => {
   }
 };
 
+export const removeCompanyFromApp = async (symbol) => {
+  try {
+    const res = await fetch(`${URL}admin/companies/${encodeURIComponent(symbol)}`, {
+      method: "DELETE",
+      headers: await authHeaders(),
+    });
+    return responseValidator(res, true);
+  } catch (error) {
+    return apiError(error);
+  }
+};
+
 export const cleanupCompanies = async (payload = {}) => {
   try {
     const res = await fetch(`${URL}admin/companies/cleanup`, {

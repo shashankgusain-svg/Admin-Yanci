@@ -4,12 +4,14 @@ import Button from "@/components/button/Button";
 import Modal from "@/components/modal/ModalIndex";
 import Pagination from "@/components/pagination/Pagination";
 import { canEdit } from "@/utils/helpers";
+import { getUser } from "@/services/api/cookies";
 import {
   uploadCompanyCSV,
   getCompaniesPaginated,
   getCompany,
   updateCompanyEnrichment,
   updateCompanyVisibility,
+  removeCompanyFromApp,
   cleanupCompanies,
   syncGSEListings,
   syncGSEMarketReport,
@@ -231,6 +233,8 @@ function downloadTemplate() {
 
 export default function CompanyDataManagement() {
   const canManage = canEdit("Stock Management");
+  const user = getUser();
+  const isSuperAdmin = Boolean(user?.isSuperAdmin || user?.roleType === "SUPER");
 
   // Upload state
   const [uploadState, setUploadState] = React.useState("idle"); // idle | uploading | success | error
@@ -252,6 +256,8 @@ export default function CompanyDataManagement() {
   const [cleanupLoading, setCleanupLoading] = React.useState(false);
   const [cleanupApplying, setCleanupApplying] = React.useState(false);
   const [cleanupPreview, setCleanupPreview] = React.useState(null);
+  const [removeTarget, setRemoveTarget] = React.useState(null);
+  const [removing, setRemoving] = React.useState(false);
 
   // Modal state
   const [selectedCompany, setSelectedCompany] = React.useState(null);
@@ -403,6 +409,24 @@ export default function CompanyDataManagement() {
     }
   };
 
+  const handleRestore = async (company) => {
+    await handleVisibilityChange(company, { isHidden: false, isDelisted: false });
+  };
+
+  const handleConfirmRemove = async () => {
+    if (!removeTarget?.symbol) return;
+    setRemoving(true);
+    const res = await removeCompanyFromApp(removeTarget.symbol);
+    setRemoving(false);
+    if (!res?.status) return;
+    if (selectedCompany?.symbol === removeTarget.symbol) {
+      setModalMode(null);
+      setSelectedCompany(null);
+    }
+    setRemoveTarget(null);
+    fetchCompanies(currentPage, search, visibility);
+  };
+
   const handleCleanListings = async () => {
     setCleanupLoading(true);
     const res = await cleanupCompanies({ ...CLEANUP_OPTIONS, dryRun: true });
@@ -441,7 +465,7 @@ export default function CompanyDataManagement() {
       <Breadcrumb items={breadCrumbItems} />
       <p className="text-heading-5 font-bold text-black-13">Companies</p>
 
-      {canManage && (
+      {isSuperAdmin && (
         <div className="bg-white border border-black-5 rounded-xl p-4 flex flex-wrap gap-3 items-center">
           <p className="text-sm font-semibold text-primary-8 mr-2">GSE Sync</p>
           <Button className="h-9 text-sm" isLoading={syncLoading} onClick={() => handleGSEAction(syncGSEListings)}>
@@ -612,20 +636,24 @@ export default function CompanyDataManagement() {
                               <button className="text-primary-8 text-sm hover:underline" onClick={() => openEdit(c)}>
                                 Edit
                               </button>
-                              <button
-                                className="text-sm hover:underline text-gray-600 disabled:opacity-40"
-                                disabled={rowBusy}
-                                onClick={() => handleVisibilityChange(c, { isHidden: !c.isHidden })}
-                              >
-                                {c.isHidden ? "Show" : "Hide"}
-                              </button>
-                              <button
-                                className="text-sm hover:underline text-gray-600 disabled:opacity-40"
-                                disabled={rowBusy}
-                                onClick={() => handleVisibilityChange(c, { isDelisted: !c.isDelisted })}
-                              >
-                                {c.isDelisted ? "Mark listed" : "Mark delisted"}
-                              </button>
+                              {isAppVisible(c) && (
+                                <button
+                                  className="text-sm hover:underline text-red-600 disabled:opacity-40"
+                                  disabled={rowBusy || removing}
+                                  onClick={() => setRemoveTarget(c)}
+                                >
+                                  Remove from app
+                                </button>
+                              )}
+                              {(c.isDelisted || c.isHidden) && (
+                                <button
+                                  className="text-sm hover:underline text-gray-600 disabled:opacity-40"
+                                  disabled={rowBusy}
+                                  onClick={() => handleRestore(c)}
+                                >
+                                  Restore
+                                </button>
+                              )}
                             </>
                           )}
                         </div>
@@ -730,6 +758,25 @@ export default function CompanyDataManagement() {
           </Modal.Content>
           <Modal.Footer>
             <Button design="secondary" className="h-9" onClick={closeModal}>Close</Button>
+            {canManage && isAppVisible(selectedCompany) && (
+              <Button
+                design="primary"
+                style="negative"
+                className="h-9"
+                onClick={() => setRemoveTarget(selectedCompany)}
+              >
+                Remove from app
+              </Button>
+            )}
+            {canManage && (selectedCompany.isDelisted || selectedCompany.isHidden) && (
+              <Button
+                className="h-9"
+                isLoading={visibilityLoading === selectedCompany.symbol}
+                onClick={() => handleRestore(selectedCompany)}
+              >
+                Restore
+              </Button>
+            )}
           </Modal.Footer>
         </Modal>
       )}
@@ -855,6 +902,37 @@ export default function CompanyDataManagement() {
             </Button>
             <Button className="h-9" isLoading={cleanupApplying} disabled={cleanupApplying} onClick={handleApplyCleanup}>
               Apply cleanup
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
+
+      {removeTarget && (
+        <Modal
+          isOpen
+          type="confirmation"
+          title={`Remove ${removeTarget.symbol} from the app?`}
+          message="Past orders are kept."
+          onClose={() => !removing && setRemoveTarget(null)}
+        >
+          <Modal.Footer>
+            <Button
+              design="secondary"
+              className="h-9"
+              disabled={removing}
+              onClick={() => setRemoveTarget(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              design="primary"
+              style="negative"
+              className="h-9"
+              isLoading={removing}
+              disabled={removing}
+              onClick={handleConfirmRemove}
+            >
+              Remove from app
             </Button>
           </Modal.Footer>
         </Modal>
