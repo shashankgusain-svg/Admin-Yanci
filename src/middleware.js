@@ -16,13 +16,54 @@ const protectedRoutes = {
   "/tutorial": { permissionName: "User Support", requiresEdit: false },
 };
 
+const isProduction = process.env.NODE_ENV === "production";
+
+const clearAuthCookies = (response) => {
+  const clearOptions = {
+    expires: new Date(0),
+    path: "/",
+    sameSite: "strict",
+    secure: isProduction,
+  };
+  response.cookies.set("token", "", clearOptions);
+  response.cookies.set("user", "", clearOptions);
+  return response;
+};
+
+const redirectToLogin = (url) => {
+  url.pathname = "/login";
+  return clearAuthCookies(NextResponse.redirect(url));
+};
+
+const parseUserCookie = (userCookie) => {
+  if (!userCookie?.value) {
+    return null;
+  }
+  try {
+    const user = JSON.parse(userCookie.value);
+    if (!user || typeof user !== "object") {
+      return null;
+    }
+    return user;
+  } catch (error) {
+    console.error("Error parsing user cookie:", error);
+    return null;
+  }
+};
+
 export default function middleware(req) {
   const url = req.nextUrl.clone();
 
   const token = req.cookies.get("token") || null;
   const userCookie = req.cookies.get("user") || null;
+  const user = parseUserCookie(userCookie);
 
-  if (token && url.pathname === "/login") {
+  // Token without a valid user session → clear auth and force re-login
+  if (token && !user) {
+    return redirectToLogin(url);
+  }
+
+  if (token && user && url.pathname === "/login") {
     url.pathname = "/";
     return NextResponse.redirect(url);
   }
@@ -36,15 +77,10 @@ export default function middleware(req) {
     return NextResponse.redirect(url);
   }
 
-  if (userCookie) {
-    let user;
-
-    try {
-      user = JSON.parse(userCookie.value);
-    } catch (error) {
-      console.error("Error parsing user cookie:", error);
-      url.pathname = "/login";
-      return NextResponse.redirect(url);
+  // Permission checks require a valid user on all protected routes
+  if (isProtectedRoute) {
+    if (!user) {
+      return redirectToLogin(url);
     }
 
     if (user.roleType === "SUPER") {

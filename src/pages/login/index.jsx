@@ -37,8 +37,9 @@ export default function Login() {
       if (res.status === false) {
         return;
       }
-      setToken(res?.data.token, expiry);
-      setUser(res?.data, expiry);
+      const { token, ...userData } = res?.data || {};
+      setToken(token, expiry);
+      setUser(userData, expiry);
       router.replace("/");
     } catch (error) {
       console.error("Error during login:", error);
