@@ -69,8 +69,10 @@ export default function UserPage() {
 
   const handleDelete = async () => {
     setLoading(true);
-    await deleteUser(userId);
+    const res = await deleteUser(userId);
     setLoading(false);
+    if (!res?.status) return;
+    setModalOpen(false);
     router.push("/user");
   };
 

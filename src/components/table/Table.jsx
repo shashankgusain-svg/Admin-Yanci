@@ -36,13 +36,15 @@ export default function Table({
   dateValue,
   dateOnChange = () => { },
 }) {
-  console.log(paginationProps);
   const [selectedStatus, setSelectedStatus] = useState("");
 
   const handleFilter = (status) => {
     setSelectedStatus(status); // Update the selected status
     onFilter(status); // Call the filter function with the selected status
   };
+
+  const colSpan = columns.length + (isDropdown ? 1 : 0);
+
   return (
     <div className="w-full flex flex-col relative slideAndAppear">
       {/* Header */}
@@ -141,7 +143,17 @@ export default function Table({
               </tr>
             </thead>
             <tbody className="bg-white">
-              {data.map((row, rowIndex) => (
+              {data.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={colSpan}
+                    className="table-cell text-center text-sm text-gray-400 py-10"
+                  >
+                    No data available.
+                  </td>
+                </tr>
+              ) : (
+                data.map((row, rowIndex) => (
                 <tr
                   className="border-b-0.3 border-primary-6 hover:bg-primary-1"
                   key={rowIndex}
@@ -195,7 +207,8 @@ export default function Table({
                     </td>
                   ) : null}
                 </tr>
-              ))}
+              ))
+              )}
             </tbody>
           </table>
         )}
