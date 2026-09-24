@@ -4,6 +4,7 @@ import parse from "html-react-parser";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Button from "@/components/button/Button";
 import { getBlogById } from "@/services/api/blogService";
+import { sanitizeHtml } from "@/utils/sanitizeHtml";
 import imagePlaceholder from "../../../../../public/images/pi_placeholder.jpg";
 
 function formatDate(value) {
@@ -118,7 +119,11 @@ export default function BlogDetailPage() {
           </div>
 
           <div className="prose prose-sm max-w-none text-black-13 updatePreview border-t border-black-5 pt-4">
-            {blog.content ? parse(blog.content) : <p className="text-gray-400">No content.</p>}
+            {blog.content ? (
+              parse(sanitizeHtml(blog.content))
+            ) : (
+              <p className="text-gray-400">No content.</p>
+            )}
           </div>
         </div>
       </article>
