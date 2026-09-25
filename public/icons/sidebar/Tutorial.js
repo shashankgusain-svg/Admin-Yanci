@@ -1,5 +1,5 @@
 export default function Tutorial({ active }) {
-  const stroke = active ? "#ffffff" : "#35BAB2";
+  const stroke = active ? "#ffffff" : "currentColor";
   return (
     <svg
       width="24"

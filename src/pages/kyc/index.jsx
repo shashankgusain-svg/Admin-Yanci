@@ -23,6 +23,9 @@ import {
   getAbandonedKycDropdownItems,
 } from "@/config/dropdownConfig";
 
+import PageHeader from "@/components/pageHeader/PageHeader";
+import InfoTip from "@/components/infoTip/InfoTip";
+
 export default function Kyc() {
   const [data, setData] = React.useState({ submitted: [], abandoned: [] });
   const [metrics, setMetrics] = React.useState({});
@@ -243,7 +246,7 @@ export default function Kyc() {
                 placeholder="e.g. CSD123456"
               />
             </InputAndLabel>
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs text-black-6 mt-2">
               Moves status to Awaiting CSD Number. Trading Active is applied automatically by the backend.
             </p>
           </Modal.Content>
@@ -280,8 +283,15 @@ export default function Kyc() {
       ) : null}
 
       <Breadcrumb items={breadCrumbItems} />
+      <PageHeader
+        title="KYC & onboarding"
+        description="Review and manage investor onboarding applications."
+        info={
+          <InfoTip purpose="Approve, reject, or advance KYC applications. CSD entry is required before trading can activate." />
+        }
+      />
       <div className="flex flex-col gap-6">
-        <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
           {Object.entries(metrics).map(([key, value], index) => (
             <MetricsCard
               key={index}

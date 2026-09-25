@@ -10,6 +10,7 @@ import parse from "html-react-parser";
 import { isRequired } from "@/utils/helpers";
 import { editorConfig } from "@/config/joditEditorConfig";
 import { getPolicy } from "@/services/api/policyService";
+import PageHeader from "@/components/pageHeader/PageHeader";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -137,6 +138,11 @@ export default function PoliciesPage() {
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
+      
+      <PageHeader
+        title="Policies"
+        description="Edit terms and privacy content."
+      />
       <Toggle options={userOptions} onSelect={handleToggleChange} />
 
       <div className="w-full max-w-report">

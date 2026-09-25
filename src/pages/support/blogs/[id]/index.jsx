@@ -57,7 +57,7 @@ export default function BlogDetailPage() {
     return (
       <div className="flex flex-col gap-6">
         <Breadcrumb items={breadCrumbItems} />
-        <p className="text-sm text-gray-500">Loading blog…</p>
+        <p className="text-sm text-black-7">Loading blog…</p>
       </div>
     );
   }
@@ -66,7 +66,7 @@ export default function BlogDetailPage() {
     return (
       <div className="flex flex-col gap-6">
         <Breadcrumb items={breadCrumbItems} />
-        <p className="text-sm text-red-600">{error || "Blog not found."}</p>
+        <p className="text-sm text-loss">{error || "Blog not found."}</p>
         <Button design="secondary" className="h-9 w-fit" onClick={() => router.push("/support/blogs")}>
           Back to Blogs
         </Button>
@@ -101,8 +101,8 @@ export default function BlogDetailPage() {
             <span
               className={`inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium ${
                 blog.status === "LIVE"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-gray-100 text-gray-600"
+                  ? "bg-gain-soft text-gain"
+                  : "bg-black-4 text-black-8"
               }`}
             >
               {blog.status || "—"}
@@ -111,14 +111,14 @@ export default function BlogDetailPage() {
 
           <h1 className="text-heading-4 font-bold text-black-13">{blog.title}</h1>
 
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-2 text-sm text-black-7">
             <span className="font-medium text-black-13">{blog.author || "—"}</span>
             <span>·</span>
             <span>{formatDate(blog.publishedDate)}</span>
           </div>
 
           <div className="prose prose-sm max-w-none text-black-13 updatePreview border-t border-black-5 pt-4">
-            {blog.content ? parse(blog.content) : <p className="text-gray-400">No content.</p>}
+            {blog.content ? parse(blog.content) : <p className="text-black-6">No content.</p>}
           </div>
         </div>
       </article>

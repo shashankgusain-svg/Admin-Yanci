@@ -39,10 +39,10 @@ const transactionColumns = () => [
       <span
         className={`rounded-full px-2 py-1 capitalize text-xs ${
           row.status === "success"
-            ? "bg-green-500 text-white"
+            ? "bg-gain-soft text-gain"
             : row.status === "failed" || row.status === "unsuccessful"
-            ? "bg-red-500 text-white"
-            : "bg-yellow-400 text-black"
+            ? "bg-loss-soft text-loss"
+            : "bg-warning-soft text-warning"
         }`}
       >
         {row.status || "--"}

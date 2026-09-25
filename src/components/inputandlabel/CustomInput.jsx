@@ -23,22 +23,22 @@ export default function CustomInput({
 
   return type === "status" ? (
     <div
-      className={`custom-input w-full flex items-center border border-black-5 bg-black-4 rounded-lg`}
+      className={`custom-input w-full flex items-center border border-black-5 bg-black-4 rounded-input`}
     >
       <span
         className={`inline-flex items-center px-3 py-0.5 rounded-full text-sm ${
           value === "Successful"
-            ? "bg-green-600 text-white"
+            ? "bg-gain-soft text-gain"
             : value === "Pending"
-            ? "bg-yellow-600 text-white"
-            : "bg-red-600 text-red-white "
+            ? "bg-warning-soft text-warning"
+            : "bg-loss-soft text-loss"
         }`}
       >
         {value}
       </span>
     </div>
   ) : type === "password" ? (
-    <div className="custom-input flex items-center border border-black-5 bg-white rounded-lg">
+    <div className="custom-input flex items-center border border-black-5 bg-white rounded-input">
       <input
         type={passwordShown ? "text" : "password"}
         name={name}
@@ -72,15 +72,15 @@ export default function CustomInput({
         className={`
           ${
             disabled === true
-              ? "custom-input border border-black-5 bg-black-4 rounded-lg text-body-2"
+              ? "custom-input border border-black-5 bg-black-4 rounded-input text-body-2"
               : null
           }
           ${
             type != "button"
-              ? `custom-input border border-black-5 bg-black-1 rounded-lg w-full text-body-2 ${
-                  value.length >= maxLength * 0.9 ? "!outline-red-500" : ""
+              ? `custom-input border border-black-5 bg-black-1 rounded-input w-full text-body-2 ${
+                  value.length >= maxLength * 0.9 ? "!outline-loss" : ""
                 }`
-              : "underline text-blue-600 text-left p-2 pl-0 text-body-2 cursor-pointer active:outline-none"
+              : "underline text-primary-6 text-left p-2 pl-0 text-body-2 cursor-pointer active:outline-none"
           } 
         ${className}`}
         {...rest}
@@ -88,7 +88,7 @@ export default function CustomInput({
       {showLimit ? (
         <p
           className={`text-[0.75rem] ${
-            value.length >= maxLength * 0.9 ? "text-red-500" : "text-black-7"
+            value.length >= maxLength * 0.9 ? "text-loss" : "text-black-7"
           } self-end`}
         >
           {value.length}/{maxLength}

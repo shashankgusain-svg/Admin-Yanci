@@ -8,7 +8,6 @@ import { getToken } from "@/services/api/authService";
 import { setToken, setUser } from "@/services/api/cookies";
 import { verifyPassword, verifyEmail } from "@/utils/helpers";
 import { setLoggingOut } from "@/services/api/helper";
-import LoadingAnimation from "../../../public/icons/animated/loading";
 
 export default function Login() {
   const [fields, setFields] = React.useState({ email: "", password: "" });
@@ -17,8 +16,9 @@ export default function Login() {
 
   const router = useRouter();
 
-  // reset logout flag when login page mounts
-  React.useEffect(() => { setLoggingOut(false); }, []);
+  React.useEffect(() => {
+    setLoggingOut(false);
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -59,35 +59,28 @@ export default function Login() {
   };
 
   return (
-    <div className="wrapper">
+    <div className="wrapper bg-canvas min-h-screen">
       <div className="layout-container">
         <div className="flex flex-col lg:flex-row min-h-screen">
-          {/* Left Section */}
-          <div
-            className="bg-primary-7 basis-[45%] p-20 relative overflow-hidden flex flex-col justify-start items-center
-        after:w-[30rem] after:h-[30rem] after:border-[0.5rem] after:rounded-full after:absolute after:border-white after:-top-[45%] after:-left-[45%]
-        before:w-[30rem] before:h-[30rem] before:border-[0.5rem] before:rounded-full before:absolute before:border-white before:-bottom-[45%] before:-right-[45%]
-      "
-          >
-            <div className="flex flex-col gap-4 items-center lg:items-start">
-              <h1 className="text-[3.75rem] text-center lg:text-left text-white leading-[1.2] font-bold">
+          <div className="bg-primary-1 basis-[45%] p-20 relative overflow-hidden flex flex-col justify-start items-center after:w-[30rem] after:h-[30rem] after:border-[0.5rem] after:rounded-full after:absolute after:border-primary-3 after:-top-[45%] after:-left-[45%] before:w-[30rem] before:h-[30rem] before:border-[0.5rem] before:rounded-full before:absolute before:border-primary-3 before:-bottom-[45%] before:-right-[45%]">
+            <div className="flex flex-col gap-4 items-center lg:items-start relative z-10">
+              <h1 className="text-[2.5rem] lg:text-[3rem] text-center lg:text-left text-navy leading-[1.2] font-bold">
                 Welcome to Yanci
               </h1>
-              <p className="text-heading-6 text-black-5 text-center lg:text-left">
-                Clarity gives you the blocks & components you need to create a
-                truly professional website.
+              <p className="text-heading-6 text-black-7 text-center lg:text-left max-w-md">
+                Invest. Learn. Grow. Admin tools for Ghana&apos;s investing
+                platform.
               </p>
             </div>
-            <div className="relative w-[250px] mx-auto mt-20">
-              <Image src={welcomeImg} alt="Welcome Image" />
+            <div className="relative w-[250px] mx-auto mt-20 z-10">
+              <Image src={welcomeImg} alt="Welcome" />
             </div>
           </div>
 
-          {/* Right Section */}
-          <div className="basis-[55%] p-20 bg-white flex">
-            <div className="w-full">
-              <h2 className="text-[3.25rem] leading-[1.2] font-bold mb-6">
-                Welcome back!
+          <div className="basis-[55%] p-20 bg-canvas flex">
+            <div className="w-full max-w-[500px]">
+              <h2 className="text-[2.5rem] lg:text-[3rem] leading-[1.2] font-bold mb-6 text-navy">
+                Welcome back
               </h2>
               <form
                 className="w-full max-w-[500px] flex flex-col gap-6 mt-24"
@@ -127,29 +120,34 @@ export default function Login() {
                       id="remember_me"
                       type="checkbox"
                       onChange={handleExpiryChange}
-                      checked={fields.expiry}
-                      className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
+                      checked={expiry}
+                      className="h-4 w-4 text-primary-6 focus:ring-primary-6 border-black-5 rounded"
                     />
                     <label
                       htmlFor="remember_me"
-                      className="ml-2 block text-sm text-gray-900"
+                      className="ml-2 block text-body-2 text-navy"
                     >
                       Remember me
                     </label>
                   </div>
 
-                  <div className="text-sm">
+                  <div className="text-body-2">
                     <a
                       href="#"
-                      className="font-medium text-blue-600 hover:text-blue-500"
+                      className="font-medium text-primary-6 hover:text-primary-7"
                     >
                       Forgot password?
                     </a>
                   </div>
                 </div>
 
-                <Button isLoading={loading} className="w-60 mt-10" type="submit" style="primary">
-                  Login
+                <Button
+                  isLoading={loading}
+                  className="w-full max-w-[240px] mt-10"
+                  type="submit"
+                  design="primary"
+                >
+                  Log in
                 </Button>
               </form>
             </div>

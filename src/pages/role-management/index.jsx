@@ -13,6 +13,7 @@ const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Sub Admin" }];
 import Pagination from "@/components/pagination/Pagination";
 import LoadingAnimation from "../../../public/icons/animated/loading";
 import { getSubAdminDropdownItems } from "@/config/dropdownConfig";
+import PageHeader from "@/components/pageHeader/PageHeader";
 
 export default function RoleManagement() {
   const [isModalOpen, setModalOpen] = React.useState(false);
@@ -111,6 +112,11 @@ export default function RoleManagement() {
         </Modal.Footer>
       </Modal>
       <Breadcrumb items={breadCrumbItems} />
+      
+      <PageHeader
+        title="Users & roles"
+        description="Manage sub-admins and their access."
+      />
       <div>
         <h3 className="text-heading-6 font-semibold">Sub Admins</h3>
         {loading ? (
@@ -142,7 +148,7 @@ export default function RoleManagement() {
                       {subAdminColumns.map((col, colIndex) => (
                         <td
                           key={colIndex}
-                          className="table-cell h-12 text-left whitespace-nowrap text-sm text-gray-700"
+                          className="table-cell h-12 text-left whitespace-nowrap text-sm text-black-9"
                         >
                           {col.render ? (
                             col.render(row)

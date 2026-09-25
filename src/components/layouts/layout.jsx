@@ -1,22 +1,25 @@
 import { useState } from "react";
 import Navbar from "../navbar/Navbar";
-import Sidebar from "../sidebar/Sidebar";
+import Sidebar, {
+  COLLAPSED_WIDTH,
+  EXPANDED_WIDTH,
+} from "../sidebar/Sidebar";
 
 export default function RootLayout({ children }) {
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const sidebarWidth = isCollapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH;
 
   return (
     <div className="wrapper">
       <div className="layout-container">
         <Navbar />
-        <div className="flex">
-          {/* Pass the state and setter to Sidebar */}
+        <div className="flex min-w-0">
           <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
           <div
             style={{
-              width: `calc(100% - ${isCollapsed ? 124 : 264}px)`,
+              width: `calc(100% - ${sidebarWidth}px)`,
             }}
-            className="admin-content bg-black-3 transition-all duration-300 relative z-0"
+            className="admin-content bg-canvas transition-all duration-300 relative z-0 text-navy min-w-0"
           >
             {children}
           </div>
@@ -25,4 +28,3 @@ export default function RootLayout({ children }) {
     </div>
   );
 }
-

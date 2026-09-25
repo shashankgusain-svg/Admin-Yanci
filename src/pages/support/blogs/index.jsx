@@ -117,8 +117,8 @@ export default function BlogsPage() {
         <span
           className={`inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium ${
             row.status === "LIVE"
-              ? "bg-green-100 text-green-700"
-              : "bg-gray-100 text-gray-600"
+              ? "bg-gain-soft text-gain"
+              : "bg-black-4 text-black-8"
           }`}
         >
           {row.status || "—"}
@@ -141,7 +141,7 @@ export default function BlogsPage() {
           {canManage && (
             <button
               type="button"
-              className="text-red-600 text-sm hover:underline font-medium"
+              className="text-loss text-sm hover:underline font-medium"
               onClick={() => setDeleteId(row._id)}
             >
               Delete
@@ -159,7 +159,7 @@ export default function BlogsPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <p className="text-heading-5 font-bold text-black-13">Blog Management</p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-black-7 mt-1">
             Manage blog posts shown in the user app. Only LIVE blogs are visible to users.
           </p>
         </div>

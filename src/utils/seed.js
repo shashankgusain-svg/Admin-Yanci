@@ -71,14 +71,20 @@ export const getKycStatusLabel = (status) =>
 export const getKycStatusBadgeClass = (status) => {
   const s = normalizeKycStatus(status);
   if (s === "trading_active" || s === "csd_number_received") {
-    return "bg-green-500 text-white";
+    return "bg-gain-soft text-gain rounded-full px-2.5 py-0.5 text-label-2 font-semibold";
   }
-  if (s === "rejected") return "bg-red-500 text-white";
-  if (s === "hold") return "bg-orange-400 text-black";
-  if (s === "awaiting_csd_number" || s === "submitted_to_csd" || s === "ready_for_review") {
-    return "bg-blue-100 text-blue-800";
+  if (s === "rejected")
+    return "bg-loss-soft text-loss rounded-full px-2.5 py-0.5 text-label-2 font-semibold";
+  if (s === "hold")
+    return "bg-warning-soft text-warning rounded-full px-2.5 py-0.5 text-label-2 font-semibold";
+  if (
+    s === "awaiting_csd_number" ||
+    s === "submitted_to_csd" ||
+    s === "ready_for_review"
+  ) {
+    return "bg-info-soft text-info rounded-full px-2.5 py-0.5 text-label-2 font-semibold";
   }
-  return "bg-yellow-400 text-black";
+  return "bg-warning-soft text-warning rounded-full px-2.5 py-0.5 text-label-2 font-semibold";
 };
 export const withdrawalRequestsStatusMapping = {
   successful: "Successful",

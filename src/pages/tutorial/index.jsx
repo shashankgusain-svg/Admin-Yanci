@@ -13,6 +13,7 @@ import {
 } from "@/services/api/tutorialVideoService";
 import { toast } from "react-toastify";
 import imagePlaceholder from "../../../public/images/pi_placeholder.jpg";
+import PageHeader from "@/components/pageHeader/PageHeader";
 
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
 const ACCEPTED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
@@ -194,7 +195,7 @@ export default function TutorialVideosPage() {
         <div className="max-w-[220px]">
           <p className="font-medium text-black-13 truncate">{row.title || "—"}</p>
           {row.description ? (
-            <p className="text-xs text-gray-500 truncate">{row.description}</p>
+            <p className="text-xs text-black-7 truncate">{row.description}</p>
           ) : null}
         </div>
       ),
@@ -211,8 +212,8 @@ export default function TutorialVideosPage() {
         <span
           className={`inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium ${
             row.status === "LIVE"
-              ? "bg-green-100 text-green-700"
-              : "bg-gray-100 text-gray-600"
+              ? "bg-gain-soft text-gain"
+              : "bg-black-4 text-black-8"
           }`}
         >
           {row.status || "—"}
@@ -240,7 +241,7 @@ export default function TutorialVideosPage() {
             Play
           </button>
         ) : (
-          <span className="text-gray-400 text-sm">—</span>
+          <span className="text-black-6 text-sm">—</span>
         ),
     },
     ...(canManage
@@ -252,7 +253,7 @@ export default function TutorialVideosPage() {
             render: (row) => (
               <button
                 type="button"
-                className="text-red-600 text-sm hover:underline font-medium"
+                className="text-loss text-sm hover:underline font-medium"
                 onClick={() => setDeleteId(row._id)}
               >
                 Delete
@@ -267,10 +268,15 @@ export default function TutorialVideosPage() {
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
 
+      
+      <PageHeader
+        title="Tutorial"
+        description="Manage learning videos for investors."
+      />
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <p className="text-heading-5 font-bold text-black-13">Tutorial Videos</p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-black-7 mt-1">
             Only LIVE videos appear in the user app. Upload MP4, WebM, or MOV (max 100MB).
           </p>
         </div>
@@ -317,7 +323,7 @@ export default function TutorialVideosPage() {
           <Modal.Content>
             <div className="flex flex-col gap-4 pb-6">
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">
+                <label className="text-xs font-semibold uppercase text-black-7">
                   Video * (MP4 / WebM / MOV, max 100MB)
                 </label>
                 <input
@@ -337,14 +343,14 @@ export default function TutorialVideosPage() {
                   }}
                 />
                 {form.video && (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-black-7">
                     {form.video.name} ({(form.video.size / (1024 * 1024)).toFixed(1)} MB)
                   </p>
                 )}
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">
+                <label className="text-xs font-semibold uppercase text-black-7">
                   Thumbnail (optional)
                 </label>
                 <input
@@ -358,7 +364,7 @@ export default function TutorialVideosPage() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">Title *</label>
+                <label className="text-xs font-semibold uppercase text-black-7">Title *</label>
                 <input
                   name="title"
                   value={form.title}
@@ -369,7 +375,7 @@ export default function TutorialVideosPage() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold uppercase text-gray-500">Description</label>
+                <label className="text-xs font-semibold uppercase text-black-7">Description</label>
                 <textarea
                   name="description"
                   value={form.description}
@@ -382,7 +388,7 @@ export default function TutorialVideosPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold uppercase text-gray-500">
+                  <label className="text-xs font-semibold uppercase text-black-7">
                     Order (lower = first)
                   </label>
                   <input
@@ -395,7 +401,7 @@ export default function TutorialVideosPage() {
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold uppercase text-gray-500">Status</label>
+                  <label className="text-xs font-semibold uppercase text-black-7">Status</label>
                   <select
                     name="status"
                     value={form.status}
@@ -416,11 +422,11 @@ export default function TutorialVideosPage() {
                       style={{ width: `${uploadProgress}%` }}
                     />
                   </div>
-                  <p className="text-xs text-gray-500">Uploading… {uploadProgress}%</p>
+                  <p className="text-xs text-black-7">Uploading… {uploadProgress}%</p>
                 </div>
               )}
 
-              {formError && <p className="text-sm text-red-600">{formError}</p>}
+              {formError && <p className="text-sm text-loss">{formError}</p>}
             </div>
           </Modal.Content>
           <Modal.Footer>
@@ -483,10 +489,10 @@ export default function TutorialVideosPage() {
                   className="w-full rounded-lg border border-black-5 bg-black max-h-[60vh]"
                 />
               ) : (
-                <p className="text-sm text-gray-400">Video URL not available.</p>
+                <p className="text-sm text-black-6">Video URL not available.</p>
               )}
               {previewVideo.description && (
-                <p className="text-sm text-gray-600 mt-3">{previewVideo.description}</p>
+                <p className="text-sm text-black-8 mt-3">{previewVideo.description}</p>
               )}
             </div>
           </Modal.Content>

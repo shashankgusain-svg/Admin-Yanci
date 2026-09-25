@@ -12,6 +12,7 @@ import useSearch from "@/hooks/useSearch";
 import Dropdown from "@/components/dropdown/DropdownIndex";
 import viewDetails from "../../../public/icons/misc/viewDetails.svg";
 import { useRouter } from "next/router";
+import PageHeader from "@/components/pageHeader/PageHeader";
 
 const breadCrumbItems = [
   { name: "Home", link: "/" },
@@ -167,16 +168,20 @@ export default function Revenue() {
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
 
+      
+      <PageHeader
+        title="Revenue"
+        description="Monitor fees and platform revenue."
+      />
       {/* Summary Cards */}
-      <div className="grid gap-x-6 gap-y-4 grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
+      <div className="grid gap-2.5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
         {metricCards.map((card, i) => (
           <MetricsCard
             key={i}
+            dense
             label={card.label}
             value={loadingSeries ? "..." : Number(card.value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             isDollar={true}
-            isPositiveChange={true}
-            percentageChange={0}
           />
         ))}
       </div>

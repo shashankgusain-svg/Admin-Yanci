@@ -25,7 +25,7 @@
   border-radius: 0 !important;
 
   &:focus{
-    border: 2px solid #35BAB2 !important;
+    border: 2px solid #028090 !important;
   }
 }
 
@@ -50,7 +50,7 @@
 .rmdp-header {
   height: 56px !important;
   display: grid !important;
-  background-color: #35bab2 !important;
+  background-color: #028090 !important;
 }
 
 .rmdp-header-values {

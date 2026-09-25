@@ -23,6 +23,7 @@ import {
   feedbackColumns,
   queriesColumns,
 } from "@/config/tableConfig";
+import PageHeader from "@/components/pageHeader/PageHeader";
 import {
   getFaqDropdownItems,
   getQueriesDropdownItems,
@@ -222,6 +223,11 @@ export default function UserSupport() {
         </Modal.Footer>
       </Modal>
       <Breadcrumb items={breadCrumbItems} />
+      
+      <PageHeader
+        title="User support"
+        description="Respond to FAQs and support queries."
+      />
       <div className="flex flex-col gap-6">
         <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
           {Object.entries(metrics).map(([key, value], index) => (

@@ -4,69 +4,116 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
-
-    // Or if using `src` directory:
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
-      width:{
-
-      },
+      width: {},
       fontFamily: {
         inter: ["var(--font-inter)"],
       },
       borderWidth: {
         0.3: "0.3px",
       },
-      maxWidth:{
-        confirmation : "437px",
-        details : "1153px",
-        document : "784px",
-        report : "550px",
-        upload : "920px",
-        roleMgmt : "862px"
+      boxShadow: {
+        card: "0 1px 3px rgba(18, 33, 59, 0.06)",
+        drawer: "0 8px 24px rgba(18, 33, 59, 0.12)",
+      },
+      borderRadius: {
+        card: "12px",
+        input: "8px",
+        button: "8px",
+        drawer: "12px",
+      },
+      maxWidth: {
+        confirmation: "437px",
+        details: "1153px",
+        document: "784px",
+        report: "550px",
+        upload: "920px",
+        roleMgmt: "862px",
+        drawer: "480px",
       },
       colors: {
         primary: {
-          1: "#ebf8f7",
-          2: "#cfeeed",
-          3: "#a8e1de",
-          4: "#80d4ce",
-          5: "#59c6c0",
-          6: "#35bab2",
-          7: "#2d9e97",
-          8: "#26847e",
-          9: "#1e6a65",
-          10: "#185450",
+          1: "#E6F6F3",
+          2: "#C5EBE6",
+          3: "#9AD9D2",
+          4: "#6FC4BB",
+          5: "#3DA8A0",
+          6: "#028090",
+          7: "#026B78",
+          8: "#025760",
+          9: "#014348",
+          10: "#013038",
         },
         black: {
           1: "#ffffff",
           2: "#fcfcfc",
-          3: "#f5f5f5",
+          3: "#F6F8FA",
           4: "#f0f0f0",
-          5: "#d9d9d9",
+          5: "#E4E9EF",
           6: "#bfbfbf",
-          7: "#8c8c8c",
+          7: "#5B6B80",
           8: "#595959",
           9: "#454545",
           10: "#262626",
           11: "#1f1f1f",
           12: "#141414",
-          13: "#000000",
+          13: "#12213B",
+        },
+        navy: "#12213B",
+        mint: "#02C39A",
+        canvas: "#F6F8FA",
+        sidebar: {
+          bg: "#0B1526",
+          active: "#12263D",
+          text: "#B8C4D4",
+          textActive: "#FFFFFF",
+          accent: "#02C39A",
+        },
+        gain: {
+          DEFAULT: "#12A150",
+          soft: "rgba(18, 161, 80, 0.12)",
+        },
+        loss: {
+          DEFAULT: "#D92D3A",
+          soft: "rgba(217, 45, 58, 0.12)",
+        },
+        warning: {
+          DEFAULT: "#D97706",
+          soft: "rgba(217, 119, 6, 0.12)",
+        },
+        info: {
+          DEFAULT: "#2563EB",
+          soft: "rgba(37, 99, 235, 0.12)",
+        },
+        status: {
+          success: "#12A150",
+          warning: "#D97706",
+          danger: "#D92D3A",
+          info: "#2563EB",
+          neutral: "#8B99AB",
         },
       },
       fontSize: {
-        "heading-1": ["2rem", "1.2"], // 32px = 2rem, Line height: 120%
-        "heading-2": ["1.8125rem", "1.2"], // 29px = 1.8125rem
-        "heading-3": ["1.625rem", "1.2"], // 26px = 1.625rem
-        "heading-4": ["1.4375rem", "1.2"], // 23px = 1.4375rem
-        "heading-5": ["1.25rem", "1.2"], // 20px = 1.25rem
-        "heading-6": ["1.125rem", "1.2"], // 18px = 1.125rem
-        "body-1": ["1rem", "1.45"], // 16px = 1rem, Line height: 145%
-        "body-2": ["0.875rem", "1.45"], // 14px = 0.875rem
-        "label-1": ["0.8125rem", "1.4"], // 13px = 0.8125rem, Line height: 140%
-        "label-2": ["0.6875rem", "1.4"], // 11px = 0.6875rem
+        "page-title": ["1.5rem", { lineHeight: "1.875rem", fontWeight: "700" }],
+        "panel-title": ["1.125rem", { lineHeight: "1.5rem", fontWeight: "600" }],
+        "kpi-value": ["1.75rem", { lineHeight: "2rem", fontWeight: "700" }],
+        "kpi-delta": ["0.75rem", { lineHeight: "1rem", fontWeight: "600" }],
+        "table-header": ["0.75rem", { lineHeight: "1rem", fontWeight: "600" }],
+        "table-cell": ["0.8125rem", { lineHeight: "1.125rem" }],
+        "heading-1": ["2rem", "1.2"],
+        "heading-2": ["1.8125rem", "1.2"],
+        "heading-3": ["1.625rem", "1.2"],
+        "heading-4": ["1.4375rem", "1.2"],
+        "heading-5": ["1.25rem", "1.2"],
+        "heading-6": ["1.125rem", "1.25"],
+        "body-1": ["1rem", "1.5"],
+        "body-2": ["0.875rem", "1.43"],
+        "label-1": ["0.8125rem", "1.4"],
+        "label-2": ["0.75rem", "1.33"],
+        "numeric-m": ["1rem", "1.25"],
       },
       screens: {
         xl: "1300px",
