@@ -41,11 +41,11 @@ export default function RoleManagement() {
       key: "features",
       render: (row) => (
         <p className=" whitespace-normal">
-          {row.permissions.map((permission, index) =>
+          {(row.permissions || []).map((permission, index) =>
             permission.view === true ? (
-              <span key={permission._id}>
+              <span key={permission._id || permission.permissionName || index}>
                 {permission.permissionName}
-                {index < row.permissions.length - 1 && ", "}
+                {index < (row.permissions || []).length - 1 && ", "}
               </span>
             ) : null
           )}
@@ -56,14 +56,27 @@ export default function RoleManagement() {
 
   const fetchSubAdminDetails = async () => {
     setLoading(true);
-    const result = await getAllSubAdmins({ limit: limit, page: page });
-    console.log(result)
-    if(result){
-      setData([...result?.data?.results]);
-      setTotalPages(result?.data?.totalPages || 1);
+    try {
+      const result = await getAllSubAdmins({ limit: limit, page: page });
+      if (result?.status) {
+        const results = Array.isArray(result.data?.results)
+          ? result.data.results
+          : Array.isArray(result.data)
+            ? result.data
+            : [];
+        setData(results);
+        setTotalPages(result.data?.totalPages || 1);
+      } else {
+        setData([]);
+        setTotalPages(1);
+      }
+    } catch (error) {
+      console.error("Error fetching sub-admins:", error);
+      setData([]);
+      setTotalPages(1);
+    } finally {
       setLoading(false);
     }
- 
   };
 
   const handleDelete = async () => {

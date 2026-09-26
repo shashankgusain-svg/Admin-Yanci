@@ -57,6 +57,11 @@ export default function index() {
         view: false,
         edit: false,
       },
+      {
+        permissionName: "Migration Import",
+        view: false,
+        edit: false,
+      },
     ],
   };
 

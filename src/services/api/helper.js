@@ -1,10 +1,13 @@
 import { toast } from "react-toastify";
 
-export const URL = "https://api.investwithyanci.com/v1/";
+export const URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://api.investwithyanci.com/v1/";
 
 // set to true during logout so in-flight responses don't show toasts
 let _isLoggingOut = false;
-export const setLoggingOut = (val) => { _isLoggingOut = val; };
+export const setLoggingOut = (val) => {
+  _isLoggingOut = val;
+};
 
 export const responseValidator = async (
   response,
