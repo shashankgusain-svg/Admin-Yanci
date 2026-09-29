@@ -100,7 +100,7 @@ export default function CreateBlogPage() {
 
       <div>
         <p className="text-heading-5 font-bold text-black-13">Create Blog</p>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-black-7 mt-1">
           Add a new blog post for the user app.
         </p>
       </div>
@@ -172,7 +172,7 @@ export default function CreateBlogPage() {
             }}
           />
           {form.thumbnail && (
-            <p className="text-xs text-gray-500">{form.thumbnail.name}</p>
+            <p className="text-xs text-black-7">{form.thumbnail.name}</p>
           )}
         </div>
 
@@ -190,7 +190,7 @@ export default function CreateBlogPage() {
             }}
           />
           {form.featuredImage && (
-            <p className="text-xs text-gray-500">{form.featuredImage.name}</p>
+            <p className="text-xs text-black-7">{form.featuredImage.name}</p>
           )}
         </div>
 
@@ -217,11 +217,11 @@ export default function CreateBlogPage() {
                 style={{ width: `${uploadProgress}%` }}
               />
             </div>
-            <p className="text-xs text-gray-500">Uploading… {uploadProgress}%</p>
+            <p className="text-xs text-black-7">Uploading… {uploadProgress}%</p>
           </div>
         )}
 
-        {formError && <p className="text-sm text-red-600">{formError}</p>}
+        {formError && <p className="text-sm text-loss">{formError}</p>}
 
         <div className="flex items-center gap-3">
           <Button type="submit" isLoading={submitting}>

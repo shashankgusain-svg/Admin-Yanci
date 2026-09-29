@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import React from "react";
 import filterIcon from "../../../public/icons/misc/filter.svg";
+import PageHeader from "@/components/pageHeader/PageHeader";
 
 const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Audit Logs" }];
 
@@ -97,7 +98,7 @@ export default function AuditLogs() {
         <p>Filters</p>
       </Dropdown.Button>
       <Dropdown.Menu origin="top-right-2">
-        <p className="px-3 pt-2 pb-1 text-xs font-semibold text-gray-500 uppercase">Where</p>
+        <p className="px-3 pt-2 pb-1 text-xs font-semibold text-black-7 uppercase">Where</p>
         {options.modules.map((module) => (
           <Dropdown.Item
             key={module}
@@ -107,7 +108,7 @@ export default function AuditLogs() {
             {module}
           </Dropdown.Item>
         ))}
-        <p className="px-3 pt-3 pb-1 text-xs font-semibold text-gray-500 uppercase">Action</p>
+        <p className="px-3 pt-3 pb-1 text-xs font-semibold text-black-7 uppercase">Action</p>
         {options.actions.map((item) => (
           <Dropdown.Item
             key={item.value}
@@ -117,7 +118,7 @@ export default function AuditLogs() {
             {item.label}
           </Dropdown.Item>
         ))}
-        <p className="px-3 pt-3 pb-1 text-xs font-semibold text-gray-500 uppercase">Role</p>
+        <p className="px-3 pt-3 pb-1 text-xs font-semibold text-black-7 uppercase">Role</p>
         {options.roles.map((item) => (
           <Dropdown.Item
             key={item.value}
@@ -130,7 +131,7 @@ export default function AuditLogs() {
         {(where || action || role) && (
           <Dropdown.Item
             onClick={clearFilters}
-            className="text-red-500 border-t border-black-5 mt-1"
+            className="text-loss border-t border-black-5 mt-1"
           >
             Clear filters
           </Dropdown.Item>
@@ -161,6 +162,11 @@ export default function AuditLogs() {
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
+      
+      <PageHeader
+        title="Audit logs"
+        description="Read-only history of sensitive admin actions."
+      />
       <Table
         title="Audit Logs"
         columns={auditLogColumns()}

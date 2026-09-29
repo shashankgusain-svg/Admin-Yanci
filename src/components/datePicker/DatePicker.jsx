@@ -10,7 +10,7 @@ export default function CustomDatePicker({ values, onChange }) {
     <div className="date-picker flex flex-col gap-2 pb-1 bg-[#F6F6F6]">
       <div className="flex justify-around items-center my-4 ">
         <div className="flex flex-col">
-          <span className="text-gray-500">From</span>
+          <span className="text-black-7">From</span>
           <span className="border border-gray-300 rounded-md px-4 py-2 bg-white">
             {selectedDates && selectedDates.length === 2
               ? selectedDates[0].format(format)
@@ -19,7 +19,7 @@ export default function CustomDatePicker({ values, onChange }) {
         </div>
 
         <div className="flex flex-col">
-          <span className="text-gray-500">To</span>
+          <span className="text-black-7">To</span>
           <span className="border border-gray-300 rounded-md px-4 py-2 bg-white">
             {selectedDates && selectedDates.length === 2
               ? selectedDates[1].format(format)

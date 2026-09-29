@@ -76,10 +76,10 @@ export default function FundDetails() {
               <span
                 className={`inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium ${
                   item.status === "Successful"
-                    ? "bg-green-100 text-green-600"
+                    ? "bg-gain-soft text-gain"
                     : item.verification === "Pending"
-                    ? "bg-yellow-100 text-yellow-400"
-                    : "bg-red-100 text-red-800 "
+                    ? "bg-warning-soft text-warning"
+                    : "bg-loss-soft text-loss "
                 }`}
               >
                 {item.status}

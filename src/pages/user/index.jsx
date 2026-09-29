@@ -15,6 +15,7 @@ import Dropdown from "@/components/dropdown/DropdownIndex";
 import Image from "next/image";
 import filterIcon from "../../../public/icons/misc/filter.svg";
 import sortIcon from "../../../public/icons/misc/SortIcon";
+import PageHeader from "@/components/pageHeader/PageHeader";
 
 const breadCrumbItems = [
   { name: "Home", link: "/" },
@@ -116,7 +117,7 @@ export default function User() {
         <p>Filters</p>
       </Dropdown.Button>
       <Dropdown.Menu origin="top-right-2">
-        <p className="px-3 pt-2 pb-1 text-xs font-semibold text-gray-500 uppercase">Gender</p>
+        <p className="px-3 pt-2 pb-1 text-xs font-semibold text-black-7 uppercase">Gender</p>
         {GENDER_OPTIONS.map((g) => (
           <Dropdown.Item
             key={g}
@@ -126,7 +127,7 @@ export default function User() {
             {g}
           </Dropdown.Item>
         ))}
-        <p className="px-3 pt-3 pb-1 text-xs font-semibold text-gray-500 uppercase">Nationality</p>
+        <p className="px-3 pt-3 pb-1 text-xs font-semibold text-black-7 uppercase">Nationality</p>
         {NATIONALITY_OPTIONS.map((n) => (
           <Dropdown.Item
             key={n}
@@ -139,7 +140,7 @@ export default function User() {
         {(gender || nationality) && (
           <Dropdown.Item
             onClick={() => { setGender(""); setNationality(""); }}
-            className="text-red-500 border-t border-black-5 mt-1"
+            className="text-loss border-t border-black-5 mt-1"
           >
             Clear filters
           </Dropdown.Item>
@@ -240,6 +241,11 @@ export default function User() {
 
       <Breadcrumb items={breadCrumbItems} />
 
+      
+      <PageHeader
+        title="Users"
+        description="Search and manage investor accounts."
+      />
       {/* Metric Cards */}
       <div className="grid gap-x-6 gap-y-4 grid-cols-2 lg:grid-cols-5">
         {metricCards.map((card, i) => (

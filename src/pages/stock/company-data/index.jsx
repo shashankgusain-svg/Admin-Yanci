@@ -19,6 +19,7 @@ import {
 import LoadingAnimation from "../../../../public/icons/animated/loading";
 import imagePlaceholder from "../../../../public/images/pi_placeholder.jpg";
 import { toast } from "react-toastify";
+import PageHeader from "@/components/pageHeader/PageHeader";
 
 const CSV_HEADERS = [
   "Symbol",
@@ -110,7 +111,7 @@ const formatSymbolLabel = (item) => {
 
 const PreviewList = ({ items, empty = "None" }) => {
   if (!items?.length) {
-    return <p className="text-sm text-gray-400">{empty}</p>;
+    return <p className="text-sm text-black-6">{empty}</p>;
   }
   const shown = items.slice(0, 20);
   return (
@@ -119,7 +120,7 @@ const PreviewList = ({ items, empty = "None" }) => {
         <li key={item.symbol || item || i}>{formatSymbolLabel(item)}</li>
       ))}
       {items.length > shown.length && (
-        <li className="text-gray-500">+{items.length - shown.length} more</li>
+        <li className="text-black-7">+{items.length - shown.length} more</li>
       )}
     </ul>
   );
@@ -128,24 +129,24 @@ const PreviewList = ({ items, empty = "None" }) => {
 const StatusBadges = ({ company, onDuplicateClick }) => {
   const badges = [];
   if (isAppVisible(company)) {
-    badges.push({ key: "listed", label: "Listed", className: "bg-green-100 text-green-700" });
+    badges.push({ key: "listed", label: "Listed", className: "bg-gain-soft text-gain" });
   }
   if (company.isDelisted) {
-    badges.push({ key: "delisted", label: "Delisted", className: "bg-red-100 text-red-700" });
+    badges.push({ key: "delisted", label: "Delisted", className: "bg-loss-soft text-loss" });
   }
   if (company.isHidden) {
-    badges.push({ key: "hidden", label: "Hidden", className: "bg-gray-100 text-gray-600" });
+    badges.push({ key: "hidden", label: "Hidden", className: "bg-black-4 text-black-8" });
   }
   if (canonicalOf(company)) {
     badges.push({
       key: "duplicate",
       label: `Duplicate of ${canonicalOf(company)}`,
-      className: "bg-yellow-100 text-yellow-800",
+      className: "bg-warning-soft text-warning",
       onClick: onDuplicateClick ? () => onDuplicateClick(canonicalOf(company)) : undefined,
     });
   }
 
-  if (!badges.length) return <span className="text-gray-400">—</span>;
+  if (!badges.length) return <span className="text-black-6">—</span>;
 
   return (
     <div className="flex flex-wrap gap-1">
@@ -171,7 +172,7 @@ const StatusBadges = ({ company, onDuplicateClick }) => {
 
 const Field = ({ label, value }) => (
   <div className="flex flex-col gap-1">
-    <p className="text-xs font-semibold uppercase text-gray-500">{label}</p>
+    <p className="text-xs font-semibold uppercase text-black-7">{label}</p>
     <div className="border border-black-5 bg-black-4 rounded-lg px-3 py-2 text-sm text-black-13 min-h-[36px] break-words">
       {value ?? "—"}
     </div>
@@ -180,7 +181,7 @@ const Field = ({ label, value }) => (
 
 const InputField = ({ label, name, value, onChange, textarea = false }) => (
   <div className="flex flex-col gap-1">
-    <label className="text-xs font-semibold uppercase text-gray-500">{label}</label>
+    <label className="text-xs font-semibold uppercase text-black-7">{label}</label>
     {textarea ? (
       <textarea
         name={name}
@@ -463,6 +464,11 @@ export default function CompanyDataManagement() {
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
+      
+      <PageHeader
+        title="Companies"
+        description="Maintain listed company records."
+      />
       <p className="text-heading-5 font-bold text-black-13">Companies</p>
 
       {isSuperAdmin && (
@@ -482,7 +488,7 @@ export default function CompanyDataManagement() {
         <div className="bg-white border border-black-5 rounded-xl p-6 flex flex-col gap-4">
           <div>
             <p className="font-semibold text-black-13 text-base">Upload Company CSV</p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-black-7 mt-1">
               Upload a CSV file to create or update company data. Existing records are only updated if data has changed.
             </p>
           </div>
@@ -507,14 +513,14 @@ export default function CompanyDataManagement() {
               <p className="text-sm font-medium text-primary-7">📄 {csvFile.name}</p>
             ) : (
               <>
-                <p className="text-sm text-gray-500">Drag & drop a CSV or Excel file here, or click to browse</p>
-                <p className="text-xs text-gray-400 mt-1">.csv and .xlsx files accepted</p>
+                <p className="text-sm text-black-7">Drag & drop a CSV or Excel file here, or click to browse</p>
+                <p className="text-xs text-black-6 mt-1">.csv and .xlsx files accepted</p>
               </>
             )}
           </div>
 
           {uploadError && (
-            <p className="text-sm text-red-600">{uploadError}</p>
+            <p className="text-sm text-loss">{uploadError}</p>
           )}
 
           <div className="flex gap-3 flex-wrap">
@@ -590,7 +596,7 @@ export default function CompanyDataManagement() {
             <LoadingAnimation />
           </div>
         ) : companies.length === 0 ? (
-          <div className="flex items-center justify-center py-16 text-gray-400 text-sm">
+          <div className="flex items-center justify-center py-16 text-black-6 text-sm">
             No companies found.
           </div>
         ) : (
@@ -599,7 +605,7 @@ export default function CompanyDataManagement() {
               <thead>
                 <tr className="border-b border-black-5 bg-primary-2">
                   {["Symbol", "Company", "Status", "Sector", "Industry", "CEO", "Website", "Date Listed", "Actions"].map((h) => (
-                    <th key={h} className="table-header text-left text-xs font-semibold text-gray-500 uppercase">
+                    <th key={h} className="table-header text-left text-xs font-semibold text-black-7 uppercase">
                       {h}
                     </th>
                   ))}
@@ -615,8 +621,8 @@ export default function CompanyDataManagement() {
                       <td className="table-cell">
                         <StatusBadges company={c} onDuplicateClick={goToCanonical} />
                       </td>
-                      <td className="table-cell text-sm text-gray-500">{c.sector || "—"}</td>
-                      <td className="table-cell text-sm text-gray-500">{c.industry || "—"}</td>
+                      <td className="table-cell text-sm text-black-7">{c.sector || "—"}</td>
+                      <td className="table-cell text-sm text-black-7">{c.industry || "—"}</td>
                       <td className="table-cell text-sm">{c.ceo || "—"}</td>
                       <td className="table-cell text-sm">
                         {c.website ? (
@@ -638,7 +644,7 @@ export default function CompanyDataManagement() {
                               </button>
                               {isAppVisible(c) && (
                                 <button
-                                  className="text-sm hover:underline text-red-600 disabled:opacity-40"
+                                  className="text-sm hover:underline text-loss disabled:opacity-40"
                                   disabled={rowBusy || removing}
                                   onClick={() => setRemoveTarget(c)}
                                 >
@@ -647,7 +653,7 @@ export default function CompanyDataManagement() {
                               )}
                               {(c.isDelisted || c.isHidden) && (
                                 <button
-                                  className="text-sm hover:underline text-gray-600 disabled:opacity-40"
+                                  className="text-sm hover:underline text-black-8 disabled:opacity-40"
                                   disabled={rowBusy}
                                   onClick={() => handleRestore(c)}
                                 >
@@ -698,7 +704,7 @@ export default function CompanyDataManagement() {
                 />
                 <div>
                   <p className="font-bold text-black-13 text-lg">{selectedCompany.companyName || selectedCompany.company}</p>
-                  <p className="text-sm text-gray-500">{selectedCompany.symbol} · {selectedCompany.sector}</p>
+                  <p className="text-sm text-black-7">{selectedCompany.symbol} · {selectedCompany.sector}</p>
                   <div className="mt-2">
                     <StatusBadges
                       company={selectedCompany}
@@ -733,7 +739,7 @@ export default function CompanyDataManagement() {
                 )}
                 {selectedCompany.duplicateOf && (
                   <div className="flex flex-col gap-1">
-                    <p className="text-xs font-semibold uppercase text-gray-500">Duplicate of</p>
+                    <p className="text-xs font-semibold uppercase text-black-7">Duplicate of</p>
                     <button
                       type="button"
                       className="text-left text-sm text-primary-6 hover:underline border border-black-5 bg-black-4 rounded-lg px-3 py-2 min-h-[36px]"
@@ -833,7 +839,7 @@ export default function CompanyDataManagement() {
           <Modal.Content>
             <div className="flex flex-col gap-5 pb-4">
               {cleanupPreview.scrapeError && (
-                <p className="text-sm text-yellow-800 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
+                <p className="text-sm text-warning bg-warning-soft border border-warning/30 rounded-lg px-3 py-2">
                   GSE scrape failed ({cleanupPreview.scrapeError}). Delisting was skipped; other fixes can continue.
                 </p>
               )}
@@ -860,15 +866,15 @@ export default function CompanyDataManagement() {
               </div>
 
               <div>
-                <p className="text-xs font-semibold uppercase text-gray-500 mb-2">Will be marked delisted</p>
+                <p className="text-xs font-semibold uppercase text-black-7 mb-2">Will be marked delisted</p>
                 <PreviewList items={cleanupPreview.delisted?.delisted} />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase text-gray-500 mb-2">Will be marked listed</p>
+                <p className="text-xs font-semibold uppercase text-black-7 mb-2">Will be marked listed</p>
                 <PreviewList items={cleanupPreview.delisted?.relisted} />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase text-gray-500 mb-2">Duplicate groups</p>
+                <p className="text-xs font-semibold uppercase text-black-7 mb-2">Duplicate groups</p>
                 {cleanupPreview.duplicates?.groups?.length ? (
                   <ul className="text-sm text-black-13 list-disc pl-5 space-y-1">
                     {cleanupPreview.duplicates.groups.slice(0, 20).map((group) => (
@@ -879,19 +885,19 @@ export default function CompanyDataManagement() {
                       </li>
                     ))}
                     {cleanupPreview.duplicates.groups.length > 20 && (
-                      <li className="text-gray-500">+{cleanupPreview.duplicates.groups.length - 20} more</li>
+                      <li className="text-black-7">+{cleanupPreview.duplicates.groups.length - 20} more</li>
                     )}
                   </ul>
                 ) : (
-                  <p className="text-sm text-gray-400">None</p>
+                  <p className="text-sm text-black-6">None</p>
                 )}
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase text-gray-500 mb-2">Corrupted symbols to remove</p>
+                <p className="text-xs font-semibold uppercase text-black-7 mb-2">Corrupted symbols to remove</p>
                 <PreviewList items={cleanupPreview.corrupted?.deletedSymbols} />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase text-gray-500 mb-2">Corrupted symbols to fix</p>
+                <p className="text-xs font-semibold uppercase text-black-7 mb-2">Corrupted symbols to fix</p>
                 <PreviewList items={cleanupPreview.corrupted?.fixedSymbols} />
               </div>
             </div>

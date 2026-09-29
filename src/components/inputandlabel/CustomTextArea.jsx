@@ -43,7 +43,7 @@ export default function CustomTextArea({
       {showLimit ? (
         <p
           className={`text-body-[0.75rem] ${
-            value.length >= maxLength * 0.9 ? "text-red-500" : "text-black-7"
+            value.length >= maxLength * 0.9 ? "text-loss" : "text-black-7"
           } self-end`}
         >
           {value.length}/{maxLength}

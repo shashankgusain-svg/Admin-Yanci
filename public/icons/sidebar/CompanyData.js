@@ -1,5 +1,5 @@
 export default function CompanyData({ active }) {
-  const fill = active ? "#ffffff" : "#35BAB2";
+  const fill = active ? "#ffffff" : "currentColor";
   return (
     <svg
       width="24"

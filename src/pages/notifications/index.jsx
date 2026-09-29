@@ -14,6 +14,7 @@ import {
 import usePagination from "@/hooks/usePagination";
 import useTableSorting from "@/hooks/useTableSort";
 import useSearch from "@/hooks/useSearch";
+import PageHeader from "@/components/pageHeader/PageHeader";
 import {
   scheduledNotificationColumns,
   sentNotificationColumns,
@@ -126,6 +127,11 @@ export default function Notifications() {
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
+      
+      <PageHeader
+        title="Announcements"
+        description="Create and review platform notifications."
+      />
       <div className="flex flex-col gap-6">
         <div className="grid gap-x-8 gap-y-4 grid-cols-2 lg:grid-cols-4">
           {Object.entries(metrics).map(([key, value], index) => (

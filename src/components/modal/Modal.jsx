@@ -31,21 +31,21 @@ export default function Modal({
     case "confirmation":
       panel = (
         <div
-          className={`popAndAppear bg-white w-full max-w-confirmation flex flex-col rounded-lg shadow-lg ${className}`}
+          className={`popAndAppear bg-white w-full max-w-confirmation flex flex-col rounded-card shadow-card border border-black-5 ${className}`}
         >
           <div className="flex justify-between items-start py-4 px-6 gap-4">
             <div className="flex flex-col gap-4 justify-start items-start">
               {title ? (
-                <h2 className="text-heading-5 font-semibold text-black-13">
+                <h2 className="text-heading-5 font-semibold text-navy">
                   {title}
                 </h2>
               ) : null}
-              {message ? <p className="text-heading-6">{message}</p> : null}
+              {message ? <p className="text-heading-6 text-black-7">{message}</p> : null}
             </div>
 
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-black-7 hover:text-navy"
             >
               <Image src={closeIcon} alt="Close" />
             </button>
@@ -57,16 +57,16 @@ export default function Modal({
     case "document":
       panel = (
         <div
-          className={`popAndAppear h-5/6 max-w-document w-full bg-white flex flex-col rounded-lg shadow-lg ${className}`}
+          className={`popAndAppear h-5/6 max-w-document w-full bg-white flex flex-col rounded-card shadow-card border border-black-5 ${className}`}
         >
           <div className="flex justify-between items-start py-4 px-6 gap-4">
             <div className="flex flex-col gap-4 justify-start items-start">
               {title ? (
-                <h2 className="text-heading-5 font-semibold text-primary-8">
+                <h2 className="text-heading-5 font-semibold text-navy">
                   {title}
                 </h2>
               ) : null}
-              {message ? <p className="text-heading-6">{message}</p> : null}
+              {message ? <p className="text-heading-6 text-black-7">{message}</p> : null}
             </div>
 
             <div className="flex gap-4">
@@ -74,7 +74,7 @@ export default function Modal({
                 <button
                   title="Download"
                   onClick={download}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-black-7 hover:text-navy"
                 >
                   <Image src={downloadIcon} alt="Download" />
                 </button>
@@ -82,7 +82,7 @@ export default function Modal({
               <button
                 onClick={onClose}
                 title="Close"
-                className="text-gray-500 hover:text-gray-700"
+                className="text-black-7 hover:text-navy"
               >
                 <Image src={closeIcon} alt="Close" />
               </button>
@@ -95,21 +95,21 @@ export default function Modal({
     case "detail":
       panel = (
         <div
-          className={`popAndAppear h-5/6 max-w-details w-full bg-white flex flex-col rounded-lg shadow-lg ${className}`}
+          className={`popAndAppear h-5/6 max-w-details w-full bg-white flex flex-col rounded-card shadow-card border border-black-5 ${className}`}
         >
           <div className="flex justify-between items-start py-4 px-6 gap-4">
             <div className="flex flex-col gap-4 justify-start items-start">
               {title ? (
-                <h2 className="text-heading-5 font-semibold text-primary-8 ">
+                <h2 className="text-heading-5 font-semibold text-navy ">
                   {title}
                 </h2>
               ) : null}
-              {message ? <p className="text-heading-6">{message}</p> : null}
+              {message ? <p className="text-heading-6 text-black-7">{message}</p> : null}
             </div>
 
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-black-7 hover:text-navy"
             >
               <Image src={closeIcon} alt="Close" />
             </button>

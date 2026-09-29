@@ -39,8 +39,8 @@ export default function Table({
   const [selectedStatus, setSelectedStatus] = useState("");
 
   const handleFilter = (status) => {
-    setSelectedStatus(status); // Update the selected status
-    onFilter(status); // Call the filter function with the selected status
+    setSelectedStatus(status);
+    onFilter(status);
   };
 
   const colSpan = columns.length + (isDropdown ? 1 : 0);
@@ -48,9 +48,9 @@ export default function Table({
   return (
     <div className="w-full flex flex-col relative slideAndAppear">
       {/* Header */}
-      <div className="min-w-full flex flex-wrap justify-between items-center gap-x-10 gap-y-5 p-4 bg-primary-2 rounded-t-xl border border-primary-3 border-b-0">
+      <div className="min-w-full flex flex-wrap justify-between items-center gap-x-10 gap-y-5 p-4 bg-white rounded-t-card border border-black-5 border-b-0">
         <div className="flex items-center flex-wrap gap-y-4">
-          <h3 className="text-heading-6 font-semibold text-primary-8">
+          <h3 className="text-panel-title text-navy">
             {title ? title : null}
           </h3>
           {searchBar ? (
@@ -84,7 +84,7 @@ export default function Table({
                   <Dropdown.Item
                     key={status}
                     onClick={() => handleFilter(status.toLowerCase())}
-                    className={selectedStatus === status.toLowerCase() ? "bg-gray-200 font-semibold" : ""}
+                    className={selectedStatus === status.toLowerCase() ? "bg-black-4 font-semibold" : ""}
                   >
                     {status}
                   </Dropdown.Item>
@@ -109,20 +109,20 @@ export default function Table({
       </div>
 
       {/* Table */}
-      <div className="table-wrapper border-x border-primary-3 bg-white min-w-full overflow-x-auto">
+      <div className="table-wrapper border-x border-black-5 bg-white min-w-full overflow-x-auto">
         {isLoading ? (
           <div className="min-w-full table-header min-h-20">
             <LoadingAnimation />
           </div>
         ) : (
           <table className="min-w-full border-collapse ">
-            <thead className="border-b-0.3 border-b-primary-6">
+            <thead className="border-b border-black-5 bg-canvas">
               <tr>
                 {columns.map((col, index) => (
                   <th
                     key={index}
                     className={`table-header ${col.sortable ? "flex items-center gap-2" : null
-                      } whitespace-nowrap text-left text-primary-8 text-body-1 font-semibold`}
+                      } whitespace-nowrap text-left text-black-7 text-table-header`}
                   >
                     {col.header}
                     {col.sortable ? (
@@ -147,22 +147,23 @@ export default function Table({
                 <tr>
                   <td
                     colSpan={colSpan}
-                    className="table-cell text-center text-sm text-gray-400 py-10"
+                    className="table-cell text-center text-body-2 text-black-7 py-12"
                   >
-                    No data available.
+                    <p className="font-medium text-navy mb-1">No results found</p>
+                    <p className="text-label-2">Try adjusting search or filters.</p>
                   </td>
                 </tr>
               ) : (
                 data.map((row, rowIndex) => (
                 <tr
-                  className="border-b-0.3 border-primary-6 hover:bg-primary-1"
+                  className="border-b border-black-5 hover:bg-primary-1"
                   key={rowIndex}
                 >
                   {/* For Cells */}
                   {columns.map((col, colIndex) => (
                     <td
                       key={colIndex}
-                      className={`table-cell text-left whitespace-nowrap text-sm text-gray-700`}
+                      className={`table-cell text-left whitespace-nowrap text-table-cell text-navy tabular-nums min-h-[44px]`}
                     >
                       {col.render ? (
                         col.render(row)
@@ -215,7 +216,7 @@ export default function Table({
       </div>
 
       {/* Footer */}
-      <div className="table-bottom flex flex-wrap justify-between items-center gap-x-2 gap-y-5 p-4 bg-white border border-primary-3 border-t-0 rounded-b-xl min-w-full">
+      <div className="table-bottom flex flex-wrap justify-between items-center gap-x-2 gap-y-5 p-4 bg-white border border-black-5 border-t-0 rounded-b-card min-w-full">
         <div className="flex items-center gap-2">
           <p className="text-body-2 text-black-7">Entries per page</p>
           <Dropdown>

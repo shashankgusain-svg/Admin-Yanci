@@ -84,10 +84,10 @@ export default function ReferralsTable() {
             <span
               className={`inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium ${
                 item.status === "Resolved"
-                  ? "bg-green-600 text-white"
+                  ? "bg-gain-soft text-gain"
                   : item.status === "On Hold"
-                  ? "bg-yellow-500 text-black-12"
-                  : "bg-red-600 text-white"
+                  ? "bg-warning-soft text-warning"
+                  : "bg-loss-soft text-loss"
               }`}
             >
               {item.status}

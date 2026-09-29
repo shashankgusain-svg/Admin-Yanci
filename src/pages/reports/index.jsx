@@ -4,6 +4,7 @@ import Button from "@/components/button/Button";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import { downloadAdminReport, getReportOptions } from "@/services/api/analyticsService";
 import { toast } from "react-toastify";
+import PageHeader from "@/components/pageHeader/PageHeader";
 
 const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Reports" }];
 
@@ -78,6 +79,11 @@ export default function Reports() {
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumb items={breadCrumbItems} />
+      
+      <PageHeader
+        title="Reports"
+        description="Generate and download operational reports."
+      />
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="w-full max-w-report grid grid-cols-1 gap-4">
           <InputAndLabel>

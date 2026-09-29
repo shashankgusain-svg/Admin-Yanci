@@ -4,9 +4,32 @@
 @import "./styles//text-editor.css";
 
 :root {
-    --font-inter: 'Inter', sans-serif;
-  }
-  
-  body {
-    font-family: var(--font-inter);
-  }
+  --font-inter: "Inter", sans-serif;
+  --bg-canvas: #f6f8fa;
+  --bg-surface: #ffffff;
+  --border-subtle: #e4e9ef;
+  --text-primary: #12213b;
+  --text-secondary: #5b6b80;
+  --text-tertiary: #8b99ab;
+  --accent-primary: #028090;
+  --accent-mint: #02c39a;
+  --sidebar-bg: #0b1526;
+  --sidebar-active: #12263d;
+  --sidebar-text: #b8c4d4;
+  --gain: #12a150;
+  --loss: #d92d3a;
+  --warning: #d97706;
+  --info: #2563eb;
+  --shadow-card: 0 1px 3px rgba(18, 33, 59, 0.06);
+}
+
+body {
+  font-family: var(--font-inter);
+  color: var(--text-primary);
+  background: var(--bg-canvas);
+}
+
+.tabular-nums,
+.font-numeric {
+  font-variant-numeric: tabular-nums;
+}
