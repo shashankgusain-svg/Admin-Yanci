@@ -109,6 +109,18 @@ export const canEdit = (permissionName) => {
   return permission?.edit ?? false;
 };
 
+export const formatMetricValue = (value, isDollar) => {
+  const num = Number(value);
+  if (Number.isNaN(num)) return value ?? 0;
+  if (isDollar) {
+    return num.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+  return num.toLocaleString();
+};
+
 export const downloadCSV = (columns, data) => {
   const fileName = window.prompt("Enter file name for the CSV", "export.csv");
 

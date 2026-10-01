@@ -13,6 +13,7 @@ import Dropdown from "@/components/dropdown/DropdownIndex";
 import viewDetails from "../../../public/icons/misc/viewDetails.svg";
 import { useRouter } from "next/router";
 import PageHeader from "@/components/pageHeader/PageHeader";
+import { formatMetricValue } from "@/utils/helpers";
 
 const breadCrumbItems = [
   { name: "Home", link: "/" },
@@ -180,7 +181,7 @@ export default function Revenue() {
             key={i}
             dense
             label={card.label}
-            value={loadingSeries ? "..." : Number(card.value || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            value={loadingSeries ? "..." : formatMetricValue(card.value || 0, true)}
             isDollar={true}
           />
         ))}
