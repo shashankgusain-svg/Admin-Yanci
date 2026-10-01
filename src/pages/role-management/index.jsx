@@ -41,11 +41,11 @@ export default function RoleManagement() {
       key: "features",
       render: (row) => (
         <p className=" whitespace-normal">
-          {(row.permissions || []).map((permission, index) =>
+          {(row.permissions ?? []).map((permission, index) =>
             permission.view === true ? (
-              <span key={permission._id || permission.permissionName || index}>
+              <span key={permission._id}>
                 {permission.permissionName}
-                {index < (row.permissions || []).length - 1 && ", "}
+                {index < (row.permissions?.length ?? 0) - 1 && ", "}
               </span>
             ) : null
           )}
@@ -57,36 +57,23 @@ export default function RoleManagement() {
   const fetchSubAdminDetails = async () => {
     setLoading(true);
     try {
-      const result = await getAllSubAdmins({ limit: limit, page: page });
+      const result = await getAllSubAdmins({ limit, page });
       if (result?.status) {
-        const results = Array.isArray(result.data?.results)
-          ? result.data.results
-          : Array.isArray(result.data)
-            ? result.data
-            : [];
-        setData(results);
-        setTotalPages(result.data?.totalPages || 1);
+        setData(result?.data?.results ?? []);
+        setTotalPages(result?.data?.totalPages || 1);
       } else {
         setData([]);
-        setTotalPages(1);
       }
-    } catch (error) {
-      console.error("Error fetching sub-admins:", error);
-      setData([]);
-      setTotalPages(1);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    try {
-      await deleteSubAdmin(userId);
-      setModalOpen(false);
-      fetchSubAdminDetails();
-    } catch (error) {
-      console.error("Error blocking user:", error);
-    }
+    const res = await deleteSubAdmin(userId);
+    if (!res?.status) return;
+    setModalOpen(false);
+    fetchSubAdminDetails();
   };
 
   React.useEffect(() => {

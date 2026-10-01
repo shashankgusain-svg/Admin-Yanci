@@ -262,22 +262,24 @@ export default function Home() {
 
   const handleApprove = async (row, csdAccountNumber) => {
     setActioningId(row.userId);
-    const res = await manageKYC({ type: "verify", userId: row.userId, csdAccountNumber });
+    const res = await manageKYC({
+      type: "verify",
+      userId: row.userId,
+      csdAccountNumber,
+    });
     setActioningId(null);
-    if (res?.status !== false) {
-      setApproveRow(null);
-      refreshKYC();
-    }
+    if (!res?.status) return;
+    setApproveRow(null);
+    refreshKYC();
   };
 
   const handleReject = async (row, reason) => {
     setActioningId(row.userId);
     const res = await manageKYC({ type: "reject", userId: row.userId, reason });
     setActioningId(null);
-    if (res?.status !== false) {
-      setRejectRow(null);
-      refreshKYC();
-    }
+    if (!res?.status) return;
+    setRejectRow(null);
+    refreshKYC();
   };
 
   const metricCards = [

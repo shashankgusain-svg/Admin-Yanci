@@ -99,7 +99,8 @@ export const getSubmittedKycDropdownItems = (payload) => {
       icon: verify,
       text: "Ready for Review",
       onClick: async () => {
-        await markKYCReadyForReview(row.userId);
+        const res = await markKYCReadyForReview(row.userId);
+        if (!res?.status) return;
         fetchKYCData();
       },
     });
@@ -110,7 +111,8 @@ export const getSubmittedKycDropdownItems = (payload) => {
       icon: verify,
       text: "Submitted to CSD",
       onClick: async () => {
-        await markKYCSubmittedToCSD(row.userId);
+        const res = await markKYCSubmittedToCSD(row.userId);
+        if (!res?.status) return;
         fetchKYCData();
       },
     });
@@ -156,7 +158,8 @@ export const getSubmittedKycDropdownItems = (payload) => {
         icon: history,
         text: "Put On Hold",
         onClick: async () => {
-          await manageKYC({ type: "hold", userId: row.userId });
+          const res = await manageKYC({ type: "hold", userId: row.userId });
+          if (!res?.status) return;
           fetchKYCData();
         },
       },
@@ -164,7 +167,8 @@ export const getSubmittedKycDropdownItems = (payload) => {
         icon: reject,
         text: "Reject",
         onClick: async () => {
-          await manageKYC({ type: "reject", userId: row.userId });
+          const res = await manageKYC({ type: "reject", userId: row.userId });
+          if (!res?.status) return;
           fetchKYCData();
         },
         className: "text-red-500",
@@ -176,7 +180,8 @@ export const getSubmittedKycDropdownItems = (payload) => {
     icon: history,
     text: "Regenerate CSD PDF",
     onClick: async () => {
-      await regenerateCsdForm(row.userId);
+      const res = await regenerateCsdForm(row.userId);
+      if (!res?.status) return;
       fetchKYCData();
     },
   });
@@ -240,8 +245,7 @@ export const getSubAdminDropdownItems = (payload) => {
 };
 
 export const getQueriesDropdownItems = (payload) => {
-  const { router, row, updateQueryStatus, fetchUserSupportDetails } = payload;
-  console.log("row-->",row)
+  const { row, updateQueryStatus, fetchUserSupportDetails } = payload;
 
   const items = [
     {
@@ -259,7 +263,8 @@ export const getQueriesDropdownItems = (payload) => {
         icon: verify,
         text: "Resolve",
         onClick: async () => {
-          await updateQueryStatus({ _id: row._id, status: "RESOLVED" });
+          const res = await updateQueryStatus({ _id: row._id, status: "RESOLVED" });
+          if (!res?.status) return;
           fetchUserSupportDetails();
         },
       },
@@ -267,7 +272,8 @@ export const getQueriesDropdownItems = (payload) => {
         icon: history,
         text: "Put on Hold",
         onClick: async () => {
-          await updateQueryStatus({ _id: row._id, status: "HOLD" });
+          const res = await updateQueryStatus({ _id: row._id, status: "HOLD" });
+          if (!res?.status) return;
           fetchUserSupportDetails();
         },
       }
@@ -279,7 +285,8 @@ export const getQueriesDropdownItems = (payload) => {
       icon: verify,
       text: "Resolve",
       onClick: async () => {
-        await updateQueryStatus({ _id: row._id, status: "RESOLVED" });
+        const res = await updateQueryStatus({ _id: row._id, status: "RESOLVED" });
+        if (!res?.status) return;
         fetchUserSupportDetails();
       },
     });
@@ -325,7 +332,8 @@ export const getFaqDropdownItems = (payload) => {
       icon: reject,
       text: "Inactive",
       onClick: async () => {
-        await updateFAQStatus({ _id: row._id, status: "INACTIVE" });
+        const res = await updateFAQStatus({ _id: row._id, status: "INACTIVE" });
+        if (!res?.status) return;
         fetchUserSupportDetails();
       },
     });

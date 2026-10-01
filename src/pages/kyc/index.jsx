@@ -266,11 +266,12 @@ export default function Kyc() {
                 if (!isRequired(verificationData.csdAccountNumber, "CSD Account Number", true)) {
                   return;
                 }
-                await manageKYC({
+                const res = await manageKYC({
                   type: "verify",
                   userId: verificationData.userId,
                   csdAccountNumber: verificationData.csdAccountNumber.trim(),
                 });
+                if (!res?.status) return;
                 closeModal();
                 fetchKYCData();
                 fetchKYCMetrics();

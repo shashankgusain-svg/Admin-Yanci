@@ -8,6 +8,7 @@ import { updatePolicy } from "@/services/api/adminService";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import parse from "html-react-parser";
 import { isRequired } from "@/utils/helpers";
+import { sanitizeHtml } from "@/utils/sanitizeHtml";
 import { editorConfig } from "@/config/joditEditorConfig";
 import { getPolicy } from "@/services/api/policyService";
 import PageHeader from "@/components/pageHeader/PageHeader";
@@ -206,7 +207,7 @@ export default function PoliciesPage() {
           onClose={() => setIsModalOpen(false)}
         >
           <Modal.Content>
-            <div className="updatePreview">{parse(previewContent)}</div>
+            <div className="updatePreview">{parse(sanitizeHtml(previewContent))}</div>
           </Modal.Content>
           <Modal.Footer>
             <Button onClick={handleUpdate}>Confirm Update</Button>

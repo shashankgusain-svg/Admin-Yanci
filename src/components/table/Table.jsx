@@ -42,6 +42,9 @@ export default function Table({
     setSelectedStatus(status);
     onFilter(status);
   };
+
+  const colSpan = columns.length + (isDropdown ? 1 : 0);
+
   return (
     <div className="w-full flex flex-col relative slideAndAppear">
       {/* Header */}
@@ -140,10 +143,10 @@ export default function Table({
               </tr>
             </thead>
             <tbody className="bg-white">
-                  {data.length === 0 ? (
+              {data.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={columns.length + (isDropdown ? 1 : 0)}
+                    colSpan={colSpan}
                     className="table-cell text-center text-body-2 text-black-7 py-12"
                   >
                     <p className="font-medium text-navy mb-1">No results found</p>

@@ -88,7 +88,8 @@ export const getBirthYear = (birthdate) => {
 export const canView = (permissionName) => {
   const user = getUser();
 
-  if (!user || user.isSuperAdmin) return true;
+  if (!user) return false;
+  if (user.isSuperAdmin || user.roleType === "SUPER") return true;
 
   const permission = user.adminPermission?.find(
     (perm) => perm.permissionName === permissionName
@@ -99,7 +100,8 @@ export const canView = (permissionName) => {
 export const canEdit = (permissionName) => {
   const user = getUser();
 
-  if (!user || user.isSuperAdmin) return true;
+  if (!user) return false;
+  if (user.isSuperAdmin || user.roleType === "SUPER") return true;
 
   const permission = user.adminPermission?.find(
     (perm) => perm.permissionName === permissionName
