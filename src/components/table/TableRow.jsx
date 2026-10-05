@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import Dropdown from "../dropdown/DropdownIndex";
 
 export default function TableRow({
@@ -18,9 +19,10 @@ export default function TableRow({
             <Dropdown.Menu origin="bottom-right">
               {dropdownItems.map((dropdownItem, index) => (
                 <Dropdown.Item
+                  key={index}
                   onClick={dropdownItem.onClick}
                 >
-                  <Image src={dropdownItem.icon} alt="View Details" />
+                  <Image src={dropdownItem.icon} alt={dropdownItem.text || "Action"} />
                   <p>{dropdownItem.text}</p>
                 </Dropdown.Item>
               ))}

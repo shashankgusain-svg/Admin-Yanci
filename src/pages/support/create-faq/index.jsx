@@ -12,7 +12,7 @@ const breadCrumbItems = [
   { name: "Create FAQ" },
 ];
 
-export default function index() {
+export default function CreateFaqPage() {
   const router = useRouter();
 
   const [loading, setLoading] = React.useState(false);
@@ -44,7 +44,7 @@ export default function index() {
       setLoading(false);
       router.push("/support");
     } catch (error) {
-      console.log(error);
+      console.error("Failed to create FAQ:", error);
     }
   };
 

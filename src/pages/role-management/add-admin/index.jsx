@@ -8,7 +8,7 @@ import { isRequired, verifyEmail, verifyPassword } from "@/utils/helpers";
 import { toast } from "react-toastify";
 import generator from "generate-password";
 
-export default function index() {
+export default function AddAdminPage() {
   const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Sub Admin", link: "/role-management" }, { name: "Add Subdmin" }];
 
   const defaultSubAdminDetails = {

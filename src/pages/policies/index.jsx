@@ -109,7 +109,6 @@ export default function PoliciesPage() {
           ? content.terms
           : content.privacy,
     };
-    console.log(policyData)
     try {
       const result = await updatePolicy(policyData);
       if (result) {

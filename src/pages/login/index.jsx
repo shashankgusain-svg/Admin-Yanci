@@ -10,8 +10,11 @@ import { verifyPassword, verifyEmail } from "@/utils/helpers";
 import { setLoggingOut } from "@/services/api/helper";
 
 export default function Login() {
-  const [fields, setFields] = React.useState({ email: "", password: "" });
-  const [expiry, setExpiry] = React.useState(false);
+  const [fields, setFields] = React.useState({
+    email: "",
+    password: "",
+    expiry: false,
+  });
   const [loading, setLoading] = React.useState(false);
 
   const router = useRouter();
@@ -33,13 +36,16 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await getToken(fields);
+      const res = await getToken({
+        email: fields.email,
+        password: fields.password,
+      });
       if (res.status === false) {
         return;
       }
       const { token, ...userData } = res?.data || {};
-      setToken(token, expiry);
-      setUser(userData, expiry);
+      setToken(token, fields.expiry);
+      setUser(userData, fields.expiry);
       router.replace("/");
     } catch (error) {
       console.error("Error during login:", error);
@@ -56,7 +62,7 @@ export default function Login() {
   };
 
   const handleExpiryChange = (e) => {
-    setExpiry(e.target.checked);
+    setFields((prev) => ({ ...prev, expiry: e.target.checked }));
   };
 
   return (
@@ -121,7 +127,7 @@ export default function Login() {
                       id="remember_me"
                       type="checkbox"
                       onChange={handleExpiryChange}
-                      checked={expiry}
+                      checked={fields.expiry}
                       className="h-4 w-4 text-primary-6 focus:ring-primary-6 border-black-5 rounded"
                     />
                     <label

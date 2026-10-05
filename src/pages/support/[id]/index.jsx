@@ -11,7 +11,7 @@ const breadCrumbItems = [
   { name: "Create FAQ" },
 ];
 
-export default function index() {
+export default function EditFaqPage() {
   const router = useRouter();
   const { question, answer, id } = router.query;
 
@@ -34,7 +34,7 @@ export default function index() {
       await updateFAQ({ ...fields, _id: id });
       router.push("/support");
     } catch (error) {
-      console.log(error);
+      console.error("Failed to update FAQ:", error);
     }
   };
 

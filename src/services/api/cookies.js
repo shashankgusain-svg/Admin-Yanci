@@ -40,8 +40,7 @@ export const getUser = () => {
     const user = JSON.parse(cookie);
     const isSuperAdmin = user.roleType === "SUPER";
     return { ...user, isSuperAdmin };
-  } catch (e) {
-    console.log(e);
+  } catch {
     return null;
   }
 };

@@ -63,7 +63,7 @@ export default function FundDetails() {
             key={index}
             modalTitle="Block User Confirmation"
             modalMessage="Are you sure you want to block this user? This action can be undone."
-            onConfirm={() => console.log("User blocked!")}
+            onConfirm={() => {}}
             showModalButton={true}
           >
             <Table.Cell>{item.SNo}</Table.Cell>

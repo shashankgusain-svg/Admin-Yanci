@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { isRequired, verifyEmail, verifyPassword } from "@/utils/helpers";
 import { toast } from "react-toastify";
 
-export default function index() {
+export default function EditAdminPage() {
     const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Sub Admin", link: "/role-management" },{name:"Edit Sub Admin"}];
     const [loading, setLoading] = useState(false);
     const [defaultSubAdminDetails, setDefaultSubAdminDetails] = useState({

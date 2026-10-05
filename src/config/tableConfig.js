@@ -484,7 +484,7 @@ export const feedbackColumns = (payload) => {
       render: (row) => (
         <div className="flex gap-1">
           {Array.from({ length: row.rating }, (_, i) => (
-            <StarRating />
+            <StarRating key={i} />
           ))}
         </div>
       ),
