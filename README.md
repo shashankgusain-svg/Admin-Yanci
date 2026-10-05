@@ -4,7 +4,7 @@ Next.js admin frontend for the Yanci investing platform (Ghana). Used by interna
 
 ## Requirements
 
-- Node.js **18.17+** (20 LTS recommended)
+- Node.js **24.x** (required on Vercel; 22+ locally is fine for most work)
 - npm 9+
 
 ## Setup
@@ -45,7 +45,7 @@ npm run lint     # ESLint via next lint (non-interactive)
 
 ## Deploy
 
-1. Set Node 18+ on the host / CI image.
+1. Set Node **24.x** on the host / CI image (Vercel Project Settings → Node.js Version, or `engines.node` in `package.json`).
 2. Configure `NEXT_PUBLIC_API_URL` if the API is not the default production host.
 3. Build and run:
 
