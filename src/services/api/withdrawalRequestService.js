@@ -3,9 +3,9 @@ import { URL, apiError, responseValidator } from "./helper";
 
 export const getAllWithdrawals = async (payload) => {
   let endpoint = `${URL}wallet/withdraw/all?page=${payload.page}&limit=${payload.limit}`;
-  if (payload.value) endpoint += `&search=${payload.value}`;
-  if (payload.startDate && payload.endDate) endpoint += `&startDate=${payload.startDate}&endDate=${payload.endDate}`;
-  if (payload.status) endpoint += `&status=${payload.status}`;
+  if (payload.value) endpoint += `&search=${encodeURIComponent(payload.value)}`;
+  if (payload.startDate && payload.endDate) endpoint += `&startDate=${encodeURIComponent(payload.startDate)}&endDate=${encodeURIComponent(payload.endDate)}`;
+  if (payload.status) endpoint += `&status=${encodeURIComponent(payload.status)}`;
   try {
     const res = await fetch(endpoint, {
       method: "GET",
@@ -19,9 +19,9 @@ export const getAllWithdrawals = async (payload) => {
 
 export const getWithdrawalRequest = async (payload) => {
   let endpoint = `${URL}wallet/admin/transactions?type=withdraw&sort=${payload.sort || "newest"}&page=${payload.page}&limit=${payload.limit}`;
-  if (payload.value) endpoint += `&search=${payload.value}`;
-  if (payload.startDate && payload.endDate) endpoint += `&startDate=${payload.startDate}&endDate=${payload.endDate}`;
-  if (payload.status) endpoint += `&status=${payload.status}`;
+  if (payload.value) endpoint += `&search=${encodeURIComponent(payload.value)}`;
+  if (payload.startDate && payload.endDate) endpoint += `&startDate=${encodeURIComponent(payload.startDate)}&endDate=${encodeURIComponent(payload.endDate)}`;
+  if (payload.status) endpoint += `&status=${encodeURIComponent(payload.status)}`;
   try {
     const res = await fetch(endpoint, {
       method: "GET",
@@ -35,9 +35,9 @@ export const getWithdrawalRequest = async (payload) => {
 
 export const getAllDeposits = async (payload) => {
   let endpoint = `${URL}wallet/admin/transactions?type=deposit&sort=${payload.sort || "newest"}&page=${payload.page}&limit=${payload.limit}`;
-  if (payload.value) endpoint += `&search=${payload.value}`;
-  if (payload.startDate && payload.endDate) endpoint += `&startDate=${payload.startDate}&endDate=${payload.endDate}`;
-  if (payload.status) endpoint += `&status=${payload.status}`;
+  if (payload.value) endpoint += `&search=${encodeURIComponent(payload.value)}`;
+  if (payload.startDate && payload.endDate) endpoint += `&startDate=${encodeURIComponent(payload.startDate)}&endDate=${encodeURIComponent(payload.endDate)}`;
+  if (payload.status) endpoint += `&status=${encodeURIComponent(payload.status)}`;
   try {
     const res = await fetch(endpoint, {
       method: "GET",

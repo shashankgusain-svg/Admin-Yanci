@@ -2,15 +2,16 @@ import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 
 export const getUserSupportDetails = async (payload) => {
+  const search = encodeURIComponent(payload.value ?? "");
   let endpoint =
     payload.type === "Queries"
-      ? `${URL}support/tickets/all?type=QUERY&search=${payload.value}`
+      ? `${URL}support/tickets/all?type=QUERY&search=${search}`
       : payload.type === "Feedbacks"
-      ? `${URL}support/tickets/all?type=FEEDBACK&search=${payload.value}`
-      : `${URL}support/faq/all?search=${payload.value}`;
+      ? `${URL}support/tickets/all?type=FEEDBACK&search=${search}`
+      : `${URL}support/faq/all?search=${search}`;
   endpoint += `&page=${payload.page}&limit=${payload.limit}`;
-  if (payload.sortOrder) endpoint += `&sortOrder=${payload.sortOrder}`;
-  if (payload.sortField) endpoint += `&sortBy=${payload.sortField}`;
+  if (payload.sortOrder) endpoint += `&sortOrder=${encodeURIComponent(payload.sortOrder)}`;
+  if (payload.sortField) endpoint += `&sortBy=${encodeURIComponent(payload.sortField)}`;
   try {
     const res = await fetch(endpoint, {
       method: "GET",

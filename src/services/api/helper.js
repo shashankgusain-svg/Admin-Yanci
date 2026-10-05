@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import { removeToken, removeUser } from "./cookies";
 
 export const URL =
   process.env.NEXT_PUBLIC_API_URL || "https://api.investwithyanci.com/v1/";
@@ -47,12 +48,18 @@ export const responseValidator = async (
       return { status: res.status, message: res.message };
     }
   } else if (response.status == 401) {
-    // only show session-expired toast if this isn't a deliberate logout
     if (!_isLoggingOut) {
+      setLoggingOut(true);
+      toast.dismiss();
       toast.error(
         "You are not logged in. Please login for accessing this section.",
         { toastId: "API-error-session-expired" }
       );
+      removeToken();
+      removeUser();
+      if (typeof window !== "undefined") {
+        window.location.replace("/login");
+      }
     }
     return { status: false, code: 401, message: "Session Expired." };
   } else if (response.status == 413) {

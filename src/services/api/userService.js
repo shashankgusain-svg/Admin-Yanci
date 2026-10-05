@@ -71,7 +71,7 @@ export const exportUsers = async (payload) => {
 export const getUserDetails = async (userId) => {
   if (!userId || userId === "undefined") return { status: false };
   try {
-    const res = await fetch(`${URL}adminuser/getusers?search=${userId}&page=1&limit=1`, {
+    const res = await fetch(`${URL}adminuser/getusers?search=${encodeURIComponent(userId)}&page=1&limit=1`, {
       method: "GET",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
     });
