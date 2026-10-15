@@ -3,13 +3,13 @@ import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Button from "@/components/button/Button";
 import Modal from "@/components/modal/ModalIndex";
 import Pagination from "@/components/pagination/Pagination";
-import { canEdit } from "@/utils/helpers";
-import { getUser } from "@/services/api/cookies";
+import { useCanEdit, useIsSuperAdmin } from "@/hooks/usePermissions";
 import {
   uploadCompanyCSV,
   getCompaniesPaginated,
   getCompany,
   updateCompanyEnrichment,
+  updateCompanyLogo,
   updateCompanyVisibility,
   removeCompanyFromApp,
   cleanupCompanies,
@@ -20,6 +20,9 @@ import LoadingAnimation from "../../../../public/icons/animated/loading";
 import imagePlaceholder from "../../../../public/images/pi_placeholder.jpg";
 import { toast } from "react-toastify";
 import PageHeader from "@/components/pageHeader/PageHeader";
+import StatusBadge from "@/components/statusBadge/StatusBadge";
+import CompanyLogoUploader from "@/components/companies/CompanyLogoUploader";
+import BulkLogoUpload from "@/components/companies/BulkLogoUpload";
 
 const CSV_HEADERS = [
   "Symbol",
@@ -129,19 +132,19 @@ const PreviewList = ({ items, empty = "None" }) => {
 const StatusBadges = ({ company, onDuplicateClick }) => {
   const badges = [];
   if (isAppVisible(company)) {
-    badges.push({ key: "listed", label: "Listed", className: "bg-gain-soft text-gain" });
+    badges.push({ key: "listed", label: "Listed", variant: "success" });
   }
   if (company.isDelisted) {
-    badges.push({ key: "delisted", label: "Delisted", className: "bg-loss-soft text-loss" });
+    badges.push({ key: "delisted", label: "Delisted", variant: "danger" });
   }
   if (company.isHidden) {
-    badges.push({ key: "hidden", label: "Hidden", className: "bg-black-4 text-black-8" });
+    badges.push({ key: "hidden", label: "Hidden", variant: "neutral" });
   }
   if (canonicalOf(company)) {
     badges.push({
       key: "duplicate",
       label: `Duplicate of ${canonicalOf(company)}`,
-      className: "bg-warning-soft text-warning",
+      variant: "warning",
       onClick: onDuplicateClick ? () => onDuplicateClick(canonicalOf(company)) : undefined,
     });
   }
@@ -156,19 +159,76 @@ const StatusBadges = ({ company, onDuplicateClick }) => {
             key={badge.key}
             type="button"
             onClick={badge.onClick}
-            className={`rounded-full px-2 py-1 text-xs hover:underline ${badge.className}`}
+            className="rounded-full hover:opacity-80"
+            title={`Go to ${canonicalOf(company)}`}
           >
-            {badge.label}
+            <StatusBadge variant={badge.variant} className="whitespace-nowrap">
+              {badge.label}
+            </StatusBadge>
           </button>
         ) : (
-          <span key={badge.key} className={`rounded-full px-2 py-1 text-xs ${badge.className}`}>
+          <StatusBadge key={badge.key} variant={badge.variant} className="whitespace-nowrap">
             {badge.label}
-          </span>
+          </StatusBadge>
         )
       )}
     </div>
   );
 };
+
+const websiteLabel = (url) =>
+  String(url)
+    .replace(/^[a-z][a-z\d+.-]*:\/\//i, "")
+    .replace(/^www\./i, "")
+    .replace(/\/$/, "");
+
+const CompanyAvatar = ({ company }) => {
+  const [failed, setFailed] = React.useState(false);
+  const src = company.logoUrl || company.logo;
+  if (src && !failed) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={src}
+        alt=""
+        className="w-9 h-9 rounded-full object-cover border border-black-5 bg-white shrink-0"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+  return (
+    <span className="w-9 h-9 rounded-full bg-primary-1 text-primary-7 text-xs font-bold flex items-center justify-center shrink-0">
+      {String(company.symbol || "?").slice(0, 3)}
+    </span>
+  );
+};
+
+const RowAction = ({ children, tone = "default", ...props }) => {
+  const tones = {
+    default: "text-primary-7 hover:bg-primary-1",
+    danger: "text-loss hover:bg-loss-soft",
+    neutral: "text-black-8 hover:bg-black-4",
+  };
+  return (
+    <button
+      type="button"
+      className={`h-8 px-2.5 rounded-md text-sm font-medium whitespace-nowrap transition-colors disabled:opacity-40 disabled:pointer-events-none ${tones[tone]}`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+const TABLE_HEADERS = [
+  { label: "Company" },
+  { label: "Status" },
+  { label: "Sector / Industry" },
+  { label: "CEO" },
+  { label: "Website" },
+  { label: "Date listed" },
+  { label: "Actions", align: "right" },
+];
 
 const Field = ({ label, value }) => (
   <div className="flex flex-col gap-1">
@@ -215,6 +275,20 @@ const EDIT_FIELDS = [
   { label: "Date Listed (GSE)", name: "dateListed" },
 ];
 
+const normalizeWebsite = (value) =>
+  /^[a-z][a-z\d+.-]*:\/\//i.test(value) ? value : `https://${value}`;
+
+const isValidUrl = (value) => {
+  try {
+    const url = new URL(value);
+    return (url.protocol === "http:" || url.protocol === "https:") && url.hostname.includes(".");
+  } catch {
+    return false;
+  }
+};
+
+const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
 function downloadTemplate() {
   const escape = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const rows = [
@@ -233,9 +307,8 @@ function downloadTemplate() {
 }
 
 export default function CompanyDataManagement() {
-  const canManage = canEdit("Stock Management");
-  const user = getUser();
-  const isSuperAdmin = Boolean(user?.isSuperAdmin || user?.roleType === "SUPER");
+  const canManage = useCanEdit("Stock Management");
+  const isSuperAdmin = useIsSuperAdmin();
 
   // Upload state
   const [uploadState, setUploadState] = React.useState("idle"); // idle | uploading | success | error
@@ -266,6 +339,8 @@ export default function CompanyDataManagement() {
   const [editForm, setEditForm] = React.useState({});
   const [saveLoading, setSaveLoading] = React.useState(false);
   const [syncLoading, setSyncLoading] = React.useState(false);
+  const [bulkLogoOpen, setBulkLogoOpen] = React.useState(false);
+  const [pendingLogo, setPendingLogo] = React.useState(null);
 
   const fetchCompanies = React.useCallback(async (page, q, vis) => {
     setTableLoading(true);
@@ -353,6 +428,7 @@ export default function CompanyDataManagement() {
       notes: company.notes ?? "",
       dateListed: company.dateListed ?? "",
     });
+    setPendingLogo(null);
     setModalMode("edit");
   };
 
@@ -367,19 +443,72 @@ export default function CompanyDataManagement() {
     setEditForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   const handleSave = async () => {
+    // Only send edited fields so legacy values (e.g. a website saved without
+    // a scheme) aren't re-validated by the backend on every save.
+    const payload = {};
+    Object.entries(editForm).forEach(([key, raw]) => {
+      const value = String(raw ?? "").trim();
+      if (!value || value === String(selectedCompany[key] ?? "").trim()) return;
+      payload[key] = key === "website" ? normalizeWebsite(value) : value;
+    });
+
+    if (payload.website && !isValidUrl(payload.website)) {
+      toast.error("Enter a valid company website, e.g. https://example.com");
+      return;
+    }
+    if (payload.email && !isValidEmail(payload.email)) {
+      toast.error("Enter a valid contact email.");
+      return;
+    }
+    const hasFieldChanges = Object.keys(payload).length > 0;
+    if (!hasFieldChanges && !pendingLogo) {
+      toast.info("No changes to save.");
+      return;
+    }
+
+    // Quiet requests so the user gets one summary toast; 401/413/5xx are
+    // already toasted inside responseValidator.
+    const reportFailure = (res, label) => {
+      if (res?.code === 401 || res?.code === 413 || res?.code >= 500) return;
+      toast.error(`${label}: ${res?.message || "Something went wrong."}`);
+    };
+
     setSaveLoading(true);
-    const payload = Object.fromEntries(
-      Object.entries(editForm).filter(([, v]) => v !== "")
-    );
-    await updateCompanyEnrichment(selectedCompany.symbol, payload);
-    setSaveLoading(false);
-    setModalMode(null);
-    fetchCompanies(currentPage, search, visibility);
+    try {
+      if (pendingLogo) {
+        const logoRes = await updateCompanyLogo(selectedCompany.symbol, pendingLogo, false);
+        if (!logoRes?.status) {
+          reportFailure(logoRes, "Logo not saved");
+          return;
+        }
+        setPendingLogo(null);
+        if (logoRes.data?.logoUrl) {
+          setSelectedCompany((prev) => (prev ? { ...prev, logoUrl: logoRes.data.logoUrl } : prev));
+        }
+      }
+
+      if (hasFieldChanges) {
+        const res = await updateCompanyEnrichment(selectedCompany.symbol, payload, false);
+        if (!res?.status) {
+          reportFailure(res, pendingLogo ? "Logo saved, but details were not" : "Details not saved");
+          fetchCompanies(currentPage, search, visibility);
+          return;
+        }
+      }
+
+      toast.success(`${selectedCompany.symbol} updated.`);
+      setModalMode(null);
+      fetchCompanies(currentPage, search, visibility);
+    } finally {
+      setSaveLoading(false);
+    }
   };
 
   const closeModal = () => {
+    if (saveLoading) return;
     setModalMode(null);
     setSelectedCompany(null);
+    setPendingLogo(null);
   };
 
   const handleGSEAction = async (fn) => {
@@ -469,7 +598,6 @@ export default function CompanyDataManagement() {
         title="Companies"
         description="Maintain listed company records."
       />
-      <p className="text-heading-5 font-bold text-black-13">Companies</p>
 
       {isSuperAdmin && (
         <div className="bg-white border border-black-5 rounded-xl p-4 flex flex-wrap gap-3 items-center">
@@ -562,6 +690,11 @@ export default function CompanyDataManagement() {
               onChange={(e) => setSearchInput(e.target.value)}
             />
             {canManage && (
+              <Button design="secondary" className="h-9 text-sm" onClick={() => setBulkLogoOpen(true)}>
+                Bulk upload logos
+              </Button>
+            )}
+            {canManage && (
               <Button
                 className="h-9 text-sm"
                 isLoading={cleanupLoading}
@@ -601,12 +734,17 @@ export default function CompanyDataManagement() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full">
+            <table className="min-w-full text-sm">
               <thead>
-                <tr className="border-b border-black-5 bg-primary-2">
-                  {["Symbol", "Company", "Status", "Sector", "Industry", "CEO", "Website", "Date Listed", "Actions"].map((h) => (
-                    <th key={h} className="table-header text-left text-xs font-semibold text-black-7 uppercase">
-                      {h}
+                <tr className="border-b border-black-5 bg-canvas">
+                  {TABLE_HEADERS.map(({ label, align }) => (
+                    <th
+                      key={label}
+                      className={`table-header text-xs font-semibold text-black-7 uppercase tracking-wide whitespace-nowrap ${
+                        align === "right" ? "text-right" : "text-left"
+                      }`}
+                    >
+                      {label}
                     </th>
                   ))}
                 </tr>
@@ -614,51 +752,84 @@ export default function CompanyDataManagement() {
               <tbody>
                 {companies.map((c) => {
                   const rowBusy = visibilityLoading === c.symbol;
+                  const name = c.companyName || c.company;
                   return (
-                    <tr key={c.symbol} className="border-b border-black-5 last:border-0 hover:bg-primary-1">
-                      <td className="table-cell font-semibold text-primary-7">{c.symbol}</td>
-                      <td className="table-cell text-sm text-black-13">{c.companyName || c.company || "—"}</td>
-                      <td className="table-cell">
+                    <tr
+                      key={c.symbol}
+                      className="border-b border-black-5 last:border-0 hover:bg-primary-1/40 transition-colors"
+                    >
+                      <td className="px-3 py-3 align-middle">
+                        <div className="flex items-center gap-3 min-w-[220px] max-w-[320px]">
+                          <CompanyAvatar key={c.logoUrl || c.logo || c.symbol} company={c} />
+                          <div className="min-w-0">
+                            <p className="font-semibold text-navy truncate" title={name || c.symbol}>
+                              {name || c.symbol}
+                            </p>
+                            <p className="text-xs font-medium text-primary-7 tracking-wide">{c.symbol}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 align-middle">
                         <StatusBadges company={c} onDuplicateClick={goToCanonical} />
                       </td>
-                      <td className="table-cell text-sm text-black-7">{c.sector || "—"}</td>
-                      <td className="table-cell text-sm text-black-7">{c.industry || "—"}</td>
-                      <td className="table-cell text-sm">{c.ceo || "—"}</td>
-                      <td className="table-cell text-sm">
-                        {c.website ? (
-                          <a href={c.website} target="_blank" rel="noreferrer" className="text-primary-6 hover:underline truncate max-w-[140px] block">
-                            {c.website}
-                          </a>
-                        ) : "—"}
+                      <td className="px-3 py-3 align-middle">
+                        <div className="max-w-[200px]">
+                          <p className="text-black-13 truncate" title={c.sector || undefined}>
+                            {c.sector || "—"}
+                          </p>
+                          {c.industry && (
+                            <p className="text-xs text-black-7 truncate" title={c.industry}>
+                              {c.industry}
+                            </p>
+                          )}
+                        </div>
                       </td>
-                      <td className="table-cell text-sm">{c.dateListed || "—"}</td>
-                      <td className="table-cell">
-                        <div className="flex flex-wrap gap-2">
-                          <button className="text-primary-6 text-sm hover:underline" onClick={() => openView(c)}>
-                            View
-                          </button>
+                      <td className="px-3 py-3 align-middle">
+                        <p className="text-black-13 truncate max-w-[180px]" title={c.ceo || undefined}>
+                          {c.ceo || "—"}
+                        </p>
+                      </td>
+                      <td className="px-3 py-3 align-middle">
+                        {c.website ? (
+                          <a
+                            href={c.website}
+                            target="_blank"
+                            rel="noreferrer"
+                            title={c.website}
+                            className="text-primary-6 hover:underline truncate max-w-[160px] block"
+                          >
+                            {websiteLabel(c.website)}
+                          </a>
+                        ) : (
+                          <span className="text-black-6">—</span>
+                        )}
+                      </td>
+                      <td className="px-3 py-3 align-middle whitespace-nowrap tabular-nums text-black-8">
+                        {c.dateListed || "—"}
+                      </td>
+                      <td className="px-3 py-3 align-middle">
+                        <div className="flex items-center justify-end gap-1">
+                          <RowAction onClick={() => openView(c)}>View</RowAction>
                           {canManage && (
                             <>
-                              <button className="text-primary-8 text-sm hover:underline" onClick={() => openEdit(c)}>
-                                Edit
-                              </button>
+                              <RowAction onClick={() => openEdit(c)}>Edit</RowAction>
                               {isAppVisible(c) && (
-                                <button
-                                  className="text-sm hover:underline text-loss disabled:opacity-40"
+                                <RowAction
+                                  tone="danger"
                                   disabled={rowBusy || removing}
                                   onClick={() => setRemoveTarget(c)}
                                 >
-                                  Remove from app
-                                </button>
+                                  Remove
+                                </RowAction>
                               )}
                               {(c.isDelisted || c.isHidden) && (
-                                <button
-                                  className="text-sm hover:underline text-black-8 disabled:opacity-40"
+                                <RowAction
+                                  tone="neutral"
                                   disabled={rowBusy}
                                   onClick={() => handleRestore(c)}
                                 >
                                   Restore
-                                </button>
+                                </RowAction>
                               )}
                             </>
                           )}
@@ -797,6 +968,14 @@ export default function CompanyDataManagement() {
         >
           <Modal.Content>
             <div className="flex flex-col gap-6 pb-6">
+              <CompanyLogoUploader
+                key={selectedCompany.symbol}
+                company={selectedCompany}
+                pendingFile={pendingLogo}
+                onChange={setPendingLogo}
+                disabled={saveLoading}
+              />
+
               {/* Read-only fields */}
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Symbol" value={selectedCompany.symbol} />
@@ -912,6 +1091,12 @@ export default function CompanyDataManagement() {
           </Modal.Footer>
         </Modal>
       )}
+
+      <BulkLogoUpload
+        isOpen={bulkLogoOpen}
+        onClose={() => setBulkLogoOpen(false)}
+        onDone={() => fetchCompanies(currentPage, search, visibility)}
+      />
 
       {removeTarget && (
         <Modal

@@ -3,7 +3,7 @@ import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Button from "@/components/button/Button";
 import Modal from "@/components/modal/ModalIndex";
 import Table from "@/components/table/Table";
-import { canEdit } from "@/utils/helpers";
+import { useCanEdit } from "@/hooks/usePermissions";
 import usePagination from "@/hooks/usePagination";
 import useSearch from "@/hooks/useSearch";
 import {
@@ -50,7 +50,7 @@ function validateVideoFile(file) {
 }
 
 export default function TutorialVideosPage() {
-  const canManage = canEdit("User Support");
+  const canManage = useCanEdit("User Support");
   const { limit, page, handleLimitChange, handlePageChange } = usePagination();
   const { searchValue, onSearch } = useSearch();
 
