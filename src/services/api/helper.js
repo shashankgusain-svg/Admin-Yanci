@@ -6,7 +6,9 @@ export const URL =
 
 // set to true during logout so in-flight responses don't show toasts
 let _isLoggingOut = false;
-export const setLoggingOut = (val) => { _isLoggingOut = val; };
+export const setLoggingOut = (val) => {
+  _isLoggingOut = val;
+};
 
 export const responseValidator = async (
   response,

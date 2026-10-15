@@ -25,6 +25,7 @@ import Button from "@/components/button/Button";
 import ConfirmSensitiveAction from "@/components/modals/ConfirmSensitiveAction";
 import StatusBadge from "@/components/statusBadge/StatusBadge";
 import { useRouter } from "next/router";
+import { formatMetricValue } from "@/utils/helpers";
 
 // ── constants ─────────────────────────────────────────────────────────────────
 
@@ -333,12 +334,17 @@ export default function Home() {
 
       <div className="grid gap-4 grid-cols-1 xl:grid-cols-[1fr_320px]">
         <div className="flex flex-col gap-6 min-w-0">
-          <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-2.5 grid-cols-2 lg:grid-cols-4">
             {metricCards.map((card, i) => (
               <MetricsCard
                 key={i}
+                dense
                 label={card.label}
-                value={loadingStats ? "…" : card.value}
+                value={
+                  loadingStats
+                    ? "..."
+                    : formatMetricValue(card.value, card.isDollar)
+                }
                 isDollar={card.isDollar}
                 percentageChange={card.percentageChange}
                 isPositiveChange={card.isPositiveChange}

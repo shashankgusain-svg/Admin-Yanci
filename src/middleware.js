@@ -14,6 +14,11 @@ const protectedRoutes = {
   "/policies": { permissionName: "Policies", requiresEdit: false },
   "/referrals": { permissionName: "Referrals", requiresEdit: false },
   "/tutorial": { permissionName: "User Support", requiresEdit: false },
+  "/migrations": {
+    permissionName: "Migration Import",
+    requiresEdit: false,
+    requiresEditAccess: true,
+  },
 };
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -101,7 +106,16 @@ export default function middleware(req) {
         (perm) => perm.permissionName === permissionName
       );
 
-      if (!userPermissions || !userPermissions.view) {
+      if (!userPermissions) {
+        url.pathname = "/no-access";
+        return NextResponse.redirect(url);
+      }
+
+      const hasAccess = routeConfig.requiresEditAccess
+        ? !!userPermissions.edit
+        : !!userPermissions.view;
+
+      if (!hasAccess) {
         url.pathname = "/no-access";
         return NextResponse.redirect(url);
       }

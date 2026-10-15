@@ -2,7 +2,7 @@ import React from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import MetricsCard from "@/components/metricsCard/MetricsCard";
 import Table from "@/components/table/Table";
-import { canEdit } from "@/utils/helpers";
+import { canEdit, formatMetricValue } from "@/utils/helpers";
 import usePagination from "@/hooks/usePagination";
 import { withdrawalRequestsColumns } from "@/config/tableConfig";
 import useSearch from "@/hooks/useSearch";
@@ -33,18 +33,6 @@ const METRIC_MAP = [
     { label: "Buying Activity (Vol.)",  key: "buyingActivity",       isDollar: true  },
     { label: "Selling Activity (Vol.)", key: "sellingActivity",      isDollar: true  },
 ];
-
-const formatMetricValue = (value, isDollar) => {
-    const num = Number(value);
-    if (Number.isNaN(num)) return value ?? 0;
-    if (isDollar) {
-        return num.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
-    }
-    return num.toLocaleString();
-};
 
 export default function Transactions() {
     const [withdrawalRequests, setWithdrawalRequests] = React.useState([]);

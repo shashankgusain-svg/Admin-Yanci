@@ -15,6 +15,7 @@ import Policies from "../../../public/icons/sidebar/Policies";
 import Referrals from "../../../public/icons/sidebar/Referrals";
 import Tutorial from "../../../public/icons/sidebar/Tutorial";
 import Blog from "../../../public/icons/sidebar/Blog";
+import Migration from "../../../public/icons/sidebar/Migration";
 import { useRouter } from "next/router";
 import { getUser, removeToken, removeUser } from "@/services/api/cookies";
 import { setLoggingOut } from "@/services/api/helper";
@@ -26,6 +27,7 @@ import arrowRight from "../../../public/icons/misc/arrowRight.svg";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Logo from "../../../public/icons/misc/Logo";
+import { canEdit } from "@/utils/helpers";
 
 const COLLAPSED_WIDTH = 80;
 const EXPANDED_WIDTH = 240;
@@ -173,6 +175,13 @@ const navGroups = [
     label: "Compliance",
     items: [
       {
+        name: "Migration",
+        permissionName: "Migration Import",
+        path: "/migrations",
+        Icon: Migration,
+        requiresEdit: true,
+      },
+      {
         name: "Audit Logs",
         permissionName: "Audit Logs",
         path: "/audit-logs",
@@ -226,10 +235,14 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
     if (!user) return false;
     if (path === "/") return true;
     if (user.isSuperAdmin) return true;
-    const permissionName = allNavItems.find((btn) => btn.path === path)
-      ?.permissionName;
+    const item = allNavItems.find((btn) => btn.path === path);
+    if (!item) return false;
+    if (item.requiresEdit) {
+      return canEdit(item.permissionName);
+    }
     return user.adminPermission?.some(
-      (perm) => perm.permissionName === permissionName && perm.view === true
+      (perm) =>
+        perm.permissionName === item.permissionName && perm.view === true
     );
   };
 
