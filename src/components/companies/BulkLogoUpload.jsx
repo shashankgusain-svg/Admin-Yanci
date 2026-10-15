@@ -44,6 +44,8 @@ async function extractLogoFiles(selected) {
   return { files, skipped };
 }
 
+const hasLogo = (c) => Boolean(c?.logoUrl || c?.logo);
+
 const companyLabel = (c) =>
   c.companyName || c.company ? `${c.symbol} — ${c.companyName || c.company}` : c.symbol;
 
@@ -54,6 +56,7 @@ export default function BulkLogoUpload({ isOpen, onClose, onDone }) {
   const [entries, setEntries] = React.useState([]);
   const [skipped, setSkipped] = React.useState([]);
   const [skipExisting, setSkipExisting] = React.useState(false);
+  const [loadError, setLoadError] = React.useState("");
   const [progress, setProgress] = React.useState({ done: 0, total: 0 });
 
   const companyBySymbol = React.useMemo(
@@ -76,6 +79,7 @@ export default function BulkLogoUpload({ isOpen, onClose, onDone }) {
 
   const reset = () => {
     releasePreviews();
+    setLoadError("");
     setEntries([]);
     setSkipped([]);
     setProgress({ done: 0, total: 0 });
@@ -94,12 +98,18 @@ export default function BulkLogoUpload({ isOpen, onClose, onDone }) {
     if (inputRef.current) inputRef.current.value = "";
     const selected = Array.from(fileList || []);
     if (!selected.length) return;
+    setLoadError("");
     setStage("loading");
     try {
       let list = companies;
       if (!list.length) {
         const res = await getAllCompanies();
         if (!res?.status) {
+          setLoadError(
+            `Couldn't load the company list to match logos${
+              typeof res?.message === "string" ? ` (${res.message})` : ""
+            }. Please try again.`
+          );
           setStage("select");
           return;
         }
@@ -169,7 +179,7 @@ export default function BulkLogoUpload({ isOpen, onClose, onDone }) {
   const toUpload = entries.filter((e) => {
     if (!e.symbol || duplicateSymbols.has(e.symbol)) return false;
     const company = companyBySymbol.get(e.symbol);
-    return !(skipExisting && company?.logoUrl);
+    return !(skipExisting && hasLogo(company));
   });
   const unmatchedCount = entries.filter((e) => !e.symbol).length;
 
@@ -244,6 +254,10 @@ export default function BulkLogoUpload({ isOpen, onClose, onDone }) {
             </div>
           )}
 
+          {stage === "select" && loadError && (
+            <p className="text-sm text-loss bg-loss-soft rounded-lg px-3 py-2">{loadError}</p>
+          )}
+
           {stage !== "select" && stage !== "loading" && (
             <>
               <div className="flex flex-wrap gap-2 text-sm">
@@ -298,7 +312,7 @@ export default function BulkLogoUpload({ isOpen, onClose, onDone }) {
                   {entries.map((e) => {
                     const company = companyBySymbol.get(e.symbol);
                     const isDup = e.symbol && duplicateSymbols.has(e.symbol);
-                    const willSkip = skipExisting && company?.logoUrl;
+                    const willSkip = skipExisting && hasLogo(company);
                     return (
                       <div key={e.id} className="flex items-center gap-3 px-3 py-2">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -320,7 +334,7 @@ export default function BulkLogoUpload({ isOpen, onClose, onDone }) {
                                 : e.note
                                   ? <span className="text-warning">{e.note}</span>
                                   : e.matchedBy
-                                    ? `Matched by ${e.matchedBy}${company?.logoUrl ? " · replaces current logo" : ""}${willSkip ? " · skipped" : ""}`
+                                    ? `Matched by ${e.matchedBy}${hasLogo(company) ? " · replaces current logo" : ""}${willSkip ? " · skipped" : ""}`
                                     : "No match — choose a company or leave skipped")}
                           </p>
                         </div>
