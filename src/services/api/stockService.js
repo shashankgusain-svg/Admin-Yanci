@@ -1,4 +1,5 @@
 import { getAuthToken } from "./cookies";
+import { toast } from "react-toastify";
 import { URL, apiError, responseValidator } from "./helper";
 
 export const uploadCompanyCSV = async (file) => {
@@ -101,37 +102,66 @@ export const cleanupCompanies = async (payload = {}) => {
   }
 };
 
-export const updateCompanyEnrichment = async (symbol, payload) => {
+export const updateCompanyEnrichment = async (symbol, payload, isToaster = true) => {
   try {
-    const res = await fetch(`${URL}admin/companies/${symbol}/enrichment`, {
+    const res = await fetch(`${URL}admin/companies/${encodeURIComponent(symbol)}/enrichment`, {
       method: "PATCH",
       headers: await authHeaders(),
       body: JSON.stringify(payload),
     });
-    return responseValidator(res, true);
+    return responseValidator(res, isToaster);
   } catch (error) {
     return apiError(error);
   }
 };
 
-export const updateCompanyLogo = async (symbol, file) => {
+const LOGO_UPLOAD_TIMEOUT_MS = 60000;
+
+export const updateCompanyLogo = async (symbol, file, isToaster = true) => {
   const formData = new FormData();
   formData.append("logo", file);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), LOGO_UPLOAD_TIMEOUT_MS);
   try {
-    const res = await fetch(`${URL}admin/companies/${symbol}/logo`, {
+    const res = await fetch(`${URL}admin/companies/${encodeURIComponent(symbol)}/logo`, {
       method: "PATCH",
       headers: { Authorization: `Bearer ${await getAuthToken()}` },
       body: formData,
+      signal: controller.signal,
     });
-    return responseValidator(res, true);
+    return await responseValidator(res, isToaster);
   } catch (error) {
-    return apiError(error);
+    const message =
+      error?.name === "AbortError"
+        ? "Logo upload timed out. Please try again."
+        : error instanceof SyntaxError
+          ? "The server returned an unexpected response. Please try again."
+          : error?.message || "Logo upload failed.";
+    if (isToaster) toast.error(message);
+    return { status: false, message };
+  } finally {
+    clearTimeout(timer);
   }
+};
+
+export const getAllCompanies = async () => {
+  const all = [];
+  let page = 1;
+  let totalPages = 1;
+  do {
+    const res = await getCompaniesPaginated(page, 200, "", "all");
+    if (!res?.status) return res;
+    const list = Array.isArray(res.data) ? res.data : res.data?.results ?? res.data?.companies ?? [];
+    all.push(...list);
+    totalPages = res.data?.totalPages ?? res.data?.pages ?? 1;
+    page += 1;
+  } while (page <= totalPages);
+  return { status: true, data: all };
 };
 
 export const updateCompanyMarketReport = async (symbol, payload) => {
   try {
-    const res = await fetch(`${URL}admin/companies/${symbol}/market-report`, {
+    const res = await fetch(`${URL}admin/companies/${encodeURIComponent(symbol)}/market-report`, {
       method: "PATCH",
       headers: await authHeaders(),
       body: JSON.stringify(payload),
