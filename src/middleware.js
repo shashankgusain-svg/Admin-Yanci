@@ -14,6 +14,7 @@ const protectedRoutes = {
   "/policies": { permissionName: "Policies", requiresEdit: false },
   "/referrals": { permissionName: "Referrals", requiresEdit: false },
   "/tutorial": { permissionName: "User Support", requiresEdit: false },
+  "/learn": { permissionName: "User Support", requiresEdit: false },
   "/migrations": {
     permissionName: "Migration Import",
     requiresEdit: false,

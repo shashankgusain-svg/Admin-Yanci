@@ -164,6 +164,12 @@ const navGroups = [
         Icon: Tutorial,
       },
       {
+        name: "Learn",
+        permissionName: "User Support",
+        path: "/learn",
+        Icon: Tutorial,
+      },
+      {
         name: "Blogs",
         permissionName: "User Support",
         path: "/support/blogs",
