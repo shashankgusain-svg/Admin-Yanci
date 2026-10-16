@@ -4,6 +4,7 @@ import Button from "@/components/button/Button";
 import Modal from "@/components/modal/ModalIndex";
 import Pagination from "@/components/pagination/Pagination";
 import { useCanEdit, useIsSuperAdmin } from "@/hooks/usePermissions";
+
 import {
   uploadCompanyCSV,
   getCompaniesPaginated,
