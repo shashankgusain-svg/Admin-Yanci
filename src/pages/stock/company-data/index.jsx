@@ -16,6 +16,7 @@ import {
   syncGSEListings,
   syncGSEMarketReport,
 } from "@/services/api/stockService";
+
 import LoadingAnimation from "../../../../public/icons/animated/loading";
 import imagePlaceholder from "../../../../public/images/pi_placeholder.jpg";
 import { toast } from "react-toastify";
