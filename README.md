@@ -63,3 +63,5 @@ Any Node host that can run Next.js 14 (Vercel, Docker, VM, etc.) works. Ensure t
 - `src/components` — shared UI (table, sidebar, modals, …)
 - `src/services/api` — HTTP clients and cookie helpers
 - `src/middleware.js` — auth / permission gate
+
+Test commit.
