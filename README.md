@@ -44,6 +44,7 @@ npm run lint     # ESLint via next lint (non-interactive)
 - **Remember me** extends cookie lifetime (7 days vs 1 hour).
 - `src/middleware.js` accepts the profile only when its signature matches `SESSION_SECRET`. Rewriting `roleType` in the browser fails that check.
 - Confirm the backend disables open `admin/super-admin/register` in production. The admin client no longer calls it.
+- Terms and privacy are publicly readable. `policy/getpolicy` does not require an admin token. Updates do.
 
 ## Deploy
 
