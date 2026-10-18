@@ -14,6 +14,8 @@ export const updatePolicy = async (payload) => {
   }
 };
 
+// Terms and privacy are public. This GET does not send a token.
+// The update above stays authenticated.
 export const getPolicy = async (userType, policyType) => {
   const url = `${URL}policy/getpolicy?userType=${encodeURIComponent(userType)}&policyType=${encodeURIComponent(policyType)}`;
   try {

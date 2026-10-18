@@ -23,9 +23,11 @@ cp .env.example .env.local
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `NEXT_PUBLIC_API_URL` | No | API base URL. Defaults to `https://api.investwithyanci.com/v1/` when unset (see `src/services/api/helper.js`). |
+| `API_URL` | No | Upstream API base URL used by the server proxy. Defaults to `https://api.investwithyanci.com/v1/`. |
+| `NEXT_PUBLIC_API_URL` | No | Same fallback as `API_URL` when `API_URL` is unset. |
+| `SESSION_SECRET` | Yes in production | Secret used to sign the user cookie. At least 32 characters. |
 
-Use `.env.local` for machine-specific values. Do not commit secrets. Auth tokens and user session data are stored in browser cookies by the app after login.
+Use `.env.local` for machine-specific values. Do not commit secrets. Login sets the API token in an HttpOnly cookie. The browser keeps a signed copy of the admin profile for the sidebar. Route checks accept that profile only when the signature matches `SESSION_SECRET`.
 
 ## Scripts
 
@@ -38,16 +40,18 @@ npm run lint     # ESLint via next lint (non-interactive)
 
 ## Auth notes
 
-- Login issues a Bearer token stored in cookies (`token` + `user`).
-- **Remember me** extends cookie lifetime (7 days vs ~1 hour).
-- Route access is gated in `src/middleware.js` and permission helpers in `src/utils/helpers.js`.
-- Confirm the backend disables open `registerSuperAdmin` registration in production; the client export exists but is not wired into the UI.
+- Login goes through `/api/auth/login`. The API token is an HttpOnly cookie. The `user` cookie is a signed profile the sidebar can read.
+- **Remember me** extends cookie lifetime (7 days vs 1 hour).
+- `src/middleware.js` accepts the profile only when its signature matches `SESSION_SECRET`. Rewriting `roleType` in the browser fails that check.
+- Confirm the backend disables open `admin/super-admin/register` in production. The admin client no longer calls it.
+- Terms and privacy are publicly readable. `policy/getpolicy` does not require an admin token. Updates do.
 
 ## Deploy
 
 1. Set Node **24.x** on the host / CI image (Vercel Project Settings → Node.js Version, or `engines.node` in `package.json`).
-2. Configure `NEXT_PUBLIC_API_URL` if the API is not the default production host.
-3. Build and run:
+2. Set `SESSION_SECRET` to a random string of at least 32 characters.
+3. Configure `API_URL` if the API is not the default production host.
+4. Build and run:
 
 ```bash
 npm ci

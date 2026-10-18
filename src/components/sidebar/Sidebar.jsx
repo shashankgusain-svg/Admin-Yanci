@@ -17,7 +17,7 @@ import Tutorial from "../../../public/icons/sidebar/Tutorial";
 import Blog from "../../../public/icons/sidebar/Blog";
 import Migration from "../../../public/icons/sidebar/Migration";
 import { useRouter } from "next/router";
-import { getUser, removeToken, removeUser } from "@/services/api/cookies";
+import { clearSession, getUser } from "@/services/api/cookies";
 import { setLoggingOut } from "@/services/api/helper";
 import { toast } from "react-toastify";
 import LoadingAnimation from "../../../public/icons/animated/loading";
@@ -229,18 +229,21 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
     setIsReady(true);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setLoggingOut(true);
     toast.dismiss();
-    removeToken();
-    removeUser();
+    await clearSession();
     router.replace("/login");
   };
 
   const canViewPage = (path) => {
     if (!user) return false;
-    if (path === "/") return true;
     if (user.isSuperAdmin) return true;
+    if (path === "/") {
+      return user.adminPermission?.some(
+        (perm) => perm.permissionName === "Home" && perm.view === true
+      );
+    }
     const item = allNavItems.find((btn) => btn.path === path);
     if (!item) return false;
     if (item.requiresEdit) {

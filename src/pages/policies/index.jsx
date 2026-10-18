@@ -1,21 +1,32 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
+import { toast } from "react-toastify";
 import Button from "@/components/button/Button";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import Toggle from "@/components/typeToggle/TypeToggle";
 import Modal from "@/components/modal/ModalIndex";
-import { updatePolicy } from "@/services/api/adminService";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import parse from "html-react-parser";
 import { isRequired } from "@/utils/helpers";
 import { sanitizeHtml } from "@/utils/sanitizeHtml";
 import { editorConfig } from "@/config/joditEditorConfig";
-import { getPolicy } from "@/services/api/policyService";
+import { getPolicy, updatePolicy } from "@/services/api/policyService";
 import PageHeader from "@/components/pageHeader/PageHeader";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
 const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Policies" }];
+
+function policyField(selectedOption) {
+  return selectedOption === "Terms & Conditions" ? "terms" : "privacy";
+}
+
+function htmlHasText(html) {
+  return (html || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .trim() !== "";
+}
 
 export default function PoliciesPage() {
   const [selectedOption, setSelectedOption] = useState("Terms & Conditions");
@@ -27,26 +38,68 @@ export default function PoliciesPage() {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewContent, setPreviewContent] = useState("");
-  const editorRef = useRef(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const joditRef = useRef(null);
+  const draftRef = useRef({ terms: null, privacy: null });
+  const selectedOptionRef = useRef(selectedOption);
+  const contentRef = useRef(content);
+  selectedOptionRef.current = selectedOption;
+  contentRef.current = content;
+
+  const bindEditor = useCallback((instance) => {
+    joditRef.current = instance;
+  }, []);
+
+  const handleContentChange = useCallback((newContent) => {
+    if (typeof newContent !== "string") return;
+    draftRef.current[policyField(selectedOptionRef.current)] = newContent;
+  }, []);
+
+  const readDescription = () => {
+    const field = policyField(selectedOptionRef.current);
+    const live = joditRef.current?.value;
+    const draft = draftRef.current[field];
+    const saved = contentRef.current[field] || "";
+
+    if (typeof live === "string" && (htmlHasText(live) || draft != null)) {
+      return live;
+    }
+    if (typeof draft === "string") return draft;
+    return saved;
+  };
 
   useEffect(() => {
+    const userType = content.userType;
+    const policyType =
+      selectedOption !== "Privacy Policy" ? selectedOption : "Privacy";
+    const field = policyField(selectedOption);
+    let cancelled = false;
+
     const fetchPolicyData = async () => {
       try {
-        const response = await getPolicy(content?.userType, selectedOption !== 'Privacy Policy' ? selectedOption : 'Privacy');
+        const response = await getPolicy(userType, policyType);
+        if (cancelled || !response?.status || !response?.data) return;
 
-        setContent(prevContent => ({
+        const description =
+          typeof response.data.description === "string"
+            ? response.data.description
+            : "";
+
+        draftRef.current[field] = null;
+        setContent((prevContent) => ({
           ...prevContent,
-          privacy: selectedOption === 'Privacy Policy' ? (response?.data?.description || prevContent.privacy) : prevContent.privacy,
-          terms: selectedOption !== 'Privacy Policy' ? (response?.data?.description || prevContent.terms) : prevContent.terms
+          [field]: description,
         }));
-        setMandatory(response?.data?.notifyUsers || false);
-
+        setMandatory(!!response.data.notifyUsers);
       } catch (error) {
         console.error("Error in fetching policy:", error);
       }
     };
 
     fetchPolicyData();
+    return () => {
+      cancelled = true;
+    };
   }, [selectedOption, content.userType]);
 
   const userOptions = [
@@ -72,14 +125,6 @@ export default function PoliciesPage() {
     setSelectedOption(selectedLabel);
   };
 
-  const handleContentChange = (newContent) => {
-    const field = selectedOption === "Terms & Conditions" ? "terms" : "privacy";
-    setContent((prevContent) => ({
-      ...prevContent,
-      [field]: newContent,
-    }));
-  };
-
   const handleUserTypeChange = (e) => {
     setContent((prevContent) => ({
       ...prevContent,
@@ -87,16 +132,9 @@ export default function PoliciesPage() {
     }));
   };
 
-  const resetForm = () => {
-    // setContent({
-    //   terms: "",
-    //   privacy: "",
-    //   userType: "",
-    // });
-    // setSelectedOption("Terms & Conditions");
-  };
-
   const handleUpdate = async () => {
+    const description = previewContent || readDescription();
+    const field = policyField(selectedOption);
     const policyData = {
       userType: content.userType,
       notifyUsers: mandatory,
@@ -104,36 +142,49 @@ export default function PoliciesPage() {
         selectedOption === "Terms & Conditions"
           ? "Terms & Conditions"
           : "Privacy",
-      description:
-        selectedOption === "Terms & Conditions"
-          ? content.terms
-          : content.privacy,
+      description,
     };
+
+    setIsUpdating(true);
     try {
       const result = await updatePolicy(policyData);
-      if (result) {
+      if (result?.status) {
+        draftRef.current[field] = description;
+        setContent((prevContent) => ({
+          ...prevContent,
+          [field]: description,
+        }));
         setIsModalOpen(false);
-        resetForm();
       }
     } catch (error) {
       console.error("Failed to update policy:", error);
+      toast.error("Failed to update policy");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
   const handlePreview = () => {
-    const field = selectedOption === "Terms & Conditions" ? "terms" : "privacy";
-    if (
-      !isRequired(content.userType, "Type of User") ||
-      !isRequired(content[field], "Description")
-    ) {
+    if (!isRequired(content.userType, "Type of User")) return;
+
+    const description = readDescription();
+    if (!htmlHasText(description)) {
+      toast.error('"Description" should not be empty', {
+        toastId: "empty-field-verification-error",
+      });
       return;
     }
 
-    const preview =
-      selectedOption === "Terms & Conditions" ? content.terms : content.privacy;
-    setPreviewContent(preview);
+    setPreviewContent(description);
     setIsModalOpen(true);
   };
+
+  const editorValue = (() => {
+    const field = policyField(selectedOption);
+    return draftRef.current[field] != null
+      ? draftRef.current[field]
+      : content[field];
+  })();
 
   return (
     <div className="flex flex-col gap-6">
@@ -169,13 +220,8 @@ export default function PoliciesPage() {
         <div className="h-full w-full mt-6 flex flex-col gap-2">
           <h6 className="text-body-2 font-medium custom-label">Description</h6>
           <JoditEditor
-            ref={editorRef}
-            value={
-              selectedOption === "Terms & Conditions"
-                ? content.terms
-                : content.privacy
-            }
-
+            editorRef={bindEditor}
+            value={editorValue}
             onChange={handleContentChange}
             className="w-full h-[70%] bg-white"
             config={editorConfig}
@@ -209,8 +255,14 @@ export default function PoliciesPage() {
             <div className="updatePreview">{parse(sanitizeHtml(previewContent))}</div>
           </Modal.Content>
           <Modal.Footer>
-            <Button onClick={handleUpdate}>Confirm Update</Button>
-            <Button onClick={() => setIsModalOpen(false)} variant="secondary">
+            <Button onClick={handleUpdate} isLoading={isUpdating} disabled={isUpdating}>
+              Confirm Update
+            </Button>
+            <Button
+              onClick={() => setIsModalOpen(false)}
+              design="secondary"
+              disabled={isUpdating}
+            >
               Cancel
             </Button>
           </Modal.Footer>

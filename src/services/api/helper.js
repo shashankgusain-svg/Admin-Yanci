@@ -1,8 +1,8 @@
 import { toast } from "react-toastify";
-import { removeToken, removeUser } from "./cookies";
+import { clearSession } from "./cookies";
 
-export const URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://api.investwithyanci.com/v1/";
+// Browser calls stay on this origin. The server proxy attaches the HttpOnly token.
+export const URL = "/api/proxy/";
 
 // set to true during logout so in-flight responses don't show toasts
 let _isLoggingOut = false;
@@ -57,8 +57,7 @@ export const responseValidator = async (
         "You are not logged in. Please login for accessing this section.",
         { toastId: "API-error-session-expired" }
       );
-      removeToken();
-      removeUser();
+      await clearSession();
       if (typeof window !== "undefined") {
         window.location.replace("/login");
       }

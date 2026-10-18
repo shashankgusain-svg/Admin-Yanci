@@ -5,7 +5,6 @@ import Button from "@/components/button/Button";
 import InputAndLabel from "@/components/inputandlabel/InputAndLabelIndex";
 import { useRouter } from "next/router";
 import { getToken } from "@/services/api/authService";
-import { setToken, setUser } from "@/services/api/cookies";
 import { verifyPassword, verifyEmail } from "@/utils/helpers";
 import { setLoggingOut } from "@/services/api/helper";
 
@@ -39,13 +38,11 @@ export default function Login() {
       const res = await getToken({
         email: fields.email,
         password: fields.password,
+        remember: fields.expiry,
       });
       if (res.status === false) {
         return;
       }
-      const { token, ...userData } = res?.data || {};
-      setToken(token, fields.expiry);
-      setUser(userData, fields.expiry);
       router.replace("/");
     } catch (error) {
       console.error("Error during login:", error);

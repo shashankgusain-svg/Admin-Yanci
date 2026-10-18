@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { isRequired, verifyEmail, verifyPassword } from "@/utils/helpers";
 import { toast } from "react-toastify";
 import generator from "generate-password";
+import { emptyAdminPermissions } from "@/config/adminPermissions";
 
 export default function AddAdminPage() {
   const breadCrumbItems = [{ name: "Home", link: "/" }, { name: "Sub Admin", link: "/role-management" }, { name: "Add Subdmin" }];
@@ -16,53 +17,7 @@ export default function AddAdminPage() {
     phone: "",
     email: "",
     password: "",
-    permissions: [
-      {
-        permissionName: "User Management",
-        view: false,
-        edit: false,
-      },
-      {
-        permissionName: "KYC",
-        view: false,
-        edit: false,
-      },
-      {
-        permissionName: "Transactions",
-        view: false,
-        edit: false,
-      },
-      {
-        permissionName: "Revenue",
-        view: false,
-        edit: false,
-      },
-      {
-        permissionName: "Reports",
-        view: false,
-        edit: false,
-      },
-      {
-        permissionName: "Stock Management",
-        view: false,
-        edit: false,
-      },
-      {
-        permissionName: "Notifications",
-        view: false,
-        edit: false,
-      },
-      {
-        permissionName: "User Support",
-        view: false,
-        edit: false,
-      },
-      {
-        permissionName: "Migration Import",
-        view: false,
-        edit: false,
-      },
-    ],
+    permissions: emptyAdminPermissions(),
   };
 
   const router = useRouter();
