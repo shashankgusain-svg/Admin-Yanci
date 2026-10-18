@@ -48,15 +48,3 @@ export const getAllDeposits = async (payload) => {
     return apiError(error);
   }
 };
-
-export const initiatePayout = async (withdrawId) => {
-  try {
-    const res = await fetch(`${URL}payment/payout/${withdrawId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
-    return responseValidator(res, true);
-  } catch (error) {
-    return apiError(error);
-  }
-};

@@ -1,48 +1,48 @@
 import cookies from "js-cookie";
 
-const isProduction = process.env.NODE_ENV === "production";
-
 const cookieFlags = {
-  secure: isProduction,
+  path: "/",
   sameSite: "strict",
+  secure: process.env.NODE_ENV === "production",
 };
 
-const getExpiryOptions = (expiry) => ({
-  ...cookieFlags,
-  expires: expiry ? 7 : 1 / 24,
-});
+function decodeBase64Url(value) {
+  const padded = value.replace(/-/g, "+").replace(/_/g, "/");
+  const pad = padded.length % 4 === 0 ? "" : "=".repeat(4 - (padded.length % 4));
+  return decodeURIComponent(
+    Array.from(atob(padded + pad))
+      .map((char) => `%${char.charCodeAt(0).toString(16).padStart(2, "0")}`)
+      .join("")
+  );
+}
 
-export const setToken = (token, expiry) => {
-  cookies.set("token", token, getExpiryOptions(expiry));
-};
-
-export const getAuthToken = async () => {
-  const cookie = await cookies.get("token");
-
-  if (!cookie) {
-    return null;
+export async function clearSession() {
+  if (typeof window !== "undefined") {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // The readable cookie is still removed below.
+    }
   }
-  return cookie;
-};
+  cookies.remove("token", cookieFlags);
+  cookies.remove("user", cookieFlags);
+}
 
 export const removeToken = () => cookies.remove("token", cookieFlags);
+export const removeUser = () => cookies.remove("user", cookieFlags);
 
-export const setUser = (user, expiry) => {
-  cookies.set("user", JSON.stringify(user), getExpiryOptions(expiry));
-};
+export const getAuthToken = async () => null;
 
 export const getUser = () => {
   const cookie = cookies.get("user");
-  if (!cookie) {
-    return null;
-  }
+  if (!cookie || !cookie.includes(".")) return null;
+
   try {
-    const user = JSON.parse(cookie);
-    const isSuperAdmin = user.roleType === "SUPER";
-    return { ...user, isSuperAdmin };
+    const payload = cookie.slice(0, cookie.lastIndexOf("."));
+    const user = JSON.parse(decodeBase64Url(payload));
+    if (!user || typeof user !== "object") return null;
+    return { ...user, isSuperAdmin: user.roleType === "SUPER" };
   } catch {
     return null;
   }
 };
-
-export const removeUser = () => cookies.remove("user", cookieFlags);

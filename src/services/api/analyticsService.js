@@ -216,16 +216,9 @@ export const downloadAdminReport = async (params = {}) => {
   const timeoutId = setTimeout(() => controller.abort(), 180000);
 
   try {
-    const token = await getAuthToken();
-    if (!token) {
-      clearTimeout(timeoutId);
-      return apiError(new Error("You are not logged in. Please login and try again."));
-    }
-
     const res = await fetch(endpoint, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`,
         Accept: "application/pdf",
       },
       signal: controller.signal,
