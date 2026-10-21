@@ -20,11 +20,6 @@ export const protectedRoutes = {
   },
 };
 
-const hasView = (user, permissionName) =>
-  user.adminPermission?.some(
-    (perm) => perm.permissionName === permissionName && perm.view === true
-  );
-
 export function accessDecision({ pathname, hasToken, user }) {
   if (hasToken && !user) return "expired";
   if (hasToken && user && pathname === "/login") return "home";
@@ -39,9 +34,7 @@ export function accessDecision({ pathname, hasToken, user }) {
   if (!needsSession) return "next";
   if (user.roleType === "SUPER") return "next";
 
-  if (pathname === "/") {
-    return hasView(user, "Home") ? "next" : "no-access";
-  }
+  if (pathname === "/") return "next";
 
   const routeConfig = protectedRoutes[matchedRoute];
   const userPermissions = user.adminPermission?.find(

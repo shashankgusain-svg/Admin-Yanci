@@ -13,6 +13,7 @@ import Dropdown from "@/components/dropdown/DropdownIndex";
 import viewDetails from "../../../public/icons/misc/viewDetails.svg";
 import { useRouter } from "next/router";
 import PageHeader from "@/components/pageHeader/PageHeader";
+import InfoTip from "@/components/infoTip/InfoTip";
 import { formatMetricValue } from "@/utils/helpers";
 
 const breadCrumbItems = [
@@ -173,6 +174,12 @@ export default function Revenue() {
       <PageHeader
         title="Revenue"
         description="Monitor fees and platform revenue."
+        info={
+          <InfoTip
+            purpose="Fee totals are the recorded fee series. They are the revenue impact of transaction fees."
+            businessLogic="A payment row lists its Yanci, TTB, and other platform fees. The cards sum the fee series."
+          />
+        }
       />
       {/* Summary Cards */}
       <div className="grid gap-2.5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">

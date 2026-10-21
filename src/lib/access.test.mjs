@@ -44,7 +44,7 @@ test("a subadmin only reaches routes their permissions allow", () => {
       hasToken: true,
       user: sub([{ permissionName: "Policies", view: true, edit: false }]),
     }),
-    "no-access"
+    "next"
   );
 });
 

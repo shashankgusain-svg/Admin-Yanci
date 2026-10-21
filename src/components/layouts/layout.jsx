@@ -6,7 +6,7 @@ import Sidebar, {
 } from "../sidebar/Sidebar";
 
 export default function RootLayout({ children }) {
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const sidebarWidth = isCollapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH;
 
   return (

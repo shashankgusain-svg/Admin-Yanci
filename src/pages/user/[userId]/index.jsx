@@ -11,6 +11,7 @@ import { canEdit, downloadFile } from "@/utils/helpers";
 import deleteIcon from "../../../../public/icons/misc/deleteWhite.svg";
 import Image from "next/image";
 import LoadingAnimation from "../../../../public/icons/animated/loading";
+import AccountHistory from "@/components/user/AccountHistory";
 
 export default function UserPage() {
   const [data, setData] = React.useState({
@@ -55,6 +56,7 @@ export default function UserPage() {
         createdDate: u.createdDate || u.createdAt,
         status: u.status,
         isKycDone: u.isKycDone,
+        isBlocked: u.isBlocked,
         profilePic: u.passportPic?.url || u.profilePic || null,
         csdFormLink: u.csdFormLink || result.data?.csdFormLink,
         csdAccountNumber: u.csdAccountNumber,
@@ -182,7 +184,7 @@ export default function UserPage() {
 
               <InputAndLabel>
                 <InputAndLabel.Label htmlFor="yanciId">Yanci ID</InputAndLabel.Label>
-                <InputAndLabel.Input disabled name="yanciId" id="yanciId" value={data.displayId ?? data.id ?? ""} />
+                <InputAndLabel.Input disabled name="yanciId" id="yanciId" value={data.displayId || "Not recorded"} />
               </InputAndLabel>
 
               <InputAndLabel>
@@ -216,6 +218,16 @@ export default function UserPage() {
               </InputAndLabel>
 
               <InputAndLabel>
+                <InputAndLabel.Label htmlFor="accountStatus">Account status</InputAndLabel.Label>
+                <InputAndLabel.Input
+                  disabled
+                  name="accountStatus"
+                  id="accountStatus"
+                  value={data.isBlocked ? "Blocked" : "Active"}
+                />
+              </InputAndLabel>
+
+              <InputAndLabel>
                 <InputAndLabel.Label htmlFor="kycStatus">KYC Status</InputAndLabel.Label>
                 <InputAndLabel.Input
                   disabled name="kycStatus" id="kycStatus"
@@ -239,6 +251,7 @@ export default function UserPage() {
                 />
               </InputAndLabel>
             </div>
+            <AccountHistory userId={userId} />
             {canEdit("User Management") && (
               <Button
                 design="primary"

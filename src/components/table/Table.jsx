@@ -239,13 +239,16 @@ export default function Table({
               >
                 20
               </Dropdown.Item>
-              <Dropdown.Item
-                onClick={() => {
-                  limitProps.onLimitChange(30);
-                }}
-              >
-                30
-              </Dropdown.Item>
+              {[30, 50, 100].map((size) => (
+                <Dropdown.Item
+                  key={size}
+                  onClick={() => {
+                    limitProps.onLimitChange(size);
+                  }}
+                >
+                  {size}
+                </Dropdown.Item>
+              ))}
             </Dropdown.Menu>
           </Dropdown>
         </div>
