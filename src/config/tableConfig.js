@@ -5,6 +5,7 @@ import {
   targetCustomerValueMapping,
   withdrawalRequestsStatusMapping,
 } from "@/utils/seed";
+import StatusBadge, { statusVariantFromLabel } from "@/components/statusBadge/StatusBadge";
 import imagePlaceholder from "../../public/images/pi_placeholder.jpg";
 import StarRating from "../../public/icons/misc/StarRating";
 
@@ -269,6 +270,29 @@ export const abandonedKycColumns = (payload) => {
     },
   ];
 };
+const fundingWhen = (row) =>
+  row.createdAt ||
+  row.createdDate ||
+  row.date ||
+  row.paidAt ||
+  row.transactionId?.createdAt ||
+  row.transactionId?.paidAt ||
+  "";
+
+const fundingStatus = (row) =>
+  row.status || row.paymentStatus || row.transactionId?.status || "";
+
+const fundingReference = (row) => {
+  const reference =
+    row.reference ||
+    row.paystackReference ||
+    row.transactionId?.reference ||
+    row.transactionId?.paystackReference;
+  if (reference) return String(reference);
+  if (typeof row.transactionId === "string") return row.transactionId;
+  return row.transactionId?._id ? String(row.transactionId._id) : "";
+};
+
 export const withdrawalRequestsColumns = () => {
 
   return [
@@ -321,6 +345,29 @@ export const withdrawalRequestsColumns = () => {
       ),
     },
     {
+      header: "Date",
+      key: "createdAt",
+      isDate: true,
+      csvExport: (row) => fundingWhen(row) || "",
+      render: (row) => {
+        const when = fundingWhen(row);
+        if (!when) return "—";
+        const date = new Date(when);
+        return Number.isNaN(date.getTime()) ? String(when) : date.toLocaleString();
+      },
+    },
+    {
+      header: "Status",
+      key: "status",
+      csvExport: (row) => fundingStatus(row) || "",
+      render: (row) => {
+        const status = fundingStatus(row);
+        if (!status) return "—";
+        const label = withdrawalRequestsStatusMapping[status] || status;
+        return <StatusBadge variant={statusVariantFromLabel(label)}>{label}</StatusBadge>;
+      },
+    },
+    {
       header: "Amount",
       key: "amount",
       render: (row) => (
@@ -335,15 +382,12 @@ export const withdrawalRequestsColumns = () => {
     },
   
     {
-      header: "Pay stack transaction id",
-      key: "transactionId",
-      csvExport: (row) => `${row.transactionId._id || ""}`,
+      header: "Paystack reference",
+      key: "reference",
+      csvExport: (row) => fundingReference(row),
       render: (row) => (
-        <div
-
-          className="hover:underline text-primary-7"
-        >
-          <p>{row.transactionId ? row.transactionId?._id : "--"}</p>
+        <div className="text-primary-7">
+          <p>{fundingReference(row) || "—"}</p>
         </div>
       ),
     },

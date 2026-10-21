@@ -92,6 +92,10 @@ export default async function handler(req, res) {
   const contentType = upstream.headers.get("content-type");
   if (contentType) res.setHeader("Content-Type", contentType);
   const disposition = upstream.headers.get("content-disposition");
-  if (disposition) res.setHeader("Content-Disposition", disposition);
+  if (disposition) {
+    res.setHeader("Content-Disposition", disposition);
+  } else if (contentType && /zip|octet-stream|pdf/i.test(contentType)) {
+    res.setHeader("Content-Disposition", "attachment");
+  }
   res.send(responseBody);
 }

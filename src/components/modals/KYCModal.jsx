@@ -58,6 +58,73 @@ const SectionTitle = ({ children }) => (
   </h6>
 );
 
+const RESIDENCY_OPTIONS = [
+  "Resident Ghanaian",
+  "Non-resident Ghanaian",
+  "Resident foreigner",
+  "Non-resident foreigner",
+];
+
+const ID_TYPE_OPTIONS = ["Ghana Card", "Passport", "Driver's licence", "Voter ID"];
+
+const choiceText = (value) => String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+
+const findRecordedValue = (root, keys) => {
+  const wanted = new Set(keys.map((key) => key.toLowerCase()));
+  const stack = [root];
+  const seen = new Set();
+  while (stack.length) {
+    const node = stack.pop();
+    if (!node || typeof node !== "object" || seen.has(node)) continue;
+    seen.add(node);
+    for (const [key, value] of Object.entries(node)) {
+      if (wanted.has(key.toLowerCase()) && value !== null && value !== undefined && value !== "") {
+        if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+          return value;
+        }
+      }
+      if (value && typeof value === "object") stack.push(value);
+    }
+  }
+  return "";
+};
+
+const ChoiceRow = ({ label, value, options }) => {
+  const recorded = choiceText(value);
+  const matched = options.find((option) => {
+    const choice = choiceText(option);
+    return recorded && (recorded === choice || recorded.includes(choice) || choice.includes(recorded));
+  });
+
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-label-2 font-medium text-black-7">{label}</p>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => {
+          const selected = option === matched;
+          return (
+            <span
+              key={option}
+              className={`text-xs px-2.5 py-1 rounded-full border ${
+                selected
+                  ? "bg-primary-1 text-primary-8 border-primary-6 font-semibold"
+                  : "bg-white text-black-6 border-black-5"
+              }`}
+            >
+              {selected ? "Selected · " : ""}
+              {option}
+            </span>
+          );
+        })}
+      </div>
+      {value && !matched ? (
+        <p className="text-xs text-black-7">Recorded as {String(value)}</p>
+      ) : null}
+      {!value ? <p className="text-xs text-black-6">Not recorded on this KYC.</p> : null}
+    </div>
+  );
+};
+
 function SafeImage({ src, alt, height = 200, onExpired }) {
   const [errored, setErrored] = React.useState(false);
   React.useEffect(() => {
@@ -332,7 +399,7 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
                       design="secondary"
                       className="h-9 text-sm"
                       isLoading={actionLoading}
-                      onClick={() => runAction(() => downloadKYCOnboardingPackage(userId))}
+                      onClick={() => downloadKYCOnboardingPackage(userId)}
                     >
                       Download Onboarding Package
                     </Button>
@@ -428,6 +495,42 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
                 </div>
               </div>
 
+              <SectionTitle>CSD</SectionTitle>
+              <div className="grid grid-cols-3 gap-4">
+                <Field label="CSD Account Number" value={kyc?.user?.csdAccountNumber || kyc?.csdAccountNumber} />
+                <Field label="Date Received" value={fmt(kyc?.user?.csdDateReceived || kyc?.csdDateReceived)} />
+                <Field label="Verification Status" value={kyc?.user?.csdVerificationStatus || kyc?.csdVerificationStatus} />
+                <Field label="CSD Form" value={csdFormLink ? "Available" : "Not available"} />
+              </div>
+
+              <SectionTitle>Residency and ID</SectionTitle>
+              <div className="flex flex-col gap-4">
+                <ChoiceRow
+                  label="Residency"
+                  value={findRecordedValue(kyc, [
+                    "residency",
+                    "residencyStatus",
+                    "residentStatus",
+                    "residentialStatus",
+                    "clientCategory",
+                    "clientType",
+                  ])}
+                  options={RESIDENCY_OPTIONS}
+                />
+                <ChoiceRow
+                  label="ID type"
+                  value={findRecordedValue(kyc, [
+                    "idType",
+                    "identityType",
+                    "documentType",
+                    "proofType",
+                    "identificationType",
+                    "idDocumentType",
+                  ])}
+                  options={ID_TYPE_OPTIONS}
+                />
+              </div>
+
               {/* Personal Information */}
               <SectionTitle>Personal Information</SectionTitle>
               <div className="grid grid-cols-3 gap-4">
@@ -440,7 +543,6 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
                 <Field label="Origin Country" value={kyc?.user?.originCountry} />
                 <Field label="Phone" value={kyc?.user?.phone ? `${kyc?.user?.countryCode || ""} ${kyc?.user?.phone}` : null} />
                 <Field label="Email" value={kyc?.user?.email} />
-                <Field label="CSD Account Number" value={kyc?.user?.csdAccountNumber || kyc?.csdAccountNumber} />
               </div>
 
               {/* Address */}

@@ -1,6 +1,5 @@
 import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
-import { toast } from "react-toastify";
 
 const authHeaders = async () => ({
   "Content-Type": "application/json",
@@ -54,35 +53,14 @@ export const getKYCDetails = async (userId) => {
  * Downloads onboarding package ZIP (CSD PDF + TeakTree form + Ghana Card images).
  * Backend streams application/zip — not JSON.
  */
-export const downloadKYCOnboardingPackage = async (userId) => {
-  try {
-    const res = await fetch(`${URL}adminuser/kyc/onboarding-package/${userId}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${await getAuthToken()}` },
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      const message = err.message || "Failed to download onboarding package";
-      toast.error(message);
-      return { status: false, code: res.status, message };
-    }
-    const blob = await res.blob();
-    const disposition = res.headers.get("Content-Disposition") || "";
-    const match = disposition.match(/filename="?([^"]+)"?/);
-    const fileName = match?.[1] || `onboarding_package_${userId}.zip`;
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-    toast.success("Onboarding package downloaded");
-    return { status: true, data: { fileName } };
-  } catch (error) {
-    return apiError(error);
-  }
+export const downloadKYCOnboardingPackage = (userId) => {
+  const link = document.createElement("a");
+  link.href = `${URL}adminuser/kyc/onboarding-package/${encodeURIComponent(userId)}`;
+  link.download = `onboarding_package_${userId}.zip`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  return { status: true };
 };
 
 /** @deprecated Use downloadKYCOnboardingPackage — package is a ZIP stream, not a URL */
