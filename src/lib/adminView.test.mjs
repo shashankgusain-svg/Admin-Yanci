@@ -7,6 +7,7 @@ import {
   recordedFee,
   segmentSignalMissing,
   userMatchesSegment,
+  chartDateLabel,
   yanciIdOf,
 } from "./adminView.mjs";
 
@@ -35,6 +36,12 @@ test("user segments follow recorded verification and funding", () => {
   assert.equal(isFundedAccount({ walletBalance: 25 }), true);
   assert.equal(segmentSignalMissing([{ name: "Ama" }], "funded"), true);
   assert.equal(segmentSignalMissing([{ isFunded: false }], "funded"), false);
+});
+
+test("chart dates drop the midnight timestamp", () => {
+  assert.equal(chartDateLabel("2026-01-01T00:00:00.000Z"), "1 Jan");
+  assert.equal(chartDateLabel("2026-03-15 00:00:00"), "15 Mar");
+  assert.equal(chartDateLabel(""), "");
 });
 
 test("fees and activity kinds use the fields a transaction already has", () => {

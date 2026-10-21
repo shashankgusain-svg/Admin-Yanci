@@ -114,6 +114,19 @@ export function activityKind(row) {
   return "other";
 }
 
+export function chartDateLabel(value) {
+  if (value === null || value === undefined || value === "") return "";
+  const raw = String(value).trim();
+  const dateOnly = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  const date = dateOnly
+    ? new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]))
+    : new Date(/^\d{12,}$/.test(raw) ? Number(raw) : raw);
+  if (Number.isNaN(date.getTime())) {
+    return raw.replace(/(?:T|\s)00:00:00(?:\.0+)?Z?$/, "");
+  }
+  return date.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
 export function formatGhs(value) {
   const amount = Number(value);
   if (Number.isNaN(amount)) return "";

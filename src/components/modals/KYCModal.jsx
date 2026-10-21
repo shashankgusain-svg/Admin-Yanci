@@ -52,8 +52,8 @@ const Field = ({ label, value }) => (
   </div>
 );
 
-const SectionTitle = ({ children }) => (
-  <h6 className="text-panel-title text-navy border-b border-black-5 pb-2 mt-2">
+const SectionTitle = ({ children, className = "" }) => (
+  <h6 className={`text-panel-title text-navy border-b border-black-5 pb-2 mt-2 ${className}`}>
     {children}
   </h6>
 );
@@ -563,17 +563,18 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
                 <Field label="Longitude" value={kyc?.address?.longitude} />
               </div>
 
-              {/* Bank Details */}
-              <SectionTitle>Bank Details</SectionTitle>
-              <div className="grid grid-cols-3 gap-4">
-                <Field label="Bank Name" value={kyc?.bankDetails?.bankName} />
-                <Field label="Branch Name" value={kyc?.bankDetails?.branchName} />
-                <Field label="Account Name" value={kyc?.bankDetails?.accountName} />
-                <Field label="Account Number" value={kyc?.bankDetails?.accountNumber} />
-                <Field label="Account Type" value={kyc?.bankDetails?.accountType} />
-                <Field label="Bank Code" value={kyc?.bankDetails?.bankCode} />
-                <Field label="Swift Code" value={kyc?.bankDetails?.swiftCode} />
-                <Field label="Routing Number" value={kyc?.bankDetails?.routingNumber} />
+              <div className="mx-auto w-full max-w-xl flex flex-col gap-4">
+                <SectionTitle className="text-center">Bank Details</SectionTitle>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Field label="Bank Name" value={kyc?.bankDetails?.bankName} />
+                  <Field label="Branch Name" value={kyc?.bankDetails?.branchName} />
+                  <Field label="Account Name" value={kyc?.bankDetails?.accountName} />
+                  <Field label="Account Number" value={kyc?.bankDetails?.accountNumber} />
+                  <Field label="Account Type" value={kyc?.bankDetails?.accountType} />
+                  <Field label="Bank Code" value={kyc?.bankDetails?.bankCode} />
+                  <Field label="Swift Code" value={kyc?.bankDetails?.swiftCode} />
+                  <Field label="Routing Number" value={kyc?.bankDetails?.routingNumber} />
+                </div>
               </div>
 
               {/* Beneficiary */}

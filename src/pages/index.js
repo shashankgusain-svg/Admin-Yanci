@@ -27,6 +27,7 @@ import StatusBadge from "@/components/statusBadge/StatusBadge";
 import { useRouter } from "next/router";
 import { formatMetricValue } from "@/utils/helpers";
 import { getKycStatusLabel, normalizeKycStatus } from "@/utils/seed";
+import { chartDateLabel } from "@/lib/adminView.mjs";
 
 // ── constants ─────────────────────────────────────────────────────────────────
 
@@ -62,7 +63,7 @@ function CustomTooltip({ active, payload, label, isDollar }) {
   const v = Number(payload[0]?.value || 0);
   return (
     <div className="bg-white border border-black-5 rounded-lg shadow-md px-3 py-2 text-sm min-w-[100px]">
-      <p className="text-black-7 text-xs mb-1">{label}</p>
+      <p className="text-black-7 text-xs mb-1">{chartDateLabel(label) || label}</p>
       <p className="font-bold text-black-13">
         {isDollar ? "GH₵ " : ""}
         {v.toLocaleString()}
@@ -133,6 +134,8 @@ function ChartCard({ title, dataKey, isDollar, fetchFn }) {
             <XAxis
               dataKey="date"
               tick={{ fontSize: 11, fill: "#9ca3af" }}
+              tickFormatter={chartDateLabel}
+              minTickGap={28}
               axisLine={false}
               tickLine={false}
             />
@@ -495,7 +498,10 @@ export default function Home() {
 
         <aside className="flex flex-col gap-4">
           <div className="bg-white border border-black-5 rounded-card p-5 shadow-card">
-            <p className="text-panel-title text-navy mb-3">Alerts</p>
+            <p className="text-panel-title text-navy">Alerts</p>
+            <p className="text-label-2 text-black-7 mt-1 mb-3">
+              Work that needs an admin today. Pending KYC is the only alert.
+            </p>
             {alerts.length === 0 ? (
               <p className="text-body-2 text-black-7">No open alerts.</p>
             ) : (
