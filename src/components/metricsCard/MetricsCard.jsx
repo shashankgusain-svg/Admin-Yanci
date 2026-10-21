@@ -14,6 +14,7 @@ export default function MetricsCard({
   info = null,
   onClick,
   dense = false,
+  periodLabel = "vs the previous period",
 }) {
   const currencyPrefix =
     currency === "GHS" || currency === "GH₵"
@@ -110,6 +111,9 @@ export default function MetricsCard({
               <Arrow direction="down" />
             )}
           </div>
+        ) : null}
+        {showDelta && periodLabel ? (
+          <p className="w-full text-[10px] font-medium text-black-7">{periodLabel}</p>
         ) : null}
       </div>
     </div>

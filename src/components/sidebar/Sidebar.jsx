@@ -239,11 +239,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
   const canViewPage = (path) => {
     if (!user) return false;
     if (user.isSuperAdmin) return true;
-    if (path === "/") {
-      return user.adminPermission?.some(
-        (perm) => perm.permissionName === "Home" && perm.view === true
-      );
-    }
+    if (path === "/") return true;
     const item = allNavItems.find((btn) => btn.path === path);
     if (!item) return false;
     if (item.requiresEdit) {

@@ -332,9 +332,19 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
 
               {/* Workflow actions */}
               {canManage && (
-                <div className="border border-black-5 rounded-lg p-4 flex flex-col gap-3">
-                  <p className="text-sm font-semibold text-primary-8">KYC Workflow</p>
-                  <StatusStepper status={workflowStatus} />
+                <div className="border border-black-5 rounded-lg p-4 flex flex-col gap-4">
+                  <div className="flex flex-col gap-2">
+                    <p className="text-sm font-semibold text-primary-8">Status</p>
+                    <StatusStepper status={workflowStatus} />
+                    <p className="text-xs text-black-6">
+                      Current stage: {getKycStatusLabel(workflowStatus)}. Trading Active is set automatically when every eligibility check passes.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2 border-t border-black-5 pt-3">
+                    <p className="text-sm font-semibold text-primary-8">Next stage</p>
+                    <p className="text-xs text-black-6">
+                      Ready for review hands this application to Teak Tree. Submitted to CSD moves it on to the depository.
+                    </p>
                   <div className="flex flex-wrap gap-2">
                     {workflowStatus === "documents_submitted" && (
                       <Button
@@ -412,9 +422,7 @@ export default function KYCModal({ userId, onClose, onActionComplete, csdFormLin
                       Regenerate CSD PDF
                     </Button>
                   </div>
-                  <p className="text-xs text-black-6">
-                    Trading Active is set automatically by the backend when all eligibility checks pass.
-                  </p>
+                  </div>
                 </div>
               )}
 

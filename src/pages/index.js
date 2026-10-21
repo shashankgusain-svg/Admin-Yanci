@@ -26,15 +26,34 @@ import ConfirmSensitiveAction from "@/components/modals/ConfirmSensitiveAction";
 import StatusBadge from "@/components/statusBadge/StatusBadge";
 import { useRouter } from "next/router";
 import { formatMetricValue } from "@/utils/helpers";
+import { getKycStatusLabel, normalizeKycStatus } from "@/utils/seed";
 
 // ── constants ─────────────────────────────────────────────────────────────────
 
 const PERIODS = [
-  { label: "12 Months", value: "12m" },
-  { label: "6 Months",  value: "6m"  },
-  { label: "30 Days",   value: "30d" },
-  { label: "7 Days",    value: "7d"  },
+  { label: "12 Months", value: "12m", compare: "vs the prior 12 months" },
+  { label: "6 Months",  value: "6m",  compare: "vs the prior 6 months" },
+  { label: "30 Days",   value: "30d", compare: "vs the prior 30 days" },
+  { label: "7 Days",    value: "7d",  compare: "vs the prior 7 days" },
 ];
+
+const kycWhen = (row) => row.submittedAt || row.createdAt || row.createdDate || row.date || "";
+
+const kycBottleneck = (status) => {
+  const normalized = normalizeKycStatus(status);
+  if (normalized === "ready_for_review") return "Teak Tree";
+  if (normalized === "submitted_to_csd" || normalized === "awaiting_csd_number") return "CSD";
+  if (normalized === "documents_submitted" || normalized === "kyc_in_progress" || normalized === "hold") {
+    return "Yanci review";
+  }
+  return getKycStatusLabel(normalized);
+};
+
+const formatKycDate = (value) => {
+  if (!value) return "—";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString();
+};
 
 // ── tooltip ───────────────────────────────────────────────────────────────────
 
@@ -144,6 +163,8 @@ function KYCRow({ row, onViewDetails, onApprove, onReject, actioningId }) {
   return (
     <tr className="border-b border-black-5 last:border-0 hover:bg-primary-1">
       <td className="table-cell text-sm font-medium text-black-13">{name}</td>
+      <td className="table-cell text-sm text-black-7">{formatKycDate(kycWhen(row))}</td>
+      <td className="table-cell text-sm text-black-13">{kycBottleneck(row.status || row.verificationStatus)}</td>
       <td className="table-cell">
         <button
           className="text-primary-6 text-sm hover:underline"
@@ -227,7 +248,10 @@ export default function Home() {
   const [actioningId, setActioningId] = React.useState(null);
 
   const [rejectRow, setRejectRow] = React.useState(null);
+  const [range, setRange] = React.useState("12m");
+  const [kycSort, setKycSort] = React.useState("oldest");
   const router = useRouter();
+  const periodLabel = PERIODS.find((period) => period.value === range)?.compare;
 
   // read user from cookie
   React.useEffect(() => {
@@ -237,7 +261,8 @@ export default function Home() {
 
   // single home call for stats + initial KYC
   React.useEffect(() => {
-    getDashboardHome({ range: "12m", kycPage: 1, kycLimit: 5 }).then((res) => {
+    setLoadingStats(true);
+    getDashboardHome({ range, kycPage: 1, kycLimit: 5 }).then((res) => {
       if (res?.status) {
         setStats(res.data?.stats ?? null);
         const results = res.data?.kycPendingApprovals?.results ?? [];
@@ -247,7 +272,7 @@ export default function Home() {
       setLoadingStats(false);
       setLoadingKYC(false);
     });
-  }, []);
+  }, [range]);
 
   const refreshKYC = React.useCallback(() => {
     setLoadingKYC(true);
@@ -290,7 +315,9 @@ export default function Home() {
       isDollar: false,
       percentageChange: stats?.totalUsers?.percentChange ?? 0,
       isPositiveChange: (stats?.totalUsers?.percentChange ?? 0) >= 0,
-      info: { purpose: "All registered investor accounts on the platform." },
+      info: {
+        purpose: "Registered investor accounts. The percentage compares this window with the one before it.",
+      },
     },
     {
       label: "Trading Volume",
@@ -298,7 +325,7 @@ export default function Home() {
       isDollar: true,
       percentageChange: stats?.tradingVolume?.percentChange ?? 0,
       isPositiveChange: (stats?.tradingVolume?.percentChange ?? 0) >= 0,
-      info: { purpose: "Gross traded value in GH₵ for the selected period." },
+      info: { purpose: "Gross traded value in GH₵ for the selected time frame." },
     },
     {
       label: "Total Orders",
@@ -306,6 +333,7 @@ export default function Home() {
       isDollar: false,
       percentageChange: stats?.totalOrders?.percentChange ?? 0,
       isPositiveChange: (stats?.totalOrders?.percentChange ?? 0) >= 0,
+      info: { purpose: "Orders placed during the selected time frame." },
     },
     {
       label: "Total Revenue",
@@ -313,8 +341,15 @@ export default function Home() {
       isDollar: true,
       percentageChange: stats?.totalRevenue?.percentChange ?? 0,
       isPositiveChange: (stats?.totalRevenue?.percentChange ?? 0) >= 0,
+      info: { purpose: "Platform revenue in GH₵ for the selected time frame." },
     },
   ];
+
+  const visibleKyc = [...kyc].sort((a, b) => {
+    const aTime = new Date(kycWhen(a)).getTime() || 0;
+    const bTime = new Date(kycWhen(b)).getTime() || 0;
+    return kycSort === "oldest" ? aTime - bTime : bTime - aTime;
+  });
 
   const alerts = [
     {
@@ -334,6 +369,20 @@ export default function Home() {
 
       <div className="grid gap-4 grid-cols-1 xl:grid-cols-[1fr_320px]">
         <div className="flex flex-col gap-6 min-w-0">
+          <div className="flex items-center justify-end gap-1">
+            {PERIODS.map((period) => (
+              <button
+                key={period.value}
+                type="button"
+                onClick={() => setRange(period.value)}
+                className={`px-3 py-1 rounded-full text-label-2 font-medium transition ${
+                  range === period.value ? "bg-navy text-white" : "text-black-7 hover:bg-canvas"
+                }`}
+              >
+                {period.label}
+              </button>
+            ))}
+          </div>
           <div className="grid gap-2.5 grid-cols-2 lg:grid-cols-4">
             {metricCards.map((card, i) => (
               <MetricsCard
@@ -349,6 +398,7 @@ export default function Home() {
                 percentageChange={card.percentageChange}
                 isPositiveChange={card.isPositiveChange}
                 info={card.info}
+                periodLabel={periodLabel}
                 onClick={
                   card.label === "Total Users"
                     ? () => router.push("/user")
@@ -381,9 +431,16 @@ export default function Home() {
               {!loadingKYC && kycTotal > 0 && (
                 <StatusBadge variant="warning">{kycTotal} pending</StatusBadge>
               )}
+              <button
+                type="button"
+                onClick={() => setKycSort((current) => (current === "oldest" ? "newest" : "oldest"))}
+                className="ml-auto text-body-2 text-black-7 font-medium hover:text-navy"
+              >
+                {kycSort === "oldest" ? "Oldest first" : "Newest first"}
+              </button>
               <Link
                 href="/kyc"
-                className="ml-auto text-body-2 text-primary-6 font-medium hover:underline"
+                className="text-body-2 text-primary-6 font-medium hover:underline"
               >
                 View all
               </Link>
@@ -405,6 +462,12 @@ export default function Home() {
                       Name
                     </th>
                     <th className="table-header text-left text-table-header text-black-7">
+                      Submitted
+                    </th>
+                    <th className="table-header text-left text-table-header text-black-7">
+                      Bottleneck
+                    </th>
+                    <th className="table-header text-left text-table-header text-black-7">
                       KYC details
                     </th>
                     <th className="table-header text-left text-table-header text-black-7">
@@ -414,7 +477,7 @@ export default function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  {kyc.map((row, i) => (
+                  {visibleKyc.map((row, i) => (
                     <KYCRow
                       key={row.userId || i}
                       row={row}
