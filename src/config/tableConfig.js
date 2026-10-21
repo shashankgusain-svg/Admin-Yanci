@@ -8,6 +8,7 @@ import {
 import StatusBadge, { statusVariantFromLabel } from "@/components/statusBadge/StatusBadge";
 import imagePlaceholder from "../../public/images/pi_placeholder.jpg";
 import StarRating from "../../public/icons/misc/StarRating";
+import { formatGhs, recordedFee, recordedWhen, yanciIdOf } from "@/lib/adminView.mjs";
 
 // USERS
 
@@ -110,15 +111,16 @@ export const submittedKycColumns = (payload) => {
     },
     {
       header: "Yanci ID",
-      key: "userId",
+      key: "displayId",
       render: (row) => (
         <Link
           href={`/user/${row.userId}`}
           className="hover:underline text-primary-7"
         >
-          <p>{row.userId ? row.userId : "--"}</p>
+          <p>{yanciIdOf(row) || "—"}</p>
         </Link>
       ),
+      csvExport: (row) => yanciIdOf(row),
     },
     {
       header: "CSD No",
@@ -226,16 +228,17 @@ export const abandonedKycColumns = (payload) => {
       csvExport: (row) => new Date(row.createdDate).toDateString(),
     },
     {
-      header: "ID",
-      key: "userId",
+      header: "Yanci ID",
+      key: "displayId",
       render: (row) => (
         <Link
           href={`/user/${row.userId}`}
           className="hover:underline text-primary-7"
         >
-          <p>{row.userId ? row.userId : "--"}</p>
+          <p>{yanciIdOf(row) || "—"}</p>
         </Link>
       ),
+      csvExport: (row) => yanciIdOf(row),
     },
     {
       header: "Nationality",
@@ -270,14 +273,7 @@ export const abandonedKycColumns = (payload) => {
     },
   ];
 };
-const fundingWhen = (row) =>
-  row.createdAt ||
-  row.createdDate ||
-  row.date ||
-  row.paidAt ||
-  row.transactionId?.createdAt ||
-  row.transactionId?.paidAt ||
-  "";
+const fundingWhen = recordedWhen;
 
 const fundingStatus = (row) =>
   row.status || row.paymentStatus || row.transactionId?.status || "";
@@ -293,7 +289,7 @@ const fundingReference = (row) => {
   return row.transactionId?._id ? String(row.transactionId._id) : "";
 };
 
-export const withdrawalRequestsColumns = () => {
+export const withdrawalRequestsColumns = ({ onReceipt } = {}) => {
 
   return [
     // {
@@ -304,37 +300,42 @@ export const withdrawalRequestsColumns = () => {
    
     // },
     {
-      header: "User ID",
-      key: "user?._id",
-      csvExport: (row) => `${row.user._id || ""}`,
-
-      render: (row) => (
-        <div
-
-          className="hover:underline text-primary-7"
-        >
-          <p>{row.user ? row.user._id : "--"}</p>
-        </div>
-      ),
+      header: "Yanci ID",
+      key: "displayId",
+      csvExport: (row) => yanciIdOf(row),
+      render: (row) => {
+        const accountId = row.user?._id || row.userId;
+        const label = yanciIdOf(row) || "—";
+        if (!accountId) return label;
+        return (
+          <Link href={`/user/${accountId}`} className="hover:underline text-primary-7">
+            {label}
+          </Link>
+        );
+      },
     },
     {
       header: "Name",
       key: "firstName",
-      csvExport: (row) => `${row.user.firstName || ""} ${row.user.lastName || ""}`,
+      csvExport: (row) => `${row.user?.firstName || ""} ${row.user?.lastName || ""}`,
 
-      render: (row) => (
-        <div
-          // href={`/user/${row.userId}`}
-          className="hover:underline text-primary-7"
-        >
-          <p>{row.user ? row.user.firstName + " " + row.user.lastName : "--"}</p>        </div>
-      ),
+      render: (row) => {
+        const accountId = row.user?._id || row.userId;
+        const name = row.user ? `${row.user.firstName || ""} ${row.user.lastName || ""}`.trim() : "";
+        const label = name || "--";
+        if (!accountId) return label;
+        return (
+          <Link href={`/user/${accountId}`} className="hover:underline text-primary-7">
+            {label}
+          </Link>
+        );
+      },
     },
 
     {
       header: "Email",
       key: "email",
-      csvExport: (row) => `${row.user.email || ""}`,
+      csvExport: (row) => `${row.user?.email || ""}`,
 
       render: (row) => (
         <div
@@ -389,6 +390,29 @@ export const withdrawalRequestsColumns = () => {
         <div className="text-primary-7">
           <p>{fundingReference(row) || "—"}</p>
         </div>
+      ),
+    },
+    {
+      header: "Fee",
+      key: "fee",
+      csvExport: (row) => (recordedFee(row) === null ? "" : recordedFee(row)),
+      render: (row) => {
+        const fee = recordedFee(row);
+        return fee === null ? "—" : formatGhs(fee);
+      },
+    },
+    {
+      header: "Receipt",
+      key: "receipt",
+      csvExport: false,
+      render: (row) => (
+        <button
+          type="button"
+          className="hover:underline text-primary-6"
+          onClick={() => onReceipt?.(row)}
+        >
+          Receipt
+        </button>
       ),
     },
     // {

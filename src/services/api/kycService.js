@@ -14,6 +14,9 @@ export const getKYCData = async (payload) => {
   if (payload.startDate && payload.endDate) {
     endpoint += `&startDate=${payload.startDate}&endDate=${payload.endDate}`;
   }
+  if (payload.verificationStatus) {
+    endpoint += `&verificationStatus=${encodeURIComponent(payload.verificationStatus)}`;
+  }
   try {
     const res = await fetch(endpoint, {
       method: "GET",

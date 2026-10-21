@@ -1,7 +1,6 @@
 import React from "react";
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import MetricsCard from "@/components/metricsCard/MetricsCard";
-import Toggle from "@/components/typeToggle/TypeToggle";
 import Table from "@/components/table/Table";
 import {
   getKYCData,
@@ -22,15 +21,45 @@ import {
   getSubmittedKycDropdownItems,
   getAbandonedKycDropdownItems,
 } from "@/config/dropdownConfig";
+import { kycRowMatches } from "@/lib/adminView.mjs";
+import { kycVerificationStatusMapping } from "@/utils/seed";
+import { createNotification } from "@/services/api/notificationsService";
 
 import PageHeader from "@/components/pageHeader/PageHeader";
 import InfoTip from "@/components/infoTip/InfoTip";
 
+const KYC_TABS = [
+  { label: "Submitted", value: "submitted" },
+  { label: "Pending approval", value: "pending" },
+  { label: "Verified", value: "verified" },
+  { label: "Abandoned", value: "abandoned" },
+];
+
+const STATUS_FILTERS = [
+  "documents_submitted",
+  "ready_for_review",
+  "submitted_to_csd",
+  "awaiting_csd_number",
+  "csd_number_received",
+  "trading_active",
+  "kyc_in_progress",
+  "hold",
+  "rejected",
+];
+
 export default function Kyc() {
-  const [data, setData] = React.useState({ submitted: [], abandoned: [] });
+  const [rows, setRows] = React.useState([]);
   const [metrics, setMetrics] = React.useState({});
   const [loading, setLoading] = React.useState(true);
-  const [selectedOption, setSelectedOption] = React.useState("Submitted KYCs");
+  const [selectedTab, setSelectedTab] = React.useState("submitted");
+  const [verificationStatus, setVerificationStatus] = React.useState("");
+  const [reminderOpen, setReminderOpen] = React.useState(false);
+  const [reminder, setReminder] = React.useState({
+    title: "Finish your Yanci KYC",
+    description: "Your identity check is still incomplete. Open Yanci and submit the remaining documents.",
+    mode: "EMAIL",
+  });
+  const [sendingReminder, setSendingReminder] = React.useState(false);
   const [modalType, setModalType] = React.useState(null);
   const [userId, setUserId] = React.useState("");
   const [csdFormLink, setCsdFormLink] = React.useState(null);
@@ -41,9 +70,9 @@ export default function Kyc() {
     userId: null,
     csdAccountNumber: "",
   });
-  const { sortField, sortOrder, handleSort } = useTableSorting();
+  const { sortField, sortOrder, handleSort } = useTableSorting("createdAt", "desc");
   const { searchValue, onSearch } = useSearch();
-  const { limit, page, handleLimitChange, handlePageChange } = usePagination();
+  const { limit, page, setPage, handleLimitChange, handlePageChange } = usePagination();
 
   const handleCSDNumberChange = (e) => {
     setVerificationData((prevData) => ({
@@ -66,7 +95,7 @@ export default function Kyc() {
   const fetchKYCData = async (startDate = "", endDate = "") => {
     setLoading(true);
     const result = await getKYCData({
-      type: selectedOption,
+      type: selectedTab === "abandoned" ? "Abandoned KYCs" : "Submitted KYCs",
       sortOrder: sortOrder,
       sortField: sortField,
       page: page,
@@ -74,14 +103,27 @@ export default function Kyc() {
       value: searchValue,
       startDate: startDate,
       endDate: endDate,
+      verificationStatus,
     });
-    setData((prevData) => ({
-      ...prevData,
-      [selectedOption === "Submitted KYCs" ? "submitted" : "abandoned"]:
-        result?.data?.results ?? [],
-    }));
+    const results = result?.data?.results ?? [];
+    setRows(results.filter((row) => kycRowMatches(row, selectedTab, verificationStatus)));
     setTotalPages(result?.data?.totalPages || 1);
     setLoading(false);
+  };
+
+  const sendReminder = async () => {
+    if (!isRequired(reminder.title, "Reminder title", true) || !isRequired(reminder.description, "Reminder", true)) {
+      return;
+    }
+    setSendingReminder(true);
+    const res = await createNotification({
+      title: reminder.title,
+      description: reminder.description,
+      mode: reminder.mode,
+      targetCustomer: "ABANDONED_KYC",
+    });
+    setSendingReminder(false);
+    if (res?.status) setReminderOpen(false);
   };
 
   const fetchKYCMetrics = async () => {
@@ -96,7 +138,7 @@ export default function Kyc() {
     }
     fetchKYCData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedOption, sortField, sortOrder, limit, page, searchValue, values]);
+  }, [selectedTab, sortField, sortOrder, limit, page, searchValue, values, verificationStatus]);
 
   React.useEffect(() => {
     fetchKYCMetrics();
@@ -107,86 +149,10 @@ export default function Kyc() {
     { name: "KYC Management" },
   ];
 
-  const userOptions = [
-    {
-      label: "Submitted KYCs",
-      content: (
-        <Table
-          searchBar
-          datePicker
-          exportToCSV
-          columns={submittedKycColumns({
-            handleSort,
-            setModalType,
-            setCsdFormLink,
-            setUserId,
-            sortOrder,
-          })}
-          data={data.submitted}
-          isDropdown={canEdit("KYC")}
-          dropdownItems={(row) =>
-            getSubmittedKycDropdownItems({
-              row,
-              setModalType,
-              setVerificationData,
-              setCsdFormLink,
-              setUserId,
-              fetchKYCData,
-            })
-          }
-          isLoading={loading}
-          paginationProps={{
-            currentPage: page,
-            totalPages,
-            onPageChange: handlePageChange,
-          }}
-          limitProps={{
-            selectedLimit: limit,
-            onLimitChange: handleLimitChange,
-          }}
-          searchValue={searchValue}
-          onSearch={onSearch}
-          dateValue={values}
-          dateOnChange={setValues}
-        />
-      ),
-    },
-    {
-      label: "Abandoned KYCs",
-      content: (
-        <Table
-          searchBar
-          datePicker
-          exportToCSV
-          columns={abandonedKycColumns({ handleSort, setModalType, setUserId, sortOrder })}
-          data={data.abandoned}
-          isDropdown
-          dropdownItems={(row) =>
-            getAbandonedKycDropdownItems({
-              row,
-              setModalType,
-              setUserId,
-              setCsdFormLink,
-            })
-          }
-          isLoading={loading}
-          paginationProps={{
-            currentPage: page,
-            totalPages,
-            onPageChange: handlePageChange,
-          }}
-          limitProps={{
-            selectedLimit: limit,
-            onLimitChange: handleLimitChange,
-          }}
-          searchValue={searchValue}
-          onSearch={onSearch}
-          dateValue={values}
-          dateOnChange={setValues}
-        />
-      ),
-    },
-  ];
+  const abandoned = selectedTab === "abandoned";
+  const columns = abandoned
+    ? abandonedKycColumns({ handleSort, setModalType, setUserId, sortOrder })
+    : submittedKycColumns({ handleSort, setModalType, setCsdFormLink, setUserId, sortOrder });
 
   return (
     <div className="flex flex-col gap-6">
@@ -283,12 +249,70 @@ export default function Kyc() {
         </Modal>
       ) : null}
 
+      <Modal
+        isOpen={reminderOpen}
+        type="confirmation"
+        title="Remind investors who abandoned KYC"
+        message="This sends one notification to the abandoned-KYC audience."
+        onClose={() => setReminderOpen(false)}
+      >
+        <Modal.Content>
+          <div className="flex flex-col gap-3 w-full">
+            <InputAndLabel>
+              <InputAndLabel.Label htmlFor="reminderTitle">Title</InputAndLabel.Label>
+              <InputAndLabel.Input
+                id="reminderTitle"
+                value={reminder.title}
+                onChange={(event) => setReminder((current) => ({ ...current, title: event.target.value }))}
+              />
+            </InputAndLabel>
+            <InputAndLabel>
+              <InputAndLabel.Label htmlFor="reminderBody">Message</InputAndLabel.Label>
+              <InputAndLabel.TextArea
+                id="reminderBody"
+                value={reminder.description}
+                onChange={(event) => setReminder((current) => ({ ...current, description: event.target.value }))}
+              />
+            </InputAndLabel>
+            <InputAndLabel>
+              <InputAndLabel.Label htmlFor="reminderMode">Mode</InputAndLabel.Label>
+              <InputAndLabel.Select
+                id="reminderMode"
+                value={reminder.mode}
+                onChange={(event) => setReminder((current) => ({ ...current, mode: event.target.value }))}
+              >
+                <InputAndLabel.Option value="EMAIL">Email</InputAndLabel.Option>
+                <InputAndLabel.Option value="SMS">SMS</InputAndLabel.Option>
+                <InputAndLabel.Option value="BOTH">Email and SMS</InputAndLabel.Option>
+                <InputAndLabel.Option value="PUSH">Push</InputAndLabel.Option>
+              </InputAndLabel.Select>
+            </InputAndLabel>
+          </div>
+        </Modal.Content>
+        <Modal.Footer>
+          <Button design="secondary" className="h-9" onClick={() => setReminderOpen(false)}>Cancel</Button>
+          <Button design="primary" className="h-9" isLoading={sendingReminder} onClick={sendReminder}>
+            Send reminder
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <Breadcrumb items={breadCrumbItems} />
       <PageHeader
         title="KYC & onboarding"
-        description="Review and manage investor onboarding applications."
+        description="Review and manage investor onboarding applications. The list opens newest first."
         info={
-          <InfoTip purpose="Approve, reject, or advance KYC applications. CSD entry is required before trading can activate." />
+          <InfoTip
+            purpose="Approve, reject, or advance KYC applications. CSD entry is required before trading can activate."
+            workflow="Abandoned KYC is its own tab. Reminders go to that audience."
+          />
+        }
+        actions={
+          abandoned && (canEdit("KYC") || canEdit("Notifications")) ? (
+            <Button design="primary" className="h-9" onClick={() => setReminderOpen(true)}>
+              Send reminder
+            </Button>
+          ) : null
         }
       />
       <div className="flex flex-col gap-6">
@@ -300,12 +324,90 @@ export default function Kyc() {
               value={value?.percent ? value.percent : value?.count}
               percentageChange={value?.percentChange}
               isPositiveChange={value?.percentChange < 0 ? false : true}
+              info={{ purpose: "Count from KYC metrics. It is not limited to the table filters below." }}
             />
           ))}
         </div>
-        <Toggle
-          options={userOptions}
-          onSelect={(label) => setSelectedOption(label)}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap gap-1">
+            {KYC_TABS.map((tab) => (
+              <button
+                key={tab.value}
+                type="button"
+                onClick={() => {
+                  setSelectedTab(tab.value);
+                  setPage(1);
+                }}
+                className={`px-3 py-1 rounded-full text-label-2 font-medium ${
+                  selectedTab === tab.value ? "bg-navy text-white" : "text-black-7 hover:bg-canvas"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          <label className="flex items-center gap-2 text-label-2 text-black-7">
+            Verification status
+            <select
+              value={verificationStatus}
+              onChange={(event) => {
+                setVerificationStatus(event.target.value);
+                setPage(1);
+              }}
+              className="h-9 rounded-lg border border-black-5 bg-white px-2 text-navy"
+            >
+              <option value="">All statuses</option>
+              {STATUS_FILTERS.map((status) => (
+                <option key={status} value={status}>
+                  {kycVerificationStatusMapping[status] || status}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        {selectedTab === "pending" || selectedTab === "verified" ? (
+          <p className="text-label-2 text-black-7">
+            This tab keeps the applications on the current page that match. Submission date is the date filter on the table, and export downloads the rows shown here.
+          </p>
+        ) : (
+          <p className="text-label-2 text-black-7">
+            {abandoned
+              ? "These investors started KYC and have not submitted. Up to 100 rows can be shown per page."
+              : "Filter by submission date on the table. Export downloads the rows shown here, up to 100 per page."}
+          </p>
+        )}
+        <Table
+          searchBar
+          datePicker
+          exportToCSV
+          columns={columns}
+          data={rows}
+          isDropdown={abandoned || canEdit("KYC")}
+          dropdownItems={(row) =>
+            abandoned
+              ? getAbandonedKycDropdownItems({ row, setModalType, setUserId, setCsdFormLink })
+              : getSubmittedKycDropdownItems({
+                  row,
+                  setModalType,
+                  setVerificationData,
+                  setCsdFormLink,
+                  setUserId,
+                  fetchKYCData,
+                })
+          }
+          isLoading={loading}
+          paginationProps={{ currentPage: page, totalPages, onPageChange: handlePageChange }}
+          limitProps={{ selectedLimit: limit, onLimitChange: handleLimitChange }}
+          searchValue={searchValue}
+          onSearch={(event) => {
+            onSearch(event);
+            setPage(1);
+          }}
+          dateValue={values}
+          dateOnChange={(next) => {
+            setValues(next);
+            setPage(1);
+          }}
         />
       </div>
     </div>

@@ -1,10 +1,12 @@
 import Breadcrumb from "@/components/breadcrumb/Breadcrumb";
 import MetricsCard from "@/components/metricsCard/MetricsCard";
 import React from "react";
-import Toggle from "@/components/typeToggle/TypeToggle";
 import { useRouter } from "next/router";
 import Table from "@/components/table/Table";
 import { getUsersData, getUserMetrics, blockUser, exportUsers } from "@/services/api/userService";
+import { downloadCSV } from "@/utils/helpers";
+import { segmentSignalMissing, userMatchesSegment } from "@/lib/adminView.mjs";
+import Link from "next/link";
 import Modal from "@/components/modal/ModalIndex";
 import Button from "@/components/button/Button";
 import usePagination from "@/hooks/usePagination";
@@ -32,17 +34,25 @@ const SORT_OPTIONS = [
 const GENDER_OPTIONS   = ["Male", "Female", "Other"];
 const NATIONALITY_OPTIONS = ["Ghana", "Nigeria", "USA", "UK", "Other"];
 
+const SEGMENTS = [
+  { label: "Verified", value: "verified", audience: null },
+  { label: "Inactive", value: "inactive", audience: "NON_ACTIVE_USERS" },
+  { label: "Funded", value: "funded", audience: "FUNDED_USERS" },
+  { label: "Unfunded", value: "unfunded", audience: "ALL_UNFUNDED_ACCOUNTS" },
+  { label: "Blocked", value: "blocked", audience: null },
+];
+
 export default function User() {
   const router = useRouter();
   const { limit, page, setPage, handleLimitChange, handlePageChange } = usePagination();
   const { searchValue, onSearch } = useSearch();
 
   const [isModalOpen, setModalOpen]       = React.useState(false);
-  const [data, setData]                   = React.useState({ active: [], blocked: [] });
+  const [users, setUsers]                 = React.useState([]);
   const [metrics, setMetrics]             = React.useState(null);
   const [userId, setUserId]               = React.useState("");
   const [loading, setLoading]             = React.useState(true);
-  const [selectedOption, setSelectedOption] = React.useState("Active Users");
+  const [segment, setSegment]             = React.useState("verified");
   const [totalPages, setTotalPages]       = React.useState(0);
   const [dateValues, setDateValues]       = React.useState(null);
   const [sort, setSort]                   = React.useState("");
@@ -50,10 +60,10 @@ export default function User() {
   const [nationality, setNationality]     = React.useState("");
 
   // reset to page 1 when filters change
-  React.useEffect(() => { setPage(1); }, [selectedOption, searchValue, sort, gender, nationality, dateValues]);
+  React.useEffect(() => { setPage(1); }, [segment, searchValue, sort, gender, nationality, dateValues]);
 
   const buildPayload = (startDate = "", endDate = "") => ({
-    type: selectedOption,
+    type: segment === "blocked" ? "Blocked Users" : "Active Users",
     page,
     limit,
     value: searchValue,
@@ -72,11 +82,10 @@ export default function User() {
       endDate   = dateValues[1]?.format?.("YYYY-MM-DD") || dateValues[1] || "";
     }
     const result = await getUsersData(buildPayload(startDate, endDate));
-    const key = selectedOption === "Blocked Users" ? "blocked" : "active";
-    setData((prev) => ({ ...prev, [key]: result?.data?.results ?? [] }));
+    setUsers(result?.data?.results ?? []);
     setTotalPages(result?.data?.totalPages ?? 1);
     setLoading(false);
-  }, [selectedOption, page, limit, searchValue, sort, gender, nationality, dateValues]);
+  }, [segment, page, limit, searchValue, sort, gender, nationality, dateValues]);
 
   React.useEffect(() => { fetchUsersData(); }, [fetchUsersData]);
 
@@ -99,13 +108,21 @@ export default function User() {
     fetchUsersData();
   };
 
+  const signalMissing = segmentSignalMissing(users, segment);
+  const visibleUsers = signalMissing ? [] : users.filter((row) => userMatchesSegment(row, segment));
+  const currentSegment = SEGMENTS.find((item) => item.value === segment);
+
   const handleExport = async () => {
     let startDate = "", endDate = "";
     if (dateValues) {
       startDate = dateValues[0]?.format?.("YYYY-MM-DD") || dateValues[0] || "";
       endDate   = dateValues[1]?.format?.("YYYY-MM-DD") || dateValues[1] || "";
     }
-    await exportUsers({ type: selectedOption, sort, gender, nationality, value: searchValue, startDate, endDate });
+    if (segment === "blocked") {
+      await exportUsers({ type: "Blocked Users", sort, gender, nationality, value: searchValue, startDate, endDate });
+      return;
+    }
+    downloadCSV(userColumns({ handleSort: () => {}, sortOrder: "" }), visibleUsers);
   };
 
   // ── filter/sort menus passed to Table ──────────────────────────────────────
@@ -184,39 +201,8 @@ export default function User() {
     dateOnChange: setDateValues,
   };
 
-  const userOptions = [
-    {
-      label: "Active Users",
-      content: (
-        <Table
-          title="User's Details"
-          searchPlaceHolder="Search with Yanci ID"
-          columns={userColumns({ handleSort: () => {}, sortOrder: "" })}
-          data={data.active}
-          isDropdown
-          dropdownItems={(row) => getActiveDropdownItems({ row, setModalOpen, router, setUserId })}
-          {...sharedTableProps}
-        />
-      ),
-    },
-    {
-      label: "Blocked Users",
-      content: (
-        <Table
-          title="Blocked Users"
-          searchPlaceHolder="Search with Yanci ID"
-          columns={userColumns({ handleSort: () => {}, sortOrder: "" })}
-          data={data.blocked}
-          isDropdown
-          dropdownItems={(row) => getBlockedDropdownItems({ handleUnblock, router, row })}
-          {...sharedTableProps}
-        />
-      ),
-    },
-  ];
-
   const metricCards = [
-    { label: "Total Users",        value: metrics?.totalUsers?.count,          isPercentage: false, percentChange: metrics?.totalUsers?.percentChange },
+    { label: "Total Users",        value: metrics?.totalUsers?.count,          isPercentage: false, percentChange: metrics?.totalUsers?.percentChange, info: { purpose: "Platform account count from user metrics. The Verified tab lists investors whose KYC is complete." } },
     { label: "Active Users",       value: metrics?.activeUsers?.count,         isPercentage: false, percentChange: metrics?.activeUsers?.percentChange },
     { label: "Inactive Users",     value: metrics?.inactiveUsers?.percent,     isPercentage: true,  percentChange: metrics?.inactiveUsers?.percentChange },
     { label: "Funded Accounts",    value: metrics?.fundedAccounts?.percent,    isPercentage: true,  percentChange: metrics?.fundedAccounts?.percentChange },
@@ -256,11 +242,57 @@ export default function User() {
             isPercentage={card.isPercentage}
             percentageChange={card.percentChange ?? 0}
             isPositiveChange={(card.percentChange ?? 0) >= 0}
+            info={card.info}
           />
         ))}
       </div>
 
-      <Toggle options={userOptions} onSelect={(label) => setSelectedOption(label)} />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-1">
+          {SEGMENTS.map((item) => (
+            <button
+              key={item.value}
+              type="button"
+              onClick={() => setSegment(item.value)}
+              className={`px-3 py-1 rounded-full text-label-2 font-medium ${
+                segment === item.value ? "bg-navy text-white" : "text-black-7 hover:bg-canvas"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+        {currentSegment?.audience ? (
+          <Link
+            href={`/notifications/create?targetCustomer=${currentSegment.audience}`}
+            className="text-body-2 text-primary-6 font-medium hover:underline"
+          >
+            Message this segment
+          </Link>
+        ) : null}
+      </div>
+      {signalMissing ? (
+        <p className="text-label-2 text-black-7">
+          This segment is not marked on the accounts returned here. Use Message this segment to reach that audience.
+        </p>
+      ) : (
+        <p className="text-label-2 text-black-7">
+          Verified, inactive, funded, and unfunded keep the matching investors from the current page. Yanci ID is the public id, not the account id.
+        </p>
+      )}
+      <Table
+        title={segment === "blocked" ? "Blocked users" : "Verified investors"}
+        searchPlaceHolder="Search with Yanci ID"
+        columns={userColumns({ handleSort: () => {}, sortOrder: "" })}
+        data={visibleUsers}
+        isDropdown
+        dropdownItems={(row) =>
+          segment === "blocked"
+            ? getBlockedDropdownItems({ handleUnblock, router, row })
+            : getActiveDropdownItems({ row, setModalOpen, router, setUserId })
+        }
+        {...sharedTableProps}
+      />
     </div>
   );
 }

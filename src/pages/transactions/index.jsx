@@ -12,6 +12,9 @@ import { getTransactionMetrics } from "@/services/api/analyticsService";
 import Toggle from "@/components/typeToggle/TypeToggle";
 import Dropdown from "@/components/dropdown/DropdownIndex";
 import PageHeader from "@/components/pageHeader/PageHeader";
+import ReceiptModal from "@/components/modals/ReceiptModal";
+import Link from "next/link";
+import { formatGhs, recordedFee } from "@/lib/adminView.mjs";
 
 const breadCrumbItems = [
     { name: "Home", link: "/" },
@@ -44,6 +47,7 @@ export default function Transactions() {
     const [sort, setSort] = React.useState("newest");
     const [metrics, setMetrics] = React.useState(null);
     const [loadingMetrics, setLoadingMetrics] = React.useState(true);
+    const [receipt, setReceipt] = React.useState(null);
 
     const { searchValue, onSearch } = useSearch();
     const { limit, page, handleLimitChange, handlePageChange } = usePagination();
@@ -130,7 +134,7 @@ export default function Transactions() {
             content: (
                 <Table
                     {...sharedTableProps}
-                    columns={withdrawalRequestsColumns()}
+                    columns={withdrawalRequestsColumns({ onReceipt: (row) => setReceipt({ row, kind: "Withdrawal" }) })}
                     data={withdrawalRequests}
                     isDropdown={canEdit("Withdrawal")}
                     dropdownItems={(row) => getWithdrawalRequestsDropdownItems({ row })}
@@ -142,7 +146,7 @@ export default function Transactions() {
             content: (
                 <Table
                     {...sharedTableProps}
-                    columns={withdrawalRequestsColumns()}
+                    columns={withdrawalRequestsColumns({ onReceipt: (row) => setReceipt({ row, kind: "Deposit" }) })}
                     data={deposits}
                     isDropdown={canEdit("Transactions")}
                     dropdownItems={(row) => getWithdrawalRequestsDropdownItems({ row })}
@@ -151,14 +155,19 @@ export default function Transactions() {
         },
     ];
 
+    const loaded = [...withdrawalRequests, ...deposits];
+    const fees = loaded.map(recordedFee).filter((fee) => fee !== null);
+    const feeTotal = fees.reduce((sum, fee) => sum + fee, 0);
+
     return (
         <div className="flex flex-col gap-6">
+            <ReceiptModal row={receipt?.row} kind={receipt?.kind} onClose={() => setReceipt(null)} />
             <Breadcrumb items={breadCrumbItems} />
 
             
       <PageHeader
         title="Funding"
-        description="Review deposits and withdrawal requests."
+        description="Review deposits and withdrawal requests. Each row can open a receipt, and any recorded fee is listed beside the amount."
       />
       <div className="grid gap-2.5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
                 {METRIC_MAP.map((card) => (
@@ -180,6 +189,15 @@ export default function Transactions() {
                     />
                 ))}
             </div>
+            <p className="text-label-2 text-black-7">
+              {fees.length > 0
+                ? `Fees recorded on the rows loaded here: ${formatGhs(feeTotal)} across ${fees.length} transactions. `
+                : "No fee was recorded on the deposits and withdrawals loaded here. "}
+              <Link href="/revenue" className="text-primary-6 hover:underline">
+                Revenue
+              </Link>
+              {" "}shows the fee totals and their effect on platform revenue.
+            </p>
 
             <Toggle options={userOptions} />
         </div>

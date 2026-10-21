@@ -21,6 +21,14 @@ export default function CreateNotification() {
     scheduleTime: { hours: 12, minutes: 30, ampm: "AM" },
   });
 
+  React.useEffect(() => {
+    if (!router.isReady || !router.query.targetCustomer) return;
+    setNotification((current) => ({
+      ...current,
+      targetCustomer: String(router.query.targetCustomer),
+    }));
+  }, [router.isReady, router.query.targetCustomer]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNotification((prevNotification) => ({

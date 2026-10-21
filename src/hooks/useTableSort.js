@@ -1,8 +1,8 @@
 import React from 'react'
 
-const useTableSorting = () => {
-  const [sortField, setSortField] = React.useState("");
-  const [sortOrder, setSortOrder] = React.useState("asc");
+const useTableSorting = (initialField = "", initialOrder = "asc") => {
+  const [sortField, setSortField] = React.useState(initialField);
+  const [sortOrder, setSortOrder] = React.useState(initialOrder);
 
   const handleSort = (field) => {
     const isAsc = sortField === field && sortOrder === "asc";

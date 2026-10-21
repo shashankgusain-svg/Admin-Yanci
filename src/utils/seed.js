@@ -110,11 +110,14 @@ export const supportKeyMapping = {
 };
 
 export const targetCustomerValueMapping = {
-  ALL_UNFUNDED_ACCOUNTS: "All Funded Accounts",
-  NO_TRANSACTION_MADE: "No Transaction Made",
-  MONTHLY_ACTIVE_USERS: "Monthly Active Users",
-  NON_ACTIVE_USERS: "Non Active Users",
+  ALL_UNFUNDED_ACCOUNTS: "All unfunded accounts",
+  FUNDED_USERS: "Funded users",
+  NO_TRANSACTION_MADE: "No transaction made",
+  MONTHLY_ACTIVE_USERS: "Monthly active users",
+  NON_ACTIVE_USERS: "Non active users",
   ABANDONED_KYC: "Abandoned KYC",
-  NEW_USERS: "New Users",
-  ALL_USERS:"All Users"
+  NEW_USERS: "New users",
+  ALL_USERS: "All users",
+  STOCK_HOLDERS: "Stock holders",
+  OWNERS_OF_STOCK: "Owners of a stock",
 };
