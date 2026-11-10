@@ -1,4 +1,3 @@
-import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 
 export const getAllWithdrawals = async (payload) => {
@@ -9,8 +8,7 @@ export const getAllWithdrawals = async (payload) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -25,8 +23,7 @@ export const getWithdrawalRequest = async (payload) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -41,8 +38,7 @@ export const getAllDeposits = async (payload) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);

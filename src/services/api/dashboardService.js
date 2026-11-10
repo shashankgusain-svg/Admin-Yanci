@@ -1,10 +1,7 @@
-import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 
 const authHeaders = async () => ({
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${await getAuthToken()}`,
-});
+  "Content-Type": "application/json" });
 
 export const getDashboardHome = async ({ range = "12m", kycPage = 1, kycLimit = 5 } = {}) => {
   try {
@@ -22,8 +19,7 @@ export const getDashboardStats = async (range = "12m") => {
   try {
     const res = await fetch(`${URL}admin/dashboard/stats?range=${range}`, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);

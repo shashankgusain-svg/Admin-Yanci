@@ -31,7 +31,8 @@ export async function clearSession() {
 export const removeToken = () => cookies.remove("token", cookieFlags);
 export const removeUser = () => cookies.remove("user", cookieFlags);
 
-export const getAuthToken = async () => null;
+// Auth is proxy-only: the HttpOnly `token` cookie is attached server-side
+// (YA-004). Browser services must not send `Authorization: Bearer …`.
 
 export const getUser = () => {
   const cookie = cookies.get("user");

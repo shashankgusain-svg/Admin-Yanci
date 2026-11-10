@@ -1,11 +1,8 @@
-import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 import { toast } from "react-toastify";
 
 const authHeaders = async () => ({
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${await getAuthToken()}`,
-});
+  "Content-Type": "application/json" });
 
 export const getAllBlogs = async (payload = {}) => {
   const params = new URLSearchParams();
@@ -17,8 +14,7 @@ export const getAllBlogs = async (payload = {}) => {
   try {
     const res = await fetch(`${URL}blogs/all?${params}`, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -29,8 +25,7 @@ export const getBlogById = async (id) => {
   try {
     const res = await fetch(`${URL}blogs/admin/${id}`, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -44,10 +39,8 @@ export const getBlogById = async (id) => {
 export const createBlog = (formData, { onProgress } = {}) =>
   new Promise(async (resolve) => {
     try {
-      const token = await getAuthToken();
       const xhr = new XMLHttpRequest();
       xhr.open("POST", `${URL}blogs/create`);
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
 
       xhr.upload.onprogress = (event) => {
         if (!event.lengthComputable || !onProgress) return;
@@ -89,8 +82,7 @@ export const deleteBlog = async (id) => {
   try {
     const res = await fetch(`${URL}blogs/delete/${id}`, {
       method: "DELETE",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);

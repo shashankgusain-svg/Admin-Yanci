@@ -1,4 +1,3 @@
-import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 
 export const getNotificationDetails = async (payload) => {
@@ -10,8 +9,7 @@ export const getNotificationDetails = async (payload) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -22,8 +20,7 @@ export const getNotificationsMetrics = async () => {
   try {
     const res = await fetch(`${URL}notify/metrics`, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -34,8 +31,7 @@ export const getNotificationStocks = async () => {
   try {
     const res = await fetch(`${URL}notify/stocks`, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -48,8 +44,7 @@ export const getAudiencePreview = async (targetCustomer, stockSymbol) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -60,9 +55,8 @@ export const createNotification = async (payload) => {
   try {
     const res = await fetch(`${URL}notify/create`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-      body: JSON.stringify(payload),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload) });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -73,9 +67,8 @@ export const broadcastToStockOwners = async (payload) => {
   try {
     const res = await fetch(`${URL}notify/broadcast/stock-owners`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-      body: JSON.stringify(payload),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload) });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);

@@ -1,8 +1,6 @@
-import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 
 export const getUsersData = async (payload) => {
-  const token = await getAuthToken();
   let endpoint = `${URL}adminuser/getusers?`;
   endpoint += `isBlocked=${payload.type === "Blocked Users"}&`;
   endpoint += `page=${payload.page}&limit=${payload.limit}`;
@@ -14,8 +12,7 @@ export const getUsersData = async (payload) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -26,8 +23,7 @@ export const getUserMetrics = async () => {
   try {
     const res = await fetch(`${URL}adminuser/user-metrics`, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     const result = await responseValidator(res);
     // API returns data.metrics — unwrap one level
     if (result?.status && result.data?.metrics) {
@@ -47,11 +43,9 @@ export const exportUsers = async (payload) => {
   if (payload.value) endpoint += `&search=${encodeURIComponent(payload.value)}`;
   if (payload.startDate && payload.endDate) endpoint += `&startDate=${payload.startDate}&endDate=${payload.endDate}`;
   try {
-    const token = await getAuthToken();
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      headers: { } });
     if (!res.ok) return apiError(new Error("Export failed"));
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);
@@ -73,8 +67,7 @@ export const getUserDetails = async (userId) => {
   try {
     const res = await fetch(`${URL}adminuser/getusers?search=${encodeURIComponent(userId)}&page=1&limit=1`, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     const result = await responseValidator(res);
     if (result?.status) {
       const user = Array.isArray(result.data)
@@ -92,8 +85,7 @@ export const getUserKYCDetails = async (userId) => {
   try {
     const res = await fetch(`${URL}adminuser/kyc-details/${userId}`, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -108,8 +100,7 @@ export const getReferrals = async (payload) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -120,8 +111,7 @@ export const blockUser = async (userId) => {
   try {
     const res = await fetch(`${URL}adminuser/block/user/${userId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -132,8 +122,7 @@ export const deleteUser = async (userId) => {
   try {
     const res = await fetch(`${URL}adminuser/users/${userId}`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -149,8 +138,7 @@ export const getUserTransactionsForAdmin = async (userId, payload = {}) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);

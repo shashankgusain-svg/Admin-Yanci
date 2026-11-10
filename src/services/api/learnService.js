@@ -1,9 +1,8 @@
-import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 import { toast } from "react-toastify";
 
 const authHeaders = async (json = true) => {
-  const headers = { Authorization: `Bearer ${await getAuthToken()}` };
+  const headers = { };
   if (json) headers["Content-Type"] = "application/json";
   return headers;
 };
@@ -24,8 +23,7 @@ export const getAllPaths = async (payload = {}) => {
   try {
     const res = await fetch(`${URL}learn/paths/all?${qs(payload)}`, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -36,8 +34,7 @@ export const getPathById = async (id) => {
   try {
     const res = await fetch(`${URL}learn/paths/admin/${id}`, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -56,14 +53,12 @@ export const createPath = async (payload, { thumbnail } = {}) => {
       res = await fetch(`${URL}learn/paths`, {
         method: "POST",
         headers: await authHeaders(false),
-        body: formData,
-      });
+        body: formData });
     } else {
       res = await fetch(`${URL}learn/paths`, {
         method: "POST",
         headers: await authHeaders(),
-        body: JSON.stringify(payload),
-      });
+        body: JSON.stringify(payload) });
     }
     return responseValidator(res, true);
   } catch (error) {
@@ -83,14 +78,12 @@ export const updatePath = async (id, payload, { thumbnail } = {}) => {
       res = await fetch(`${URL}learn/paths/${id}`, {
         method: "PUT",
         headers: await authHeaders(false),
-        body: formData,
-      });
+        body: formData });
     } else {
       res = await fetch(`${URL}learn/paths/${id}`, {
         method: "PUT",
         headers: await authHeaders(),
-        body: JSON.stringify(payload),
-      });
+        body: JSON.stringify(payload) });
     }
     return responseValidator(res, true);
   } catch (error) {
@@ -102,8 +95,7 @@ export const togglePathStatus = async (id) => {
   try {
     const res = await fetch(`${URL}learn/paths/${id}/status`, {
       method: "PUT",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -114,8 +106,7 @@ export const deletePath = async (id) => {
   try {
     const res = await fetch(`${URL}learn/paths/${id}`, {
       method: "DELETE",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -128,8 +119,7 @@ export const getAllLessons = async (payload = {}) => {
   try {
     const res = await fetch(`${URL}learn/lessons/all?${qs(payload)}`, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -140,8 +130,7 @@ export const getLessonById = async (id) => {
   try {
     const res = await fetch(`${URL}learn/lessons/admin/${id}`, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -153,8 +142,7 @@ export const createLesson = async (payload) => {
     const res = await fetch(`${URL}learn/lessons`, {
       method: "POST",
       headers: await authHeaders(),
-      body: JSON.stringify(payload),
-    });
+      body: JSON.stringify(payload) });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -166,8 +154,7 @@ export const updateLesson = async (id, payload) => {
     const res = await fetch(`${URL}learn/lessons/${id}`, {
       method: "PUT",
       headers: await authHeaders(),
-      body: JSON.stringify(payload),
-    });
+      body: JSON.stringify(payload) });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -178,8 +165,7 @@ export const toggleLessonStatus = async (id) => {
   try {
     const res = await fetch(`${URL}learn/lessons/${id}/status`, {
       method: "PUT",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -190,8 +176,7 @@ export const deleteLesson = async (id) => {
   try {
     const res = await fetch(`${URL}learn/lessons/${id}`, {
       method: "DELETE",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);

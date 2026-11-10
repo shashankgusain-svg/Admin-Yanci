@@ -1,11 +1,8 @@
-import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 import { toast } from "react-toastify";
 
 const authHeaders = async () => ({
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${await getAuthToken()}`,
-});
+  "Content-Type": "application/json" });
 
 export const getTutorialVideos = async (payload = {}) => {
   const params = new URLSearchParams();
@@ -19,8 +16,7 @@ export const getTutorialVideos = async (payload = {}) => {
   try {
     const res = await fetch(`${URL}tutorial-videos/all?${params}`, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -34,10 +30,8 @@ export const getTutorialVideos = async (payload = {}) => {
 export const createTutorialVideo = (formData, { onProgress } = {}) =>
   new Promise(async (resolve) => {
     try {
-      const token = await getAuthToken();
       const xhr = new XMLHttpRequest();
       xhr.open("POST", `${URL}tutorial-videos/create`);
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
 
       xhr.upload.onprogress = (event) => {
         if (!event.lengthComputable || !onProgress) return;
@@ -79,8 +73,7 @@ export const deleteTutorialVideo = async (id) => {
   try {
     const res = await fetch(`${URL}tutorial-videos/delete/${id}`, {
       method: "DELETE",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
