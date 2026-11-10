@@ -1,4 +1,3 @@
-import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 
 export const getUserSupportDetails = async (payload) => {
@@ -15,8 +14,7 @@ export const getUserSupportDetails = async (payload) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -27,8 +25,7 @@ export const getSupportTicket = async (ticketId) => {
   try {
     const res = await fetch(`${URL}support/ticket/${ticketId}`, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -40,8 +37,7 @@ export const getSupportMetrics = async (payload) => {
   try {
     const res = await fetch(`${URL}support/metrics?type=${type}`, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -52,9 +48,8 @@ export const createNewFAQ = async (payload) => {
   try {
     const res = await fetch(`${URL}support/faq/create`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-      body: JSON.stringify(payload),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload) });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -65,9 +60,8 @@ export const updateQueryStatus = async (payload) => {
   try {
     const res = await fetch(`${URL}support/ticket/${payload._id}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-      body: JSON.stringify({ status: payload.status }),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: payload.status }) });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -78,9 +72,8 @@ export const updateFAQStatus = async (payload) => {
   try {
     const res = await fetch(`${URL}support/faq/update/status/${payload._id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-      body: JSON.stringify({ status: payload.status }),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: payload.status }) });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -91,9 +84,8 @@ export const updateFAQ = async (payload) => {
   try {
     const res = await fetch(`${URL}support/faq/update/${payload._id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-      body: JSON.stringify({ question: payload.question, answer: payload.answer }),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: payload.question, answer: payload.answer }) });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -104,8 +96,7 @@ export const deleteFAQ = async (_id) => {
   try {
     const res = await fetch(`${URL}support/faq/delete/${_id}`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);

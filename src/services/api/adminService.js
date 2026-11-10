@@ -1,4 +1,3 @@
-import { getAuthToken } from "./cookies";
 import { apiError, responseValidator, URL } from "./helper";
 
 export const getAllAdmins = async (payload) => {
@@ -10,8 +9,7 @@ export const getAllAdmins = async (payload) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -25,8 +23,7 @@ export const getAllSubAdmins = async (payload) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -37,8 +34,7 @@ export const getSubAdminDetails = async (_id) => {
   try {
     const res = await fetch(`${URL}admin/get-single-admin/${_id}`, {
       method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -49,9 +45,8 @@ export const addSubAdmin = async (payload) => {
   try {
     const res = await fetch(`${URL}admin/create-sub-admin`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-      body: JSON.stringify(payload),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload) });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -62,9 +57,8 @@ export const updateSubadmin = async (payload, id) => {
   try {
     const res = await fetch(`${URL}admin/update-sub-admin/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-      body: JSON.stringify(payload),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload) });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -75,8 +69,7 @@ export const deleteSubAdmin = async (_id) => {
   try {
     const res = await fetch(`${URL}admin/delete/sub-admin/${_id}`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { "Content-Type": "application/json" } });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);

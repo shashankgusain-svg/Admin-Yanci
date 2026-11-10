@@ -11,7 +11,6 @@ test("signed user cookie round-trips role and permissions", async () => {
     _id: "admin-1",
     name: "Ada",
     email: "ada@example.com",
-    phone: "",
     roleType: "SUB",
     adminPermission: [{ permissionName: "Policies", view: true, edit: false }],
   };
@@ -21,6 +20,7 @@ test("signed user cookie round-trips role and permissions", async () => {
 
   assert.equal(parsed.roleType, "SUB");
   assert.equal(parsed.adminPermission[0].permissionName, "Policies");
+  assert.equal(parsed.phone, undefined);
   assert.equal(signed.includes("token"), false);
 });
 
@@ -29,7 +29,6 @@ test("a rewritten role fails the signature check", async () => {
     _id: "admin-1",
     name: "Ada",
     email: "ada@example.com",
-    phone: "",
     roleType: "SUB",
     adminPermission: [],
   });
@@ -52,4 +51,23 @@ test("the token cookie is HttpOnly and the user cookie is not", () => {
   assert.doesNotMatch(userCookie, /HttpOnly/);
   assert.match(tokenCookie, /token=secret-token/);
   assert.match(userCookie, /user=signed-user/);
+});
+
+test("remember-me caps session at 12 hours", () => {
+  const [tokenCookie] = authCookies("secret-token", "signed-user", true);
+  assert.match(tokenCookie, /Max-Age=43200/);
+});
+
+test("sessionUser drops phone from readable claims", async () => {
+  const { sessionUser } = await import("./session.mjs");
+  const slim = sessionUser({
+    _id: "a1",
+    name: "Ada",
+    email: "ada@example.com",
+    phone: "+233241234567",
+    roleType: "SUPER",
+    adminPermission: [],
+  });
+  assert.equal(slim.phone, undefined);
+  assert.equal(slim.email, "ada@example.com");
 });

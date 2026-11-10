@@ -23,29 +23,25 @@ export const responseValidator = async (
     if (Array.isArray(res.data)) {
       if (isToaster) {
         toast.success(!message || message.length == 0 ? res.message : message, {
-          toastId: `API-Response-success-${Math.random()}`,
-        });
+          toastId: `API-Response-success-${Math.random()}` });
       }
       return { status: true, data: [...res.data] };
     } else if (typeof res?.data === "object") {
       if (isToaster) {
         toast.success(!message || message.length == 0 ? res.message : message, {
-          toastId: `API-Response-success-${Math.random()}`,
-        });
+          toastId: `API-Response-success-${Math.random()}` });
       }
       return { status: true, data: res.data };
     } else if (typeof res.data === "string") {
       if (isToaster) {
         toast.success(!message || message.length == 0 ? res.message : message, {
-          toastId: `API-Response-success-${Math.random()}`,
-        });
+          toastId: `API-Response-success-${Math.random()}` });
       }
       return { status: true, data: res.data };
     } else {
       if (isToaster) {
         toast.success(!message || message.length == 0 ? res.message : message, {
-          toastId: `API-Response-success-${Math.random()}`,
-        });
+          toastId: `API-Response-success-${Math.random()}` });
       }
       return { status: res.status, message: res.message };
     }
@@ -65,8 +61,7 @@ export const responseValidator = async (
     return { status: false, code: 401, message: "Session Expired." };
   } else if (response.status == 413) {
     toast.error("Media file which you attach is too large.", {
-      toastId: "API-error-file-size-too-large",
-    });
+      toastId: "API-error-file-size-too-large" });
     return { status: false, code: 413, message: "file-size-too-large" };
   } else if (response.status >= 400 && response.status < 500) {
     const res = await response.json();

@@ -1,10 +1,7 @@
-import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 
 const authHeaders = async () => ({
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${await getAuthToken()}`,
-});
+  "Content-Type": "application/json" });
 
 export const getKYCData = async (payload) => {
   let endpoint = `${URL}adminuser/kyc-users?isSubmitted=${payload.type === "Submitted KYCs"}&page=${payload.page}&limit=${payload.limit}`;
@@ -20,8 +17,7 @@ export const getKYCData = async (payload) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -32,8 +28,7 @@ export const getKYCMetrics = async () => {
   try {
     const res = await fetch(`${URL}adminuser/metrics`, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -44,8 +39,7 @@ export const getKYCDetails = async (userId) => {
   try {
     const res = await fetch(`${URL}adminuser/kyc-details/${userId}`, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -74,8 +68,7 @@ export const manageKYC = async (payload) => {
     const res = await fetch(`${URL}adminuser/kyc/verify/user`, {
       method: "PUT",
       headers: await authHeaders(),
-      body: JSON.stringify(payload),
-    });
+      body: JSON.stringify(payload) });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -86,8 +79,7 @@ export const markKYCReadyForReview = async (userId) => {
   try {
     const res = await fetch(`${URL}adminuser/kyc/ready-for-review/${userId}`, {
       method: "PUT",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -98,8 +90,7 @@ export const markKYCSubmittedToCSD = async (userId) => {
   try {
     const res = await fetch(`${URL}adminuser/kyc/submitted-to-csd/${userId}`, {
       method: "PUT",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -111,8 +102,7 @@ export const updateKYCCSDNumber = async (userId, payload) => {
     const res = await fetch(`${URL}adminuser/kyc/csd-number/${userId}`, {
       method: "PUT",
       headers: await authHeaders(),
-      body: JSON.stringify(payload),
-    });
+      body: JSON.stringify(payload) });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -123,8 +113,7 @@ export const regenerateCsdForm = async (userId) => {
   try {
     const res = await fetch(`${URL}adminuser/kyc/regenerate-csd/${userId}`, {
       method: "POST",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res, true);
   } catch (error) {
     return apiError(error);
@@ -139,8 +128,7 @@ export const fetchKYCMediaBlobUrl = async (userId, field) => {
   try {
     const res = await fetch(`${URL}adminuser/kyc-media/${userId}/${field}`, {
       method: "GET",
-      headers: { Authorization: `Bearer ${await getAuthToken()}` },
-    });
+      headers: { } });
     if (!res.ok) return { status: false, message: "Media unavailable" };
     const blob = await res.blob();
     return { status: true, data: { url: window.URL.createObjectURL(blob) } };

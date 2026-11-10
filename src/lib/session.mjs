@@ -17,11 +17,11 @@ export function getSessionSecret() {
 
 export function sessionUser(data) {
   if (!data || typeof data !== "object") return null;
+  // YA-001: keep the readable cookie minimal — no phone in JS-accessible claims.
   return {
     _id: data._id || data.id || "",
     name: data.name || data.fullName || "",
     email: data.email || "",
-    phone: data.phone || "",
     roleType: data.roleType || "",
     adminPermission: Array.isArray(data.adminPermission) ? data.adminPermission : [],
   };
@@ -111,7 +111,8 @@ export function serializeCookie(name, value, { httpOnly = false, maxAge = 0 } = 
 }
 
 export function authCookies(token, signedUser, remember) {
-  const maxAge = remember ? 60 * 60 * 24 * 7 : 60 * 60;
+  // YA-003: cap remember-me at 12h (was 7d) for KYC-capable admin sessions.
+  const maxAge = remember ? 60 * 60 * 12 : 60 * 60;
   return [
     serializeCookie("token", token, { httpOnly: true, maxAge }),
     serializeCookie("user", signedUser, { httpOnly: false, maxAge }),

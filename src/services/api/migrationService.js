@@ -1,4 +1,3 @@
-import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 
 const postMigrationFile = async (path, file, isToaster = false) => {
@@ -7,9 +6,8 @@ const postMigrationFile = async (path, file, isToaster = false) => {
   try {
     const res = await fetch(`${URL}${path}`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${await getAuthToken()}` },
-      body: formData,
-    });
+      headers: { },
+      body: formData });
     return responseValidator(res, isToaster);
   } catch (error) {
     return apiError(error);

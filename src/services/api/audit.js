@@ -1,4 +1,3 @@
-import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 
 const buildAuditLogQuery = (params = {}) => {
@@ -31,17 +30,13 @@ export const getAuditLogs = async (params = {}) => {
     from: params.from,
     to: params.to,
     startDate: params.startDate,
-    endDate: params.endDate,
-  });
+    endDate: params.endDate });
   const endpoint = `${URL}admin/audit-logs?${query}`;
   try {
     const res = await fetch(endpoint, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${await getAuthToken()}`,
-      },
-    });
+        "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -53,10 +48,7 @@ export const getAuditLogOptions = async () => {
     const res = await fetch(`${URL}admin/audit-logs/options`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${await getAuthToken()}`,
-      },
-    });
+        "Content-Type": "application/json" } });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -74,15 +66,12 @@ export const exportAuditLogs = async (params = {}) => {
     from: params.from,
     to: params.to,
     startDate: params.startDate,
-    endDate: params.endDate,
-  });
+    endDate: params.endDate });
   const endpoint = `${URL}admin/audit-logs/export?${query}`;
   try {
-    const token = await getAuthToken();
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      headers: { } });
     if (!res.ok) return apiError(new Error("Export failed"));
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);

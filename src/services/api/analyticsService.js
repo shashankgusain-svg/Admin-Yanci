@@ -1,10 +1,7 @@
-import { getAuthToken } from "./cookies";
 import { URL, apiError, responseValidator } from "./helper";
 
 const authHeaders = async () => ({
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${await getAuthToken()}`,
-});
+  "Content-Type": "application/json" });
 
 export const getAnalyticsOverview = async (params = {}) => {
   let endpoint = `${URL}admin/analytics/overview?`;
@@ -13,8 +10,7 @@ export const getAnalyticsOverview = async (params = {}) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -85,8 +81,7 @@ export const getTradesOrders = async (params = {}) => {
   try {
     const res = await fetch(endpoint, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -145,9 +140,7 @@ export const getTransactionMetrics = async (params = {}) => {
         dailyAverageTrade: { value: dailyAverageTrade },
         tradingDays: { value: tradingDays },
         buyingActivity: { value: walletMovements.trade_buy?.amount || 0 },
-        sellingActivity: { value: walletMovements.trade_sell?.amount || 0 },
-      },
-    };
+        sellingActivity: { value: walletMovements.trade_sell?.amount || 0 } } };
   } catch (error) {
     return apiError(error);
   }
@@ -170,8 +163,7 @@ export const getReportsAudit = async () => {
   try {
     const res = await fetch(`${URL}admin/analytics/reports/audit`, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -182,8 +174,7 @@ export const getReportsAuditSummary = async () => {
   try {
     const res = await fetch(`${URL}admin/analytics/reports/audit-summary`, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -194,8 +185,7 @@ export const getReportOptions = async () => {
   try {
     const res = await fetch(`${URL}admin/analytics/reports/options`, {
       method: "GET",
-      headers: await authHeaders(),
-    });
+      headers: await authHeaders() });
     return responseValidator(res);
   } catch (error) {
     return apiError(error);
@@ -219,10 +209,8 @@ export const downloadAdminReport = async (params = {}) => {
     const res = await fetch(endpoint, {
       method: "GET",
       headers: {
-        Accept: "application/pdf",
-      },
-      signal: controller.signal,
-    });
+        Accept: "application/pdf" },
+      signal: controller.signal });
     clearTimeout(timeoutId);
 
     const contentType = res.headers.get("Content-Type") || "";
